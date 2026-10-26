@@ -4223,6 +4223,7 @@ function ensureModeForPage(v){
 function pageFollowMode(){
   if(!pagesReady)return;
   if(state.adaptive&&state.adaptive.active){applyPageVisibility();return}
+  if(typeof holdUntil!=="undefined"&&Date.now()<holdUntil){applyPageVisibility();return}
   const pg=GOAL_PAGE[curGoal()]||"home";
   if(pg!==currentView)showView(pg,true);else applyPageVisibility();
 }
@@ -4971,7 +4972,14 @@ syncModeCategory=function(m){
   try{if(state.adaptive&&state.adaptive.active&&state.adaptive.index===0&&currentView==="home")setTimeout(()=>{const c=$("exerciseCard");if(c)c.scrollIntoView({behavior:"smooth",block:"start"})},60)}catch(e){}
 };
 const __rapOrig=renderAdaptivePanel;
-renderAdaptivePanel=function(){__rapOrig();try{applyPageVisibility()}catch(e){}};
+let adWas=false,holdUntil=0;
+renderAdaptivePanel=function(){
+  __rapOrig();
+  const on=!!(state.adaptive&&state.adaptive.active);
+  if(adWas&&!on)holdUntil=Date.now()+400;
+  adWas=on;
+  try{applyPageVisibility()}catch(e){}
+};
 
 /* =====================================================================
    v29 : mini-jeux de vocabulaire
