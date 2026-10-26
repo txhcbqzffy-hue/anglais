@@ -6019,6 +6019,29 @@ function lockScroll(on){
   if(on&&lockY===null){lockY=window.scrollY||0;b.style.position="fixed";b.style.top=(-lockY)+"px";b.style.left="0";b.style.right="0";b.style.width="100%";document.documentElement.style.overflow="hidden"}
   else if(!on&&lockY!==null){b.style.position="";b.style.top="";b.style.left="";b.style.right="";b.style.width="";document.documentElement.style.overflow="";const y=lockY;lockY=null;try{window.scrollTo(0,y)}catch(e){}}
 }
+
+/* ----- reprise d'un exercice libre : on rouvre l'app là où on s'était arrêté ----- */
+let rsReady=false;const __rsSaved=state.resume?{...state.resume}:null;
+const __rsNQ=newQuestion;
+newQuestion=function(){
+  __rsNQ.apply(this,arguments);
+  try{
+    const c=$("exerciseCard");
+    if(rsReady&&!sessOpen&&c&&c.offsetParent!==null&&typeof mode==="string"&&mode.indexOf("view:")!==0){
+      state.resume={mode,q:qNumber};saveState();
+    }
+  }catch(e){}
+};
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#pbBack")){state.resume=null;saveState()}},true);
+setTimeout(()=>{
+  try{
+    const r=__rsSaved;
+    if(!r||!r.mode||sessOpen){rsReady=true;return}
+    openExercise(r.mode);
+    qNumber=r.q||1;rsReady=true;
+    $("qCounter").textContent="Question "+qNumber;$("progress").style.width=(((qNumber-1)%20)*5)+"%";
+  }catch(e){rsReady=true;console.error(e)}
+},700);
 /* =====================================================================
    v42 : ajouter un mot (anglais ou français) -> traduction, explication, exemple
    ===================================================================== */
