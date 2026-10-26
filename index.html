@@ -4704,6 +4704,7 @@ function initV28(){
   const G=goalModeGroups,all=[].concat(G.understand.modes,G.produce.modes),by=m=>all.find(x=>x[0]===m);
   G.understand={title:"Audio & oral",modes:["view:audio","audioDialogues","dictation","listening","pronunciation","pronLab","wordStress","sentenceStress","shadowing","conversation"].map(by).filter(Boolean)};
   G.produce={title:"Écriture & lecture",modes:["view:translate","writingTask","reading","translationText"].map(by).filter(Boolean)};
+  const rv=document.createElement("section");rv.id="revPanel";rv.className="panel";vt.insertBefore(rv,$("planPanel").nextSibling);
   const pb=document.createElement("div");pb.id="pageBar";pb.className="pageBar";vt.insertBefore(pb,vt.firstChild);
   G.vocab.modes=G.vocab.modes.concat(GAME_MODES.map(m=>[m,modeNames[m],modeDescriptions[m]]));
   (function(){const og=document.createElement("optgroup");og.label="Jeux";GAME_MODES.forEach(m=>{const o=document.createElement("option");o.value=m;o.textContent=modeNames[m];og.appendChild(o)});$("modeSelect").appendChild(og)})();
@@ -4854,6 +4855,7 @@ function renderPlan(){
 let planSig="";
 function planTick(){
   try{applyPageVisibility()}catch(e){}
+  try{renderRev()}catch(e){}
   try{
     const sig=JSON.stringify(planSteps().map(s=>s.ok))+today()+(state.packFocus||"");
     if(sig!==planSig||!$("planPanel").firstChild){planSig=sig;renderPlan()}
@@ -4891,6 +4893,22 @@ function renderPageBar(){
     state.packFocus=t.value||null;saveState();
     if(["quiz","quizReverse","quizMix","write","reverse"].includes(mode))newQuestion();else openExercise("quizMix");
   };
+}
+
+/* ----- bloc Révision sur l'accueil ----- */
+let revSig="";
+function renderRev(){
+  const h=$("revPanel");if(!h)return;
+  const due=getDueItems().length,err=Object.values(state.wrong||{}).filter(x=>x>0).length,fav=(state.favorites||[]).length;
+  const sig=[due,err,fav].join("|");if(sig===revSig&&h.firstChild)return;revSig=sig;
+  h.innerHTML=`<h2>Révision</h2>
+  <div class="planList">
+    <button type="button" class="planStep" data-rv="review"><span class="planTx"><b>Révision espacée</b><small>${due?due+" à revoir maintenant":"Rien de dû pour le moment"}</small></span></button>
+    <button type="button" class="planStep" data-rv="errors"><span class="planTx"><b>Mes erreurs</b><small>${err?err+" à retravailler":"Aucune erreur enregistrée"}</small></span></button>
+    <button type="button" class="planStep" data-rv="favorites"><span class="planTx"><b>Mes favoris</b><small>${fav?fav+" mot(s)":"Aucun favori"}</small></span></button>
+    <button type="button" class="planStep" data-rv="irregularMix"><span class="planTx"><b>Verbes irréguliers</b><small>Révision rapide des formes</small></span></button>
+  </div>`;
+  h.querySelectorAll("[data-rv]").forEach(b=>b.onclick=()=>openExercise(b.dataset.rv));
 }
 
 /* =====================================================================
