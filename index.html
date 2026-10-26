@@ -1151,6 +1151,8 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 #whyBox .whyOthers{margin:8px 0 0;padding:0;list-style:none}
 #whyBox .whyOthers li{margin:5px 0;color:var(--muted)}
 #whyBox .whyOthers b{color:var(--text)}
+#modeLabel:not(.keep){display:none}
+.topline>span:last-child{margin-left:auto}
 </style>
 </head>
 <body>
@@ -1159,7 +1161,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v41</span></h1>
+        <h1>English Trainer<span class="ver">v42</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -4663,7 +4665,7 @@ function resetZones(){
   $("nextBtn").classList.add("hidden");
   $("speakBtn").style.visibility="visible";$("favBtn").style.visibility="visible";
   $("speakBtn").style.display=VOC_SPEAK.includes(mode)?"none":"";
-  $("modeLabel").textContent=modeNames[mode]||mode;$("modeHelp").textContent=modeDescriptions[mode]||"";renderLesson();
+  $("modeLabel").classList.remove("keep");$("modeLabel").textContent=modeNames[mode]||mode;$("modeHelp").textContent=modeDescriptions[mode]||"";renderLesson();
   $("qCounter").textContent="Question "+qNumber;
   $("progress").style.width=(((qNumber-1)%20)*5)+"%";
 }
@@ -5248,7 +5250,7 @@ function startLevelTest(){
 }
 function renderLevelQuestion(){
   resetZones();
-  $("modeLabel").textContent=`Diagnostic · ${levelState.index+1}/${levelState.items.length}`;
+  $("modeLabel").classList.add("keep");$("modeLabel").textContent=`Diagnostic · ${levelState.index+1}/${levelState.items.length}`;
   $("modeHelp").textContent="20 questions. Pas d’indice. Résultat indicatif avec points faibles.";
   $("hintBtn").disabled=true;
   const x=levelState.items[levelState.index];
@@ -5497,7 +5499,7 @@ function startRecognition(){
 /* ---------------- EXAM ---------------- */
 function renderExamQuestion(){
   if(examIndex===0)examScore=0;
-  $("modeLabel").textContent=`Mode examen · ${examIndex+1}/10`;
+  $("modeLabel").classList.add("keep");$("modeLabel").textContent=`Mode examen · ${examIndex+1}/10`;
   const type=rand(["vocab","tense","error"]);
   if(type==="vocab"){
     const all=vocab(),item=rand(all),pool=shuffle(all.filter(x=>x[0]!==item[0])).slice(0,3);current={vocab:item,answer:item[1]};$("question").textContent=item[0];
