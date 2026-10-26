@@ -586,6 +586,9 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 .tab{font-size:13px;padding:8px 2px}
 .bottomNav button{font-size:10.5px!important}
 @media(max-width:720px){.tabs{display:none!important}}
+.goalBtn span:empty,.bottomNav span:empty,.planIc:empty{display:none}
+.small:empty{display:none}
+.goalTop{display:none!important}
 </style>
 </head>
 <body>
@@ -595,7 +598,6 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
       <div class="logo">E</div>
       <div>
         <h1>English Trainer<span class="ver">v29</span></h1>
-        <div class="sub">Vocabulaire · grammaire · lecture · écoute · oral</div>
       </div>
     </div>
     <div class="headTools"><button id="themeBtn" class="ghost themeBtn" type="button" aria-label="Passer au thème sombre">Sombre</button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -625,7 +627,6 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
     <div class="cefrHead">
       <div>
         <h2 style="margin:0 0 4px;font-size:18px">Parcours CECR A1 → B2</h2>
-        <div class="small">Progression structurée par compétences. Niveau indicatif, pas une certification officielle.</div>
       </div>
       <span class="badge" id="cefrOverall">A1 · en cours</span>
     </div>
@@ -636,7 +637,6 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
     <div class="adaptiveHead">
       <div>
         <h2>Parcours adaptatif du jour</h2>
-        <div class="small">L’app choisit les exercices selon tes erreurs, tes révisions dues et tes points faibles.</div>
       </div>
       <button id="adaptiveBtn" class="primary">▶ Commencer 10 questions</button>
     </div>
@@ -649,22 +649,20 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
     <div class="goalTop">
       <div>
         <b>Que veux-tu travailler ?</b>
-        <div class="small">Choisis un bloc. Tu gardes toujours un seul exercice à l’écran.</div>
       </div>
     </div>
     <div class="goalGrid">
-      <button class="goalBtn active" data-goal="grammar"><span>🧩</span>Grammaire</button>
-      <button class="goalBtn" data-goal="vocab"><span>🧠</span>Vocabulaire</button>
-      <button class="goalBtn" data-goal="understand"><span>🎧</span>Comprendre</button>
-      <button class="goalBtn" data-goal="produce"><span>✍️</span>Produire</button>
-      <button class="goalBtn" data-goal="review"><span>🔁</span>Réviser</button>
-      <button class="goalBtn" data-goal="test"><span>🎯</span>Tester mon niveau</button>
+      <button class="goalBtn active" data-goal="grammar">Grammaire</button>
+      <button class="goalBtn" data-goal="vocab">Vocabulaire</button>
+      <button class="goalBtn" data-goal="understand">Comprendre</button>
+      <button class="goalBtn" data-goal="produce">Produire</button>
+      <button class="goalBtn" data-goal="review">Réviser</button>
+      <button class="goalBtn" data-goal="test">Tester mon niveau</button>
     </div>
     <div id="goalChoices" class="goalChoices">
       <div class="goalChoicesHead">
         <div>
-          <b id="goalChoicesTitle">🧩 Grammaire</b>
-          <div class="small">Choisis exactement ce que tu veux réviser.</div>
+          <b id="goalChoicesTitle">Grammaire</b>
         </div>
       </div>
       <div id="goalChoicesGrid" class="goalChoicesGrid"></div>
@@ -677,7 +675,7 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 
   <div class="toolbar">
     <select id="modeSelect">
-      <optgroup label="🧩 Grammaire">
+      <optgroup label="Grammaire">
         <option value="questionsNeg">Questions & négations</option>
         <option value="wordOrder">Ordre des mots</option>
         <option value="tenses">Choisir le bon temps</option>
@@ -691,14 +689,14 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
         <option value="thirdPerson">3e personne : he / she / it</option>
         <option value="edSpell">Past régulier : orthographe -ed</option>
       </optgroup>
-      <optgroup label="🔤 Verbes & prononciation grammaticale">
+      <optgroup label="Verbes & prononciation grammaticale">
         <option value="irregularPast">Irréguliers : past simple</option>
         <option value="irregularPart">Irréguliers : participe passé</option>
         <option value="irregularMix">Irréguliers : mix</option>
         <option value="edPron">-ED : /t/ /d/ /ɪd/</option>
         <option value="sPron">-S/-ES : /s/ /z/ /ɪz/</option>
       </optgroup>
-      <optgroup label="🧠 Vocabulaire naturel">
+      <optgroup label="Vocabulaire naturel">
         <option value="quiz">QCM vocabulaire · EN → FR</option>
         <option value="quizReverse">QCM vocabulaire · FR → EN</option>
         <option value="quizMix">QCM vocabulaire · Mix EN ↔ FR</option>
@@ -710,14 +708,14 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
         <option value="write">Écriture EN → FR</option>
         <option value="reverse">Écriture FR → EN</option>
       </optgroup>
-      <optgroup label="🎧 Compréhension">
+      <optgroup label="Compréhension">
         <option value="listening">Écoute → écrire</option>
         <option value="dictation">Dictée de phrases</option>
         <option value="audioDialogues">Dialogues audio & compréhension</option>
         <option value="reading">Lecture & compréhension</option>
         <option value="translationText">Traduction de texte EN → FR</option>
       </optgroup>
-      <optgroup label="🗣️ Production">
+      <optgroup label="Production">
         <option value="pronunciation">Prononciation de mots</option>
         <option value="pronLab">Laboratoire des sons</option>
         <option value="wordStress">Accent tonique des mots</option>
@@ -726,19 +724,19 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
         <option value="writingTask">Mini-rédaction</option>
         <option value="conversation">Conversation simulée</option>
       </optgroup>
-      <optgroup label="🔁 Révision">
+      <optgroup label="Révision">
         <option value="review">Révision espacée</option>
         <option value="errors">Mes erreurs</option>
         <option value="favorites">Mes favoris</option>
       </optgroup>
-      <optgroup label="🎯 Tests">
+      <optgroup label="Tests">
         <option value="levelTest">Diagnostic de niveau</option>
         <option value="exam">Mode examen</option>
       </optgroup>
     </select>
-    <button id="timerBtn" class="ghost">⏱️ OFF</button>
-    <button id="hintBtn" class="ghost">💡 Indice</button>
-    <button id="lessonBtn" class="ghost">📘 Mini-leçon</button>
+    <button id="timerBtn" class="ghost">OFF</button>
+    <button id="hintBtn" class="ghost">Indice</button>
+    <button id="lessonBtn" class="ghost">Mini-leçon</button>
   </div>
   <div id="modeHelp" class="modeHelp"></div>
 
@@ -800,7 +798,7 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
       <div class="readerBox"><div id="readingText" class="readerText"></div></div>
       <div id="wordTranslation" class="translationPop hidden"></div>
       <div class="actions">
-        <button id="readAloudBtn" class="ghost">🔊 Écouter le texte 🇺🇸</button>
+        <button id="readAloudBtn" class="ghost">Écouter le texte </button>
         <button id="newReadingBtn" class="ghost">↻ Nouveau texte</button>
       </div>
       <div class="hint">Écris en français ce que tu as compris. Pas besoin de traduire mot à mot : restitue le sens.</div>
@@ -835,7 +833,7 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
       <div class="actions">
         <button id="checkTranslationTextBtn" class="primary">Vérifier ma traduction</button>
         <button id="showTranslationTextModelBtn" class="ghost">Voir la traduction modèle</button>
-        <button id="listenTranslationTextBtn" class="ghost">🔊 Écouter le texte 🇺🇸</button>
+        <button id="listenTranslationTextBtn" class="ghost">Écouter le texte </button>
       </div>
 
       <div id="translationTextResult" class="hidden">
@@ -850,7 +848,7 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
     <div id="pronZone" class="hidden">
       <div class="info">Écoute le modèle puis lis le mot ou la phrase à voix haute.</div>
       <div class="actions">
-        <button id="recordBtn" class="primary">🎙️ Parler</button>
+        <button id="recordBtn" class="primary">Parler</button>
       </div>
       <div id="heard" class="feedback"></div>
     </div>
@@ -864,9 +862,9 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
       </div>
       <div class="audioControls">
         <select id="audioAccent" class="ghost">
-          <option value="en-GB">🇬🇧 Anglais britannique</option>
-          <option value="en-US">🇺🇸 Anglais américain</option>
-          <option value="en-AU">🇦🇺 Anglais australien</option>
+          <option value="en-GB">Anglais britannique</option>
+          <option value="en-US">Anglais américain</option>
+          <option value="en-AU">Anglais australien</option>
         </select>
         <select id="audioSpeed" class="ghost">
           <option value="0.72">Lent</option>
@@ -892,8 +890,8 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
         <div class="pronMetric"><b id="pronRhythmScore">Mode dédié</b><span>Rythme & accent</span></div>
       </div>
       <div class="actions">
-        <button id="pronModelBtn" class="ghost">🔊 Écouter le modèle</button>
-        <button id="pronRecordBtn" class="primary">🎙️ Enregistrer / analyser</button>
+        <button id="pronModelBtn" class="ghost">Écouter le modèle</button>
+        <button id="pronRecordBtn" class="primary">Enregistrer / analyser</button>
       </div>
       <div id="pronLabFeedback" class="feedback"></div>
       <div class="pronDisclaimer">
@@ -920,7 +918,7 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
     <div id="levelResult" class="hidden"></div>
 
     <div id="translationWrap" class="hidden">
-      <button id="translationBtn" class="ghost translationBtn">👁 Voir la réponse / traduction</button>
+      <button id="translationBtn" class="ghost translationBtn">Voir la réponse / traduction</button>
       <div id="translationBox" class="translationReveal hidden"></div>
     </div>
 
@@ -938,7 +936,6 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 
   <section class="panel">
     <h2>Profil d’erreurs</h2>
-    <div class="small">Plus un pourcentage est bas, plus cette notion doit revenir dans ton parcours adaptatif.</div>
     <div class="profileGrid" style="margin-top:10px">
       <div>
         <div id="conceptProfile" class="profileList"></div>
@@ -952,7 +949,6 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 
   <section class="panel">
     <h2>Maîtrise des mots & règles</h2>
-    <div class="small">Chaque élément évolue automatiquement : nouveau → en apprentissage → presque acquis → maîtrisé.</div>
     <div class="masterySummary">
       <div class="masteryStat"><b id="masteryNew">0</b><span>Nouveaux</span></div>
       <div class="masteryStat"><b id="masteryLearning">0</b><span>En apprentissage</span></div>
@@ -972,7 +968,6 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 
   <section class="panel">
     <h2>Banque d’exercices</h2>
-    <div class="small">Les exercices utilisent des banques fixes vérifiées + des variantes générées à partir de modèles contrôlés.</div>
     <div class="bankKpis">
       <div class="bankKpi"><b id="bankTotal">0</b><span>variantes d’exercices</span></div>
       <div class="bankKpi"><b id="bankConcepts">0</b><span>notions suivies</span></div>
@@ -992,7 +987,6 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 
   <section class="panel">
     <h2>Fiches de référence</h2>
-    <div class="small">À ouvrir seulement si tu veux revoir une règle. Elles ne gênent pas les exercices.</div>
     <details class="referenceDetails">
       <summary>Temps essentiels</summary>
       <div>
@@ -1115,11 +1109,10 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 
   <section class="panel">
     <h2>Sauvegarde & export</h2>
-    <div class="small">Ta progression reste enregistrée dans ce navigateur. Exporte-la si tu veux changer d’appareil ou garder une copie.</div>
     <div class="backupGrid" style="margin-top:10px">
-      <button id="exportBackupBtn" class="ghost">⬇ Exporter la sauvegarde</button>
-      <button id="importBackupBtn" class="ghost">⬆ Importer une sauvegarde</button>
-      <button id="exportErrorsBtn" class="ghost">📊 Exporter mes erreurs CSV</button>
+      <button id="exportBackupBtn" class="ghost">Exporter la sauvegarde</button>
+      <button id="importBackupBtn" class="ghost">Importer une sauvegarde</button>
+      <button id="exportErrorsBtn" class="ghost">Exporter mes erreurs CSV</button>
     </div>
     <input id="importBackupFile" type="file" accept=".json,application/json" class="hidden">
     <div id="backupStatus" class="small" style="margin-top:8px"></div>
@@ -1143,7 +1136,7 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
   <div id="view-translate" class="view hidden" role="tabpanel" aria-label="Traduction libre">
     <section class="secCard">
       <h2>Traduction libre</h2>
-      <div class="small">Écris un texte, traduis-le toi-même, puis fais-le corriger par LanguageTool et compare-le à une traduction automatique.</div>
+      
       <div class="trDir" id="trDir" style="margin-top:12px">
         <button data-dir="fr-en" class="on">Français → Anglais</button>
         <button data-dir="en-fr">Anglais → Français</button>
@@ -1153,16 +1146,16 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
       <div class="row2" style="margin-top:8px">
         <button id="trIdea" class="ghost" type="button">Texte au hasard</button>
         <button id="trClear" class="ghost" type="button">Effacer</button>
-        <button id="trListenSrc" class="ghost hidden" type="button">🔊 Écouter</button>
+        <button id="trListenSrc" class="ghost hidden" type="button">Écouter</button>
       </div>
       <label class="lbl" for="trMine" id="trMineLbl">Ta traduction en anglais</label>
       <textarea id="trMine" class="trBox" maxlength="1800" placeholder="Ta traduction…" spellcheck="false" autocapitalize="sentences"></textarea>
       <div class="row2" style="margin-top:10px">
         <button id="trGo" class="primary" type="button">Corriger et comparer</button>
         <select id="trAccent" class="ghost" aria-label="Variante d’anglais"><option value="en-GB">Anglais UK</option><option value="en-US">Anglais US</option></select>
-        <button id="trListenMine" class="ghost hidden" type="button">🔊 Écouter ma version</button>
+        <button id="trListenMine" class="ghost hidden" type="button">Écouter ma version</button>
       </div>
-      <div class="small" style="margin-top:8px">Au clic, ton texte est envoyé à LanguageTool (correction) et à MyMemory (traduction automatique). Rien n’est envoyé avant. Connexion nécessaire.</div>
+      <div class="small" style="margin-top:8px">Envoyé à LanguageTool et MyMemory au clic.</div>
       <div id="trRes" class="trRes"></div>
     </section>
     <section class="secCard">
@@ -1173,11 +1166,11 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 </div>
 
 <nav class="bottomNav">
-  <button class="active" data-view="home"><span>🏠</span>Accueil</button>
-  <button data-view="vocab"><span>🧠</span>Vocab.</button>
-  <button data-view="gram"><span>🧩</span>Grammaire</button>
-  <button data-view="audio"><span>🎧</span>Audio</button>
-  <button data-view="write"><span>✍️</span>Écriture</button>
+  <button class="active" data-view="home">Accueil</button>
+  <button data-view="vocab">Vocab.</button>
+  <button data-view="gram">Grammaire</button>
+  <button data-view="audio">Audio</button>
+  <button data-view="write">Écriture</button>
 </nav>
 
 <script>
@@ -2334,7 +2327,7 @@ function updateUI(){
   $("streak").textContent=state.streak;
   $("daily").textContent=state.daily+"/20";
   $("level").textContent=estimatedLevel();
-  $("timerBtn").textContent=state.timer?"⏱️ ON":"⏱️ OFF";
+  $("timerBtn").textContent=state.timer?"Minuteur : ON":"Minuteur : OFF";
   $("customInfo").textContent=state.custom.length?`${state.custom.length} mot(s) ajouté(s).`:"Aucun mot personnel pour le moment.";
   renderSkills();renderConceptProfile();renderMastery();renderCEFR();renderAdaptivePanel();
   const due=getDueItems().length;
@@ -2476,7 +2469,7 @@ function startTimer(){
   timerId=setInterval(()=>{
     seconds--;$("timer").textContent="· "+seconds+"s";
     $("timer").classList.toggle("low",seconds<=3);
-    if(seconds<=0){clearTimer();if(!locked)fail("⏱️ Temps écoulé.")}
+    if(seconds<=0){clearTimer();if(!locked)fail("Temps écoulé.")}
   },1000);
 }
 function availableVoice(locale){
@@ -2645,7 +2638,7 @@ function updateTranslationButton(){
     $("translationWrap").classList.toggle("hidden",!allowed);
     $("translationBox").classList.add("hidden");
     $("translationBox").innerHTML="";
-    $("translationBtn").textContent="👁 Voir la réponse / traduction";
+    $("translationBtn").textContent="Voir la réponse / traduction";
   }catch(err){
     console.error("Translation button error:",err);
     $("translationWrap").classList.add("hidden");
@@ -2657,7 +2650,7 @@ function revealTranslation(){
     if(!text)return;
     const english=englishAudioForCurrent();
     const audioButton=english?`
-      <button type="button" class="ghost usAudioBtn" data-listen-translation-us>🔊 Écouter en anglais 🇺🇸</button>
+      <button type="button" class="ghost usAudioBtn" data-listen-translation-us>Écouter en anglais </button>
       <div class="audioAccentNote">Lecture avec une voix anglaise américaine disponible sur ton appareil.</div>`:"";
     $("translationBox").innerHTML=`<b>Traduction / aide :</b><br>${text}${audioButton}`;
     $("translationBox").classList.remove("hidden");
@@ -2795,10 +2788,10 @@ function newQuestion(){
     const reverse=Math.random()<.5;
     current={vocab:item,answer:reverse?item[0]:item[1],direction:reverse?"fr-en":"en-fr"};
     if(reverse){
-      $("question").innerHTML=`🇫🇷 <b>${escapeHtml(item[1])}</b> → choisis l’anglais`;
+      $("question").innerHTML=`<b>${escapeHtml(item[1])}</b> → choisis l’anglais`;
       shuffle([item[0],...shuffle(pool).slice(0,3).map(x=>x[0])]).forEach(x=>makeOption(x,x===item[0]));
     }else{
-      $("question").innerHTML=`🇬🇧 <b>${escapeHtml(item[0])}</b> → choisis le français`;
+      $("question").innerHTML=`<b>${escapeHtml(item[0])}</b> → choisis le français`;
       shuffle([item[1],...shuffle(pool).slice(0,3).map(x=>x[1])]).forEach(x=>makeOption(x,x===item[1]));
     }
   }
@@ -2821,7 +2814,7 @@ function newQuestion(){
     const sentence=rand(allDictationSentences);
     current={answer:sentence,spoken:sentence,accepted:[sentence]};
     $("question").textContent="Écoute la phrase puis écris-la exactement.";
-    $("info").textContent="Tu peux réécouter avec 🔊. La ponctuation finale n’est pas obligatoire.";$("info").classList.remove("hidden");
+    $("info").textContent="Tu peux réécouter avec . La ponctuation finale n’est pas obligatoire.";$("info").classList.remove("hidden");
     $("textZone").classList.remove("hidden");$("answerInput").placeholder="Écris toute la phrase en anglais";
     if(!selfTesting)if(!selfTesting)setTimeout(()=>speak(sentence),180);
   }
@@ -2979,7 +2972,7 @@ function newQuestion(){
     current={answer:sentence,spoken:sentence,shadow:true};
     $("question").textContent=sentence;
     $("pronZone").classList.remove("hidden");
-    $("info").textContent="1. Écoute avec 🔊  2. Répète immédiatement  3. Appuie sur 🎙️ Parler. Le score vérifie surtout les mots reconnus.";$("info").classList.remove("hidden");
+    $("info").textContent="1. Écoute avec 🔊  2. Répète immédiatement  3. Appuie sur Parler. Le score vérifie surtout les mots reconnus.";$("info").classList.remove("hidden");
     if(!selfTesting)if(!selfTesting)setTimeout(()=>speak(sentence),180);
   }
   else if(mode==="writingTask"){
@@ -3217,7 +3210,7 @@ function startPronLabAnalysis(){
   const target=current?.target||current?.spoken;if(!target)return;
   const start=performance.now();
   const r=new SR();r.lang="en-GB";r.interimResults=false;r.maxAlternatives=5;
-  $("pronLabFeedback").textContent="🎙️ J’écoute… prononce le mot cible clairement.";
+  $("pronLabFeedback").textContent="J’écoute… prononce le mot cible clairement.";
   r.onresult=e=>{
     const alts=[...e.results[0]].map(x=>norm(x.transcript));
     const t=norm(target),contrast=norm(current.contrast||"");
@@ -3426,14 +3419,14 @@ function renderReadingWords(x){
     $("wordTranslation").innerHTML=`
       <div><b>${escapeHtml(visibleWord)}</b> → ${escapeHtml(translation)}</div>
       <div class="wordExampleActions">
-        <button type="button" class="ghost usAudioBtn" data-speak-word-us>🔊 Écouter le mot 🇺🇸</button>
+        <button type="button" class="ghost usAudioBtn" data-speak-word-us>Écouter le mot </button>
       </div>
       <div class="wordExampleBlock">
         <div class="wordExampleTitle">Exemple dans une phrase</div>
         <div class="wordExampleEn">${escapeHtml(example.en)}</div>
-        <div class="wordExampleFr">🇫🇷 ${escapeHtml(example.fr)}</div>
+        <div class="wordExampleFr">${escapeHtml(example.fr)}</div>
         <div class="wordExampleActions">
-          <button type="button" class="ghost usAudioBtn" data-speak-word-example>🔊 Écouter la phrase 🇺🇸</button>
+          <button type="button" class="ghost usAudioBtn" data-speak-word-example>Écouter la phrase </button>
         </div>
         <div class="audioAccentNote">Prononciation américaine.</div>
       </div>`;
@@ -3490,14 +3483,14 @@ function renderTranslationTextWords(x){
     $("translationTextWord").innerHTML=`
       <div><b>${escapeHtml(visibleWord)}</b> → ${escapeHtml(translation)}</div>
       <div class="wordExampleActions">
-        <button type="button" class="ghost usAudioBtn" data-translation-word-audio>🔊 Écouter le mot 🇺🇸</button>
+        <button type="button" class="ghost usAudioBtn" data-translation-word-audio>Écouter le mot </button>
       </div>
       <div class="wordExampleBlock">
         <div class="wordExampleTitle">Exemple dans une phrase</div>
         <div class="wordExampleEn">${escapeHtml(example.en)}</div>
-        <div class="wordExampleFr">🇫🇷 ${escapeHtml(example.fr)}</div>
+        <div class="wordExampleFr">${escapeHtml(example.fr)}</div>
         <div class="wordExampleActions">
-          <button type="button" class="ghost usAudioBtn" data-translation-example-audio>🔊 Écouter la phrase 🇺🇸</button>
+          <button type="button" class="ghost usAudioBtn" data-translation-example-audio>Écouter la phrase </button>
         </div>
       </div>`;
     $("translationTextWord").classList.remove("hidden");
@@ -3578,10 +3571,10 @@ function showTranslationTextModel(){
 function startRecognition(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){
-    $("heard").textContent="La reconnaissance vocale n’est pas disponible ici. Utilise 🔊 pour écouter le modèle, puis répète à voix haute.";
+    $("heard").textContent="La reconnaissance vocale n’est pas disponible ici. Utilise pour écouter le modèle, puis répète à voix haute.";
     $("heard").className="feedback warnText";return;
   }
-  const r=new SR();r.lang="en-GB";r.interimResults=false;r.maxAlternatives=1;$("heard").textContent="🎙️ J’écoute…";
+  const r=new SR();r.lang="en-GB";r.interimResults=false;r.maxAlternatives=1;$("heard").textContent="J’écoute…";
   r.onresult=e=>{
     const heard=e.results[0][0].transcript,sim=similarity(heard,current.answer);
     $("heard").textContent=`Entendu : “${heard}” — mots reconnus ${Math.round(sim*100)}%`;
@@ -3892,7 +3885,7 @@ function toggleAdaptive(){
 
 
 const goalModeGroups={
-  grammar:{title:"🧩 Grammaire",modes:[
+  grammar:{title:"Grammaire",modes:[
     ["questionsNeg","Questions & négations","do / does / did, auxiliaires, négation"],
     ["wordOrder","Ordre des mots","Construire une phrase dans l’ordre naturel"],
     ["tenses","Choisir le bon temps","Present, past, future, perfect..."],
@@ -3912,7 +3905,7 @@ const goalModeGroups={
     ["sPron","Prononciation -S/-ES","/s/ /z/ /ɪz/"],
     ["connectors","Connecteurs","although, however, therefore..."]
   ]},
-  vocab:{title:"🧠 Vocabulaire",modes:[
+  vocab:{title:"Vocabulaire",modes:[
     ["quiz","QCM vocabulaire · EN → FR","Tu vois l’anglais et choisis le français"],
     ["quizReverse","QCM vocabulaire · FR → EN","Tu vois le français et choisis l’anglais"],
     ["quizMix","QCM vocabulaire · Mix EN ↔ FR","Le sens change aléatoirement à chaque question"],
@@ -3924,7 +3917,7 @@ const goalModeGroups={
     ["write","EN → FR","Écrire la traduction française"],
     ["reverse","FR → EN","Retrouver le mot anglais"]
   ]},
-  understand:{title:"🎧 Comprendre",modes:[
+  understand:{title:"Comprendre",modes:[
     ["view:audio","Podcasts et vidéos","Écoute réelle : podcasts et vidéos YouTube sous-titrées"],
     ["audioDialogues","Dialogues audio","Accent et vitesse réglables + questions"],
     ["dictation","Dictée de phrases","Écouter puis écrire la phrase entière"],
@@ -3932,7 +3925,7 @@ const goalModeGroups={
     ["reading","Lecture & compréhension","Lire un texte et restituer son sens"],
     ["translationText","Traduction de texte EN → FR","Traduire le texte et cliquer sur les mots inconnus"]
   ]},
-  produce:{title:"✍️ Produire",modes:[
+  produce:{title:"Produire",modes:[
     ["view:translate","Traduction libre FR ⇄ EN","Traduire, corriger avec LanguageTool et comparer"],
     ["pronunciation","Prononciation de mots","Répéter des mots et expressions"],
     ["pronLab","Laboratoire des sons","TH, H, voyelles, V/W, R, NG..."],
@@ -3942,7 +3935,7 @@ const goalModeGroups={
     ["writingTask","Mini-rédaction","Écrire un court texte guidé"],
     ["conversation","Conversation simulée","Entretien, réunion, voyage, networking"]
   ]},
-  review:{title:"🔁 Réviser",modes:[
+  review:{title:"Réviser",modes:[
     ["review","Révision espacée","Revoir ce qui est dû aujourd’hui"],
     ["errors","Mes erreurs","Retravailler ce que tu as raté"],
     ["favorites","Mes favoris","Réviser les mots enregistrés"],
@@ -3950,7 +3943,7 @@ const goalModeGroups={
     ["phrasal","Phrasal verbs","Réviser les verbes à particule"],
     ["collocations","Collocations","Réviser les associations naturelles"]
   ]},
-  test:{title:"🎯 Tester mon niveau",modes:[
+  test:{title:"Tester mon niveau",modes:[
     ["levelTest","Diagnostic A1 → B2","20 questions pour repérer tes forces/faiblesses"],
     ["exam","Mode examen","Évaluation courte avec note /20"]
   ]}
@@ -4224,7 +4217,7 @@ function renderAudio(){
   else renderPod(host);
 }
 function renderAudioEx(host){
-  host.innerHTML=`<section class="secCard"><h2>Exercices audio</h2><div class="small">Voix de synthèse : accent et vitesse réglables.</div>
+  host.innerHTML=`<section class="secCard"><h2>Exercices audio</h2>
   <div class="goalChoicesGrid" style="margin-top:12px">${AUDIO_EX.map(([m,l,d])=>`<button class="exerciseChoice" data-ex="${m}"><div><div>${esc(l)}</div><small>${esc(d)}</small></div><span class="arrow">›</span></button>`).join("")}</div></section>`;
   host.querySelectorAll("[data-ex]").forEach(b=>b.onclick=()=>openExercise(b.dataset.ex));
 }
@@ -4240,7 +4233,7 @@ function renderPod(host){
   if(pod.show)return renderPodShow(host);
   const a=A(),last=a.last;
   host.innerHTML=`<section class="secCard"><h2>Podcasts</h2>
-  <div class="small">De vraies voix et des épisodes récents, lus ici avec réglage de vitesse. Connexion nécessaire.</div>
+  
   ${last?`<div class="resume"><div><b>Reprendre</b><div class="small">${esc(last.title)}${a.pos[last.key]?" · à "+fmtClock(a.pos[last.key]):""}</div></div><button class="primary" id="pResume" type="button">Reprendre</button></div>`:""}
   <div class="row2" style="margin-top:12px"><input id="pQ" class="input" type="search" placeholder="Chercher un podcast" autocomplete="off" value="${esc(pod.q)}"><button id="pGo" class="primary" type="button">Chercher</button></div>
   <div class="chipRow2" id="pSugg">${POD_SUGG.map(s=>`<button class="chip2" type="button" data-q="${esc(s)}">${esc(s)}</button>`).join("")}</div>
@@ -4388,7 +4381,7 @@ function renderVideos(host){
   const list=VIDS.filter(v=>(vid.cat==="Tous"||v.cat===vid.cat)&&okLvl(v));
   const seenN=VIDS.filter(v=>a.vids[v.id]).length;
   host.innerHTML=`<section class="secCard"><h2>Écoute réelle</h2>
-  <div class="small">${VIDS.length} vidéos YouTube avec sous-titres anglais. ${seenN}/${VIDS.length} regardées. Le niveau est indicatif.</div>
+  <div class="small">${seenN}/${VIDS.length} regardées</div>
   <div class="vToday"><span class="lvTag">${esc(sug.lvl)}</span> <span class="small">Pour aujourd’hui · ${esc(sug.cat)}</span><b class="t">${esc(sug.t)}</b><div class="small">${esc(sug.ch)}${sug.len?" · "+esc(sug.len):""}</div><div class="row2" style="margin-top:8px"><button id="vGo" class="primary" type="button">Regarder</button></div></div>
   <div class="chipRow2" id="vCats">${["Tous",...VCATS].map(c=>`<button class="chip2${c===vid.cat?" on":""}" type="button" data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div>
   <div class="chipRow2" id="vLv">${lvOpts.map(([k,l])=>`<button class="chip2${k===vid.lvl?" on":""}" type="button" data-l="${k}">${l}</button>`).join("")}</div>
@@ -4408,15 +4401,15 @@ function renderVideo(host,id){
   <h2 style="margin-top:6px">${esc(v.t)}</h2><div class="small">${esc(v.n)}</div>
   ${online?`<div class="vFrame"><iframe src="${esc(vidEmbed(v))}" title="${esc(v.t)}" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`:'<div class="noteBox err"><b>Hors connexion.</b> Les vidéos demandent du réseau.</div>'}
   <div class="row2"><a class="ghost" style="padding:11px 14px;border-radius:12px;text-decoration:none;color:inherit;border:1px solid var(--line)" href="${esc(vidWatch(v))}" target="_blank" rel="noopener">Ouvrir sur YouTube</a></div>
-  <div class="small" style="margin-top:8px">Sous-titres : touche <b>CC</b> dans le lecteur. S’ils manquent : ⚙ → Sous-titres → Anglais. Trop rapide : ⚙ → Vitesse → 0,75.</div>
-  <div class="vStep"><b>1 · Regarde 10 minutes</b><div class="small">Première écoute avec les sous-titres anglais. Si tu peux, une deuxième fois sans.</div></div>
-  <div class="vStep"><b>2 · Attrape jusqu’à 5 expressions</b><div class="small">Elles sont ajoutées à tes révisions (retour dans 10 minutes, puis demain).</div>
+  <div class="small" style="margin-top:8px">Sous-titres : touche <b>CC</b> dans le lecteur. S’ils manquent : → Sous-titres → Anglais. Trop rapide : → Vitesse → 0,75.</div>
+  <div class="vStep"><b>1 · Regarde 10 minutes</b></div>
+  <div class="vStep"><b>2 · Attrape jusqu’à 5 expressions</b>
    ${[0,1,2,3,4].map(i=>`<div class="exRow"><input class="input" id="xEn${i}" placeholder="expression en anglais" autocomplete="off" autocapitalize="off" spellcheck="false"><input class="input" id="xFr${i}" placeholder="sens en français" autocomplete="off" spellcheck="false"></div>`).join("")}
    <div class="row2"><button id="xAdd" class="ghost" type="button">Ajouter à mes révisions</button></div><div class="small" id="xFb" style="margin-top:6px"></div></div>
-  <div class="vStep"><b>3 · Résume en 3 ou 4 phrases</b><div class="small">En anglais, avec tes mots. Tu peux dicter avec le micro du clavier.</div>
+  <div class="vStep"><b>3 · Résume en 3 ou 4 phrases</b>
    <textarea id="sumTxt" class="trBox" placeholder="What I understood…" spellcheck="false"></textarea>
    <div class="row2" style="margin-top:8px"><button id="sumFix" class="ghost" type="button">Corriger avec LanguageTool</button></div><div id="sumRes"></div></div>
-  <div class="vStep"><b>4 · Ta compréhension</b><div class="small">Sois honnête : cela règle les prochaines vidéos proposées.</div>
+  <div class="vStep"><b>4 · Ta compréhension</b>
    <div class="rate">${[[2,"Presque tout"],[1,"Environ la moitié"],[0,"Peu"]].map(([r,l])=>`<button type="button" data-r="${r}" class="${prev&&prev.r===r?"on":""}">${l}</button>`).join("")}</div>
    <div id="rateFb" class="small" style="margin-top:8px">${prev?`Déjà regardée le ${esc(fmtDate(prev.d))}.`:""}</div></div></section>`;
   $("vBack").onclick=()=>{vid.open=null;renderVideos(host)};
@@ -4640,8 +4633,8 @@ function initV28(){
   initTranslate();
   const vt=$("view-train");vt.parentNode.insertBefore($("view-audio"),vt);vt.parentNode.insertBefore($("view-translate"),vt);
   const G=goalModeGroups,all=[].concat(G.understand.modes,G.produce.modes),by=m=>all.find(x=>x[0]===m);
-  G.understand={title:"🎧 Audio & oral",modes:["view:audio","audioDialogues","dictation","listening","pronunciation","pronLab","wordStress","sentenceStress","shadowing","conversation"].map(by).filter(Boolean)};
-  G.produce={title:"✍️ Écriture & lecture",modes:["view:translate","writingTask","reading","translationText"].map(by).filter(Boolean)};
+  G.understand={title:"Audio & oral",modes:["view:audio","audioDialogues","dictation","listening","pronunciation","pronLab","wordStress","sentenceStress","shadowing","conversation"].map(by).filter(Boolean)};
+  G.produce={title:"Écriture & lecture",modes:["view:translate","writingTask","reading","translationText"].map(by).filter(Boolean)};
   tagPages();pagesReady=true;
   const h0=(location.hash||"").replace("#","");
   const hp=({translate:"write",train:"home"})[h0]||h0;
@@ -4663,7 +4656,7 @@ function renderPacks(){
   const host=$("packsPanel");if(!host)return;
   const off=packsOff(),on=PACKS.filter(p=>!off[p.id]),n=on.reduce((s,p)=>s+p.words.length,0);
   host.innerHTML=`<h2>Packs de vocabulaire</h2>
-  <div class="small">${n} mots actifs dans les quiz (en plus des mots de base et des tiens). Touche un thème pour l’activer ou le couper.</div>
+  <div class="small">${n} mots actifs</div>
   <div class="chipRow2">${PACKS.map(p=>`<button type="button" class="chip2 ghost${off[p.id]?"":" on"}" data-pack="${p.id}" aria-pressed="${off[p.id]?"false":"true"}">${esc(p.name)} · ${p.words.length}</button>`).join("")}</div>
   <div class="row" style="margin-top:6px"><button type="button" class="ghost" id="packWeb">Quiz « Analyse web & marketing »</button></div>`;
   host.querySelectorAll("[data-pack]").forEach(b=>b.onclick=()=>{
@@ -4706,24 +4699,23 @@ function planSteps(){
   const seenPod=Object.values(a.seen||{}).some(sameDay);
   const trToday=((state.tr||{}).hist||[]).some(h=>sameDay(h.d));
   return [
-    {id:"rev",ic:"🧠",t:"Révisions + 10 mots",s:pk?`Thème du jour : ${pk.name}`:"Vocabulaire",go:()=>{const due=getDueItems().length;openExercise(due?"review":"quizMix")},ok:skDelta("vocab")>=10},
-    {id:"gram",ic:"🧩",t:"Grammaire : 6 questions",s:conceptModeLabels[gm]||gm,go:()=>openExercise(gm),ok:skDelta("grammar")+skDelta("tenses")>=6},
-    vidDay?{id:"lis",ic:"▶️",t:"Écoute : 1 vidéo",s:"Vidéo sous-titrée, 5 expressions, résumé",go:()=>{A().seg="vid";saveState();showView("audio")},ok:recentVid||skDelta("listening")>=3}
-          :{id:"lis",ic:"🎧",t:"Écoute : 1 podcast",s:"10 à 20 minutes, vitesse au choix",go:()=>{A().seg="pod";saveState();showView("audio")},ok:seenPod||skDelta("listening")>=3},
-    trDay?{id:"prod",ic:"🔁",t:"Traduction libre",s:"Un texte FR ⇄ EN, corrigé par LanguageTool",go:()=>showView("translate"),ok:trToday}
-         :{id:"prod",ic:"✍️",t:"Écrire 3 phrases",s:"Rédaction guidée",go:()=>openExercise("writingTask"),ok:skDelta("writing")>=1||trToday},
-    {id:"oral",ic:"🎙️",t:"Oral : 5 phrases",s:"Prononciation à voix haute",go:()=>openExercise(wd===0?"shadowing":"pronunciation"),ok:skDelta("speaking")>=5}
+    {id:"rev",ic:"",t:"Révisions + 10 mots",s:pk?`Thème du jour : ${pk.name}`:"Vocabulaire",go:()=>{const due=getDueItems().length;openExercise(due?"review":"quizMix")},ok:skDelta("vocab")>=10},
+    {id:"gram",ic:"",t:"Grammaire : 6 questions",s:conceptModeLabels[gm]||gm,go:()=>openExercise(gm),ok:skDelta("grammar")+skDelta("tenses")>=6},
+    vidDay?{id:"lis",ic:"▶️",t:"Écoute : 1 vidéo",s:"",go:()=>{A().seg="vid";saveState();showView("audio")},ok:recentVid||skDelta("listening")>=3}
+          :{id:"lis",ic:"",t:"Écoute : 1 podcast",s:"",go:()=>{A().seg="pod";saveState();showView("audio")},ok:seenPod||skDelta("listening")>=3},
+    trDay?{id:"prod",ic:"",t:"Traduction libre",s:"",go:()=>showView("translate"),ok:trToday}
+         :{id:"prod",ic:"",t:"Écrire 3 phrases",s:"",go:()=>openExercise("writingTask"),ok:skDelta("writing")>=1||trToday},
+    {id:"oral",ic:"",t:"Oral : 5 phrases",s:"",go:()=>openExercise(wd===0?"shadowing":"pronunciation"),ok:skDelta("speaking")>=5}
   ];
 }
 function renderPlan(){
   const host=$("planPanel");if(!host)return;
   const p=planDay(),steps=planSteps(),n=steps.filter(s=>s.ok).length,m=planMonth(),rm=ROADMAP[Math.min(3,Math.floor((m-1)/2))];
   if(n===steps.length&&!p.day.all){p.day.all=1;p.days=p.days||{};p.days[p.day.d]=1;saveState()}
-  const dn=Object.keys(p.days||{}).length;
-  host.innerHTML=`<h2>Séance du jour <span class="badge">${n}/${steps.length}</span></h2>
-  <div class="small">${esc(rm[0])} (mois ${m}/8) : ${esc(rm[1])}. ${dn} séance(s) complète(s) au total.</div>
-  <div class="planList">${steps.map((s,i)=>`<button type="button" class="planStep${s.ok?" ok":""}" data-ps="${i}"><span class="planIc">${s.ok?"✅":s.ic}</span><span class="planTx"><b>${esc(s.t)}</b><small>${esc(s.s)}</small></span></button>`).join("")}</div>
-  ${n===steps.length?'<div class="noteBox">Séance terminée. Bravo.</div>':""}`;
+    host.innerHTML=`<h2>Séance du jour <span class="badge">${n}/${steps.length}</span></h2>
+  <div class="small">Mois ${m}/8 · ${esc(rm[1])}</div>
+  <div class="planList">${steps.map((s,i)=>`<button type="button" class="planStep${s.ok?" ok":""}" data-ps="${i}">${s.ok?'<span class="planIc">✅</span>':""}<span class="planTx"><b>${esc(s.t)}</b>${s.s?`<small>${esc(s.s)}</small>`:""}</span></button>`).join("")}</div>
+  ${n===steps.length?'<div class="noteBox">Séance terminée.</div>':""}`;
   host.querySelectorAll("[data-ps]").forEach(b=>b.onclick=()=>{try{steps[+b.dataset.ps].go()}catch(e){}});
 }
 let planSig="";
