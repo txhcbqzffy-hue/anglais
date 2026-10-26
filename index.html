@@ -1047,7 +1047,7 @@ background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.30),transp
 .bottomNav button.active{color:var(--on-accent)!important}
 
 /* l'animation d'entrée ne doit pas laisser de transform sur la carte : sinon « fixed » se calcule par rapport à la carte */
-#view-train>#exerciseCard{animation-fill-mode:backwards!important}
+#view-train>#exerciseCard{animation:none!important;transform:none!important}
 /* boutons d'action principaux : fixes en bas de l'écran, au-dessus de la barre de navigation */
 :root{--dockBottom:calc(max(12px,env(safe-area-inset-bottom)) + 70px + 10px);--dockH:56px}
 body:not(.sessionOn) #exerciseCard #checkTextBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #checkGrammarBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #checkReadingBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #checkTranslationTextBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #recordBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #pronRecordBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #checkWritingBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #nextBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #gOk:not(.hidden){
@@ -1166,7 +1166,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v46</span></h1>
+        <h1>English Trainer<span class="ver">v47</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
