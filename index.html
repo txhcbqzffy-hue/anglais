@@ -1150,7 +1150,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v34</span></h1>
+        <h1>English Trainer<span class="ver">v35</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -6903,7 +6903,7 @@ function favOpen(){
         const ai=state.custom.findIndex(c=>c.en===x.en&&c.auto);if(ai>=0){state.custom.splice(ai,1);__trSig=""}
         saveState();favRender();try{updateFavButton()}catch(z){}}return}
       const en=e.target.closest(".fEn");
-      if(en){const row=en.closest(".fRow");if(row.classList.contains("hide"))row.classList.toggle("peek");else{try{speak(en.dataset.say)}catch(z){}}return}
+      if(en){const row=en.closest(".fRow");if(row.classList.contains("hide"))row.classList.toggle("peek");try{speak(en.dataset.say)}catch(z){}return}
     });
   }
   favRender();s.classList.remove("hidden");document.body.classList.add("sheetOpen");s.scrollTop=0;
