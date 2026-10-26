@@ -1150,7 +1150,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v36</span></h1>
+        <h1>English Trainer<span class="ver">v37</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -3152,7 +3152,7 @@ function translationForCurrent(){
 function updateTranslationButton(){
   try{
     const text=translationForCurrent();
-    const allowed=!!text && !["reading","translationText","writingTask","conversation","levelTest","exam","pronLab"].includes(mode);
+    const allowed=!!text && !["reading","translationText","writingTask","conversation","levelTest","exam","pronLab","quiz","quizReverse","quizMix","phrases","favorites"].includes(mode);
     $("translationWrap").classList.toggle("hidden",!allowed);
     $("translationBox").classList.add("hidden");
     $("translationBox").innerHTML="";
