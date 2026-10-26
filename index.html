@@ -924,6 +924,10 @@ header{justify-content:space-between!important}
 .lvlStep.cur{background:var(--accent);color:var(--on-accent);border-color:transparent}
 .lvlH{font-size:13px;margin:14px 2px 4px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 #lvlSheet .cefrPanel{margin-top:14px}
+.accRow{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:start;margin-bottom:10px}
+.accRow .acc{margin:0!important}
+.accRow .acc>summary{padding:12px!important;min-height:44px;font-size:14px}
+.accRow .acc[open]{grid-column:1/-1}
 </style>
 </head>
 <body>
@@ -4441,12 +4445,15 @@ function accordionize(){
     const sm=document.createElement("summary");sm.textContent=h.replace(/^Maîtrise des mots & règles/,"Maîtrise des mots et règles");
     root.insertBefore(d,el);d.appendChild(sm);d.appendChild(el);
   });
+  const find=t=>[...root.children].find(e=>e.tagName==="DETAILS"&&e.firstChild&&e.firstChild.textContent.indexOf(t)===0),pp=$("progPanel");
+  const a1=find("Profil d’erreurs"),a2=find("Progression");
+  if(pp&&a1&&a2){const row=document.createElement("div");row.id="accRow";row.className="accRow";root.insertBefore(row,pp);row.appendChild(a1);row.appendChild(a2)}
 }
 function tagPages(){
   const root=$("view-train"),H=e=>((e.querySelector("h2,h3,b")||{}).textContent||"").trim();
   pageTags=[...root.children].map(el=>{
     let pg="home";
-    if(el.id==="packsPanel"||el.id==="planPanel"||el.classList.contains("stats"))pg="none";
+    if(el.id==="packsPanel"||el.id==="planPanel"||el.classList.contains("stats")||/^Banque d’exercices/.test(H(el)))pg="none";
     
     else if(el.classList.contains("goalPanel"))pg="all";
     else if(["modeHelp","lessonPanel","exerciseCard"].includes(el.id)||el.classList.contains("toolbar"))pg="zone";
