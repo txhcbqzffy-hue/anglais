@@ -4965,7 +4965,13 @@ function renderRev(){
 }
 
 const __syncOrig=syncModeCategory;
-syncModeCategory=function(m){__syncOrig(m);modeGoal=activeGoal()};
+syncModeCategory=function(m){
+  __syncOrig(m);modeGoal=activeGoal();
+  try{applyPageVisibility()}catch(e){}
+  try{if(state.adaptive&&state.adaptive.active&&state.adaptive.index===0&&currentView==="home")setTimeout(()=>{const c=$("exerciseCard");if(c)c.scrollIntoView({behavior:"smooth",block:"start"})},60)}catch(e){}
+};
+const __rapOrig=renderAdaptivePanel;
+renderAdaptivePanel=function(){__rapOrig();try{applyPageVisibility()}catch(e){}};
 
 /* =====================================================================
    v29 : mini-jeux de vocabulaire
