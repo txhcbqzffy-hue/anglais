@@ -1150,7 +1150,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v37</span></h1>
+        <h1>English Trainer<span class="ver">v38</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -6848,6 +6848,14 @@ checkOption=function(){
   }catch(err){console.error(err)}
   return r;
 };
+document.addEventListener("click",e=>{
+  const t=e.target;if(!t.closest)return;
+  if(t.closest(".optFav"))return;
+  const o=t.closest(".option.optDone");
+  if(o){const st=o.querySelector(".optFav");if(st){try{speak(st.dataset.en)}catch(x){}}return}
+  const q=t.closest("#question b");
+  if(q&&current&&current.direction!=="fr-en"&&OPT_TR_MODES.includes(mode)){try{speak(q.textContent)}catch(x){}}
+},true);
 document.addEventListener("click",e=>{
   const st=e.target.closest&&e.target.closest(".optFav");if(!st)return;
   e.stopPropagation();e.preventDefault();
