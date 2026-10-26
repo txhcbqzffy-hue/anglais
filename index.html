@@ -599,6 +599,39 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 #modeSelect{display:none!important}
 .toolbar{justify-content:flex-start}
 @media(min-width:721px){.pageBar{grid-template-columns:1fr 1fr}}
+
+/* v29 : paramètres, jeux */
+.sheet{position:fixed;inset:0;z-index:90;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 60px max(14px,env(safe-area-inset-left))}
+.sheet.hidden{display:none}
+.sheetHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+.sheetHead h2{margin:0;font-size:22px}
+body.sheetOpen{overflow:hidden}
+.sheet .panel{margin-bottom:12px}
+.diagOut{margin-top:10px;display:grid;gap:6px}
+.diagLine{font-size:14px;padding:8px 10px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);color:var(--text-soft)}
+.diagLine.ok{border-color:var(--good-line);color:var(--good-text);background:var(--good-bg)}
+.diagLine.ko{border-color:var(--bad-line);color:var(--bad-text);background:var(--bad-bg)}
+#rpTxt{width:100%;min-height:96px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text)}
+.rpItem{margin-top:8px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+.seg2 button.on{background:var(--sel-bg);color:var(--sel-text);border-color:var(--sel-bg)}
+#gameZone.hidden{display:none}
+.gPairs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gCol{display:grid;gap:8px;align-content:start}
+.gTile{min-height:48px;padding:10px 8px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);font-weight:700;font-size:15px;word-break:break-word}
+.gTile.on{border-color:var(--accent-line);background:var(--sel-bg);color:var(--sel-text)}
+.gTile.good,.gTile:disabled.good{background:var(--good-bg);border-color:var(--good-line);color:var(--good-text);opacity:1}
+.gTile.bad{background:var(--bad-bg);border-color:var(--bad-line);color:var(--bad-text)}
+.gLetters{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.gLetter{min-width:46px;text-transform:lowercase;font-size:20px}
+.gLetter:disabled{opacity:.3}
+.gSlots{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.gSlot{display:inline-flex;align-items:center;justify-content:center;width:34px;height:42px;border-bottom:3px solid var(--line);font-size:22px;font-weight:800}
+.gSlots.good .gSlot{border-color:var(--good);color:var(--good-text)}
+.gSlots.bad .gSlot{border-color:var(--bad);color:var(--bad-text)}
+.gMask{font-size:28px;font-weight:800;letter-spacing:.12em;margin:10px 0 12px;word-break:break-all}
+.gScore{font-size:44px;font-weight:800;text-align:center;margin:14px 0}
+.gProg{font-size:13px;color:var(--muted);margin-bottom:6px}
+.gTF{min-width:120px;min-height:52px;font-size:18px}
 </style>
 </head>
 <body>
@@ -610,7 +643,7 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
         <h1>English Trainer<span class="ver">v29</span></h1>
       </div>
     </div>
-    <div class="headTools"><button id="themeBtn" class="ghost themeBtn" type="button" aria-label="Passer au thème sombre">Sombre</button><div class="coin"><b id="coins">0</b> 🪙</div></div>
+    <div class="headTools"><button id="settingsBtn" class="ghost themeBtn" type="button">Paramètres</button><div class="coin"><b id="coins">0</b> 🪙</div></div>
   </header>
   <div id="compatNotice" class="compatNotice"></div>
   <nav class="tabs" role="tablist" aria-label="Sections de l’application">
@@ -781,6 +814,7 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 
     <div id="info" class="info hidden"></div>
     <div id="wordBank" class="wordbank hidden"></div>
+    <div id="gameZone" class="hidden"></div>
     <div id="options" class="options"></div>
 
     <div id="textZone" class="hidden">
@@ -2198,7 +2232,7 @@ function ensureDaily(){
   if(state.lastDay!==t){state.lastDay=t;state.daily=0;saveState()}
 }
 function skillForMode(){
-  if(["quiz","quizReverse","quizMix","phrases","write","reverse","review","errors","favorites","phrasal","collocations","falseFriends"].includes(mode))return"vocab";
+  if(["gPairs","gScramble","gTrueFalse","gMissing","quiz","quizReverse","quizMix","phrases","write","reverse","review","errors","favorites","phrasal","collocations","falseFriends"].includes(mode))return"vocab";
   if(["grammar","transform","finderror","edSpell","thirdPerson","articles","prepositions","comparatives","modals","questionsNeg","wordOrder","connectors"].includes(mode))return"grammar";
   if(["listening","dictation","edPron","sPron","audioDialogues"].includes(mode))return"listening";
   if(["pronunciation","shadowing","conversation","pronLab","wordStress","sentenceStress"].includes(mode))return"speaking";
@@ -2761,6 +2795,7 @@ const modeDescriptions={
 
 function resetZones(){
   locked=false;clearTimer();
+  if($("gameZone"))$("gameZone").classList.add("hidden");
   $("feedback").textContent="";$("feedback").className="feedback";
   $("options").innerHTML="";
   ["textZone","grammarZone","readingZone","translationTextZone","pronZone","audioZone","pronLabZone","writingZone","conversationZone","levelResult","info","wordBank","grammarMarkup","readingResult","readingModel","wordTranslation","translationTextWord","translationTextResult","translationTextModel","writingResult","writingModel","audioScript","translationWrap","translationBox"].forEach(id=>$(id).classList.add("hidden"));
@@ -2778,6 +2813,7 @@ function makeOption(text,correct){
 function newQuestion(){
   resetZones();
   const all=vocab();
+  if(GAME_MODES.includes(mode)){startGame(mode,all);return}
 
   if(mode==="quiz"){
     const item=rand(all),same=all.filter(x=>x[2]===item[2]&&x[0]!==item[0]);
@@ -3995,7 +4031,7 @@ function updateFocus(){
 function syncModeCategory(m){
   const category=
     ["questionsNeg","wordOrder","tenses","grammar","transform","finderror","articles","prepositions","comparatives","modals","thirdPerson","edSpell","irregularPast","irregularPart","irregularMix","edPron","sPron","connectors"].includes(m)?"grammar":
-    ["quiz","quizReverse","quizMix","phrases","phrasal","collocations","falseFriends","write","reverse"].includes(m)?"vocab":
+    ["gPairs","gScramble","gTrueFalse","gMissing","quiz","quizReverse","quizMix","phrases","phrasal","collocations","falseFriends","write","reverse"].includes(m)?"vocab":
     ["listening","dictation","audioDialogues","pronunciation","pronLab","wordStress","sentenceStress","shadowing","conversation"].includes(m)?"understand":
     ["reading","translationText","writingTask"].includes(m)?"produce":
     ["review","errors","favorites"].includes(m)?"review":"test";
@@ -4660,7 +4696,7 @@ function initPWA(){
    ===================================================================== */
 function initV28(){
   applyTheme(document.documentElement.dataset.theme==="dark"?"dark":"light");
-  $("themeBtn").onclick=toggleTheme;
+  if($("themeBtn"))$("themeBtn").onclick=toggleTheme;
   document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{showView(b.dataset.view);try{history.replaceState(null,"","#"+(b.dataset.view==="home"?"":b.dataset.view))}catch(e){}}));
   initTranslate();
   const vt=$("view-train");vt.parentNode.insertBefore($("view-audio"),vt);vt.parentNode.insertBefore($("view-translate"),vt);
@@ -4668,6 +4704,9 @@ function initV28(){
   G.understand={title:"Audio & oral",modes:["view:audio","audioDialogues","dictation","listening","pronunciation","pronLab","wordStress","sentenceStress","shadowing","conversation"].map(by).filter(Boolean)};
   G.produce={title:"Écriture & lecture",modes:["view:translate","writingTask","reading","translationText"].map(by).filter(Boolean)};
   const pb=document.createElement("div");pb.id="pageBar";pb.className="pageBar";vt.insertBefore(pb,vt.firstChild);
+  G.vocab.modes=G.vocab.modes.concat(GAME_MODES.map(m=>[m,modeNames[m],modeDescriptions[m]]));
+  (function(){const og=document.createElement("optgroup");og.label="Jeux";GAME_MODES.forEach(m=>{const o=document.createElement("option");o.value=m;o.textContent=modeNames[m];og.appendChild(o)});$("modeSelect").appendChild(og)})();
+  initSettings();
   tagPages();pagesReady=true;
   const h0=(location.hash||"").replace("#","");
   const hp=({translate:"write",train:"home"})[h0]||h0;
@@ -4722,6 +4761,7 @@ const SUBGROUPS={
   ],
   vocab:[
     ["Quiz de mots",["quizMix","quiz","quizReverse","write","reverse"]],
+    ["Jeux",["gPairs","gScramble","gTrueFalse","gMissing"]],
     ["En contexte",["phrases","phrasal","collocations","falseFriends","connectors"]]
   ]
 };
@@ -4850,6 +4890,252 @@ function renderPageBar(){
     state.packFocus=t.value||null;saveState();
     if(["quiz","quizReverse","quizMix","write","reverse"].includes(mode))newQuestion();else openExercise("quizMix");
   };
+}
+
+/* =====================================================================
+   v29 : mini-jeux de vocabulaire
+   ===================================================================== */
+const GAME_MODES=["gPairs","gScramble","gTrueFalse","gMissing"];
+Object.assign(modeNames,{gPairs:"Jeu · Paires",gScramble:"Jeu · Lettres mélangées",gTrueFalse:"Jeu · Vrai ou faux",gMissing:"Jeu · Lettres manquantes"});
+Object.assign(modeDescriptions,{
+  gPairs:"Relie chaque mot anglais à sa traduction.",
+  gScramble:"Remets les lettres dans l’ordre pour former le mot.",
+  gTrueFalse:"10 cartes : la traduction est-elle juste ?",
+  gMissing:"Complète les lettres qui manquent."
+});
+try{Object.assign(conceptModeLabels,{gPairs:"Jeu : paires",gScramble:"Jeu : lettres mélangées",gTrueFalse:"Jeu : vrai ou faux",gMissing:"Jeu : lettres manquantes"})}catch(e){}
+
+function gz(){return $("gameZone")}
+function gDone(msg,cls){
+  const f=$("feedback");f.textContent=msg;f.className="feedback "+(cls||"goodText");
+  $("nextBtn").classList.remove("hidden");
+}
+function gPick(all,n,filter){
+  const seen=new Set(),out=[];
+  shuffle(all.filter(filter||(()=>true))).forEach(x=>{const k=x[1].toLowerCase();if(out.length<n&&!seen.has(k)){seen.add(k);out.push(x)}});
+  return out;
+}
+function startGame(m,all){
+  const z=gz();z.classList.remove("hidden");z.innerHTML="";
+  $("speakBtn").style.visibility="hidden";
+  if(m==="gPairs")gamePairs(z,all);
+  else if(m==="gScramble")gameScramble(z,all);
+  else if(m==="gTrueFalse")gameTrueFalse(z,all);
+  else gameMissing(z,all);
+}
+
+/* --- Paires --- */
+function gamePairs(z,all){
+  const items=gPick(all,6);
+  $("question").textContent="Relie chaque mot à sa traduction";
+  current={vocab:items[0],answer:items[0][1]};
+  const left=items.map((it,i)=>({t:it[0],i})),right=shuffle(items.map((it,i)=>({t:it[1],i})));
+  z.innerHTML=`<div class="gPairs"><div class="gCol" id="gL">${left.map(x=>`<button type="button" class="gTile" data-i="${x.i}">${escapeHtml(x.t)}</button>`).join("")}</div><div class="gCol" id="gR">${right.map(x=>`<button type="button" class="gTile" data-i="${x.i}">${escapeHtml(x.t)}</button>`).join("")}</div></div>`;
+  let sel=null,left_=items.length;
+  z.querySelectorAll(".gTile").forEach(b=>b.onclick=()=>{
+    if(b.disabled)return;
+    const side=b.parentNode.id;
+    if(!sel||sel.parentNode.id===side){if(sel)sel.classList.remove("on");sel=b;b.classList.add("on");return}
+    const a=sel,i=+a.dataset.i,j=+b.dataset.i;sel=null;a.classList.remove("on");
+    if(i===j){
+      [a,b].forEach(x=>{x.disabled=true;x.classList.add("good")});
+      reward(items[i],items[i][1]);left_--;
+      if(!left_)gDone("Toutes les paires sont trouvées");
+    }else{
+      [a,b].forEach(x=>x.classList.add("bad"));
+      penalize(items[i],b.textContent);
+      setTimeout(()=>[a,b].forEach(x=>x.classList.remove("bad")),500);
+    }
+  });
+}
+
+/* --- Lettres mélangées --- */
+function gameScramble(z,all){
+  const pool=all.filter(x=>/^[A-Za-z]{4,12}$/.test(x[0]));
+  const item=rand(pool.length?pool:all),word=item[0].replace(/[^A-Za-z]/g,"").toLowerCase()||item[0].toLowerCase();
+  current={vocab:item,answer:item[0]};
+  $("question").innerHTML=`Remets les lettres dans l’ordre<br><b>${escapeHtml(item[1])}</b>`;
+  let letters=word.split("");let tries=0;
+  do{letters=shuffle(word.split(""));tries++}while(letters.join("")===word&&tries<6);
+  z.innerHTML=`<div class="gSlots" id="gS"></div><div class="gLetters" id="gLt">${letters.map((c,i)=>`<button type="button" class="gTile gLetter" data-k="${i}">${escapeHtml(c)}</button>`).join("")}</div><div class="actions"><button type="button" class="ghost" id="gClr">Effacer</button></div>`;
+  let typed=[],done=false;
+  const slots=$("gS"),btns=[...z.querySelectorAll(".gLetter")];
+  const draw=()=>{slots.innerHTML=word.split("").map((_,i)=>`<span class="gSlot">${escapeHtml(typed[i]?typed[i].c:"")}</span>`).join("")};
+  draw();
+  btns.forEach(b=>b.onclick=()=>{
+    if(done||b.disabled)return;
+    typed.push({c:b.textContent,b});b.disabled=true;draw();
+    if(typed.length===word.length){
+      done=true;
+      if(typed.map(x=>x.c).join("")===word){slots.classList.add("good");reward(item,word);gDone("Correct : "+item[0])}
+      else{slots.classList.add("bad");penalize(item,typed.map(x=>x.c).join(""));gDone("Réponse : "+item[0],"badText")}
+    }
+  });
+  $("gClr").onclick=()=>{if(done)return;typed.forEach(x=>x.b.disabled=false);typed=[];draw()};
+}
+
+/* --- Vrai ou faux --- */
+function gameTrueFalse(z,all){
+  const N=10;let n=0,ok=0;
+  const next=()=>{
+    if(n>=N){z.innerHTML=`<div class="gScore">${ok} / ${N}</div>`;$("question").textContent="Partie terminée";gDone(ok>=8?"Très bien":ok>=5?"Pas mal, encore un tour ?":"On recommence ?",ok>=5?"goodText":"warnText");return}
+    const item=rand(all),truth=Math.random()<.5;
+    const same=all.filter(x=>x[2]===item[2]&&x[1]!==item[1]);
+    const other=rand(same.length?same:all.filter(x=>x[1]!==item[1]));
+    const shown=truth?item[1]:other[1];
+    current={vocab:item,answer:item[1]};
+    $("question").innerHTML=`<b>${escapeHtml(item[0])}</b> = <b>${escapeHtml(shown)}</b> ?`;
+    z.innerHTML=`<div class="gProg">${n+1} / ${N}</div><div class="actions"><button type="button" class="primary gTF" data-v="1">Vrai</button><button type="button" class="ghost gTF" data-v="0">Faux</button></div>`;
+    z.querySelectorAll(".gTF").forEach(b=>b.onclick=()=>{
+      z.querySelectorAll(".gTF").forEach(x=>x.disabled=true);
+      const right=(b.dataset.v==="1")===truth;
+      if(right){ok++;reward(item,shown)}else penalize(item,shown);
+      const f=$("feedback");f.textContent=right?"Correct":"Faux : "+item[0]+" = "+item[1];f.className="feedback "+(right?"goodText":"badText");
+      n++;setTimeout(()=>{$("feedback").textContent="";next()},right?450:1300);
+    });
+  };
+  next();
+}
+
+/* --- Lettres manquantes --- */
+function gameMissing(z,all){
+  const pool=all.filter(x=>/^[A-Za-z]{4,14}$/.test(x[0]));
+  const item=rand(pool.length?pool:all),w=item[0];
+  current={vocab:item,answer:w};
+  const idx=[...Array(w.length).keys()].slice(1);
+  const hide=new Set(shuffle(idx).slice(0,Math.max(2,Math.round(w.length*.4))));
+  const shown=w.split("").map((c,i)=>hide.has(i)?"_":c).join(" ");
+  $("question").innerHTML=`Complète le mot<br><b>${escapeHtml(item[1])}</b>`;
+  z.innerHTML=`<div class="gMask">${escapeHtml(shown)}</div><input id="gIn" class="input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Le mot en entier"><div class="actions"><button type="button" class="primary" id="gOk">Valider</button></div>`;
+  let done=false;
+  const check=()=>{
+    if(done)return;const v=$("gIn").value.trim().toLowerCase();if(!v)return;done=true;$("gIn").disabled=true;
+    if(v===w.toLowerCase()){reward(item,v);gDone("Correct : "+w)}else{penalize(item,v);gDone("Réponse : "+w,"badText")}
+  };
+  $("gOk").onclick=check;$("gIn").addEventListener("keydown",e=>{if(e.key==="Enter")check()});
+}
+
+/* =====================================================================
+   v29 : paramètres, tests de l'appareil, signalement
+   ===================================================================== */
+const REPO_ISSUES="https://github.com/txhcbqzffy-hue/anglais/issues/new";
+function R(){state.reports=Array.isArray(state.reports)?state.reports:[];return state.reports}
+function envInfo(){
+  const ua=navigator.userAgent||"",sa=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
+  const ios=(ua.match(/OS (\d+[_\d]*) like Mac/)||[])[1];
+  return {ua,standalone:!!sa,ios:ios?ios.replace(/_/g,"."):"",w:innerWidth,h:innerHeight,lang:navigator.language||"",online:navigator.onLine!==false};
+}
+function reportContext(){
+  const e=envInfo();
+  let q="";try{q=($("question").innerText||$("question").textContent||"").replace(/\s+/g," ").trim().slice(0,200)}catch(x){}
+  let ans="";try{ans=String(expected()||"").slice(0,120)}catch(x){}
+  return {version:APP_VERSION,page:currentView,mode:mode,modeName:(modeNames[mode]||mode),question:q,expected:ans,
+    device:(e.ios?"iOS "+e.ios:"")+(e.standalone?" · app installée":" · navigateur"),size:e.w+"×"+e.h,lang:e.lang,online:e.online,ua:e.ua};
+}
+function reportText(r){
+  const c=r.ctx;
+  return `**Type** : ${r.type}\n**Détail** : ${r.txt||"(aucun)"}\n\n**Page** : ${c.page} · **Exercice** : ${c.modeName}\n**Question affichée** : ${c.question||"-"}\n**Réponse attendue** : ${c.expected||"-"}\n\n**Appareil** : ${c.device} · ${c.size} · ${c.lang} · ${c.online?"en ligne":"hors ligne"}\n**Version** : ${c.version} · ${r.date}\n**UA** : ${c.ua}`;
+}
+function copyText(t){
+  return new Promise(res=>{
+    const fb=()=>{try{const a=document.createElement("textarea");a.value=t;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.focus();a.select();const ok=document.execCommand("copy");a.remove();res(ok)}catch(e){res(false)}};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>res(true),fb);else fb();
+  });
+}
+
+let sheetBuilt=false;
+function buildSheet(){
+  if(sheetBuilt)return;sheetBuilt=true;
+  const sh=document.createElement("div");sh.id="settingsSheet";sh.className="sheet hidden";sh.setAttribute("role","dialog");sh.setAttribute("aria-label","Paramètres");
+  sh.innerHTML=`<div class="sheetHead"><h2>Paramètres</h2><button type="button" id="sheetClose" class="ghost">Fermer</button></div>
+  <section class="secCard"><h2>Apparence</h2><div class="seg2" id="setTheme"><button type="button" data-t="light">Clair</button><button type="button" data-t="dark">Sombre</button></div></section>
+  <section class="secCard"><h2>Voix et micro</h2>
+    <div class="actions"><button type="button" class="ghost" id="tVoice">Tester la voix</button><button type="button" class="ghost" id="tMic">Tester le micro</button><button type="button" class="ghost" id="tSR">Reconnaissance vocale</button><button type="button" class="ghost" id="tNet">Connexion</button></div>
+    <div id="tOut" class="diagOut"></div></section>
+  <section class="secCard" id="setReport"><h2>Signaler un problème</h2>
+    <label class="pbField"><span>Type</span><select id="rpType"><option>Bug</option><option>Contenu faux ou bizarre</option><option>Idée ou amélioration</option><option>Modification importante</option></select></label>
+    <label class="pbField" style="margin-top:10px"><span>Détail : que s’est-il passé ?</span><textarea id="rpTxt" rows="4" placeholder="Ce que tu faisais, ce que tu attendais, ce qui s’est passé"></textarea></label>
+    <div class="small" id="rpCtx" style="margin-top:8px"></div>
+    <div class="actions"><button type="button" class="primary" id="rpGit">Envoyer sur GitHub</button><button type="button" class="ghost" id="rpCopy">Copier</button><button type="button" class="ghost" id="rpSave">Garder ici</button></div>
+    <div id="rpFb" class="small"></div>
+    <div id="rpList"></div></section>
+  <div id="setMoved"></div>`;
+  document.body.appendChild(sh);
+  $("sheetClose").onclick=closeSettings;
+  sh.querySelectorAll("#setTheme [data-t]").forEach(b=>b.onclick=()=>{applyTheme(b.dataset.t);markTheme()});
+  $("tVoice").onclick=testVoice;$("tMic").onclick=testMic;$("tSR").onclick=testSR;$("tNet").onclick=testNet;
+  const make=()=>{
+    const txt=$("rpTxt").value.trim(),type=$("rpType").value;
+    return {id:Date.now(),type,txt,ctx:reportContext(),date:new Date().toLocaleString("fr-FR")};
+  };
+  $("rpSave").onclick=()=>{const r=make();if(!r.txt){$("rpFb").textContent="Écris au moins une ligne de détail.";return}R().unshift(r);if(R().length>50)R().length=50;saveState();$("rpTxt").value="";$("rpFb").textContent="Gardé sur cet appareil.";renderReports()};
+  $("rpCopy").onclick=async()=>{const r=make();const ok=await copyText(reportText(r));$("rpFb").textContent=ok?"Copié. Colle-le dans la discussion avec Claude.":"Copie impossible : sélectionne le texte à la main."};
+  $("rpGit").onclick=()=>{
+    const r=make();if(!r.txt){$("rpFb").textContent="Écris au moins une ligne de détail.";return}
+    R().unshift(r);if(R().length>50)R().length=50;saveState();renderReports();
+    const title=`[${r.type}] ${r.txt.slice(0,70)}`,body=reportText(r).slice(0,3500);
+    const url=REPO_ISSUES+"?title="+encodeURIComponent(title)+"&body="+encodeURIComponent(body);
+    copyText(reportText(r));
+    $("rpFb").textContent="Ouverture de GitHub. Le texte est aussi copié si la page ne s’ouvre pas.";
+    window.open(url,"_blank","noopener");
+  };
+}
+function markTheme(){document.querySelectorAll("#setTheme [data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t===document.documentElement.dataset.theme))}
+function renderReports(){
+  const l=R(),host=$("rpList");if(!host)return;
+  host.innerHTML=l.length?`<h3>Gardés ici (${l.length})</h3>`+l.slice(0,8).map(r=>`<div class="rpItem"><b>${esc(r.type)}</b> · ${esc(r.date)}<div class="small">${esc(r.txt.slice(0,160))}</div></div>`).join("")+`<div class="actions"><button type="button" class="ghost" id="rpAll">Copier tout</button><button type="button" class="ghost" id="rpClear">Vider</button></div>`:"";
+  const a=$("rpAll");if(a)a.onclick=async()=>{const ok=await copyText(l.map(reportText).join("\n\n---\n\n"));$("rpFb").textContent=ok?"Tout est copié.":"Copie impossible."};
+  const c=$("rpClear");if(c)c.onclick=()=>{state.reports=[];saveState();renderReports()};
+}
+function diag(line,ok){const o=$("tOut");const d=document.createElement("div");d.className="diagLine "+(ok===true?"ok":ok===false?"ko":"");d.textContent=(ok===true?"OK · ":ok===false?"Échec · ":"")+line;o.appendChild(d)}
+function testVoice(){
+  $("tOut").innerHTML="";
+  if(!("speechSynthesis" in window)){diag("Synthèse vocale absente sur cet appareil",false);return}
+  const v=speechSynthesis.getVoices().filter(x=>/^en/i.test(x.lang));
+  diag(v.length+" voix anglaise(s) trouvée(s)"+(v[0]?" (ex. "+v[0].name+")":""),v.length>0);
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance("Hello, this is a voice test.");u.lang="en-GB";if(v[0])u.voice=v.find(x=>/en-GB/i.test(x.lang))||v[0];speechSynthesis.speak(u);diag("Lecture lancée : si tu n’entends rien, vérifie le volume et le mode silencieux de l’iPhone")}catch(e){diag("Lecture impossible : "+e.message,false)}
+}
+async function testMic(){
+  $("tOut").innerHTML="";
+  if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){diag("Accès au micro non disponible dans ce navigateur",false);return}
+  try{const s=await navigator.mediaDevices.getUserMedia({audio:true});diag("Micro autorisé et accessible",true);s.getTracks().forEach(t=>t.stop())}
+  catch(e){diag("Micro refusé ou indisponible ("+(e.name||"erreur")+"). Autorise-le dans les réglages du navigateur",false)}
+}
+function testSR(){
+  $("tOut").innerHTML="";
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){diag("Reconnaissance vocale non disponible ici : les exercices de prononciation seront limités",false);return}
+  diag("Reconnaissance vocale disponible",true);
+  const e=envInfo();if(e.standalone)diag("App installée sur l’écran d’accueil : sur iPhone, la reconnaissance vocale marche souvent mieux dans Safari");
+  try{const r=new SR();r.lang="en-GB";r.onresult=ev=>diag("Entendu : « "+ev.results[0][0].transcript+" »",true);r.onerror=ev=>diag("Erreur : "+ev.error,false);r.onend=()=>{};r.start();diag("Parle maintenant en anglais (quelques secondes)")}catch(x){diag("Démarrage impossible : "+x.message,false)}
+}
+async function testNet(){
+  $("tOut").innerHTML="";
+  diag(navigator.onLine!==false?"Appareil en ligne":"Appareil hors ligne",navigator.onLine!==false);
+  const probe=async(name,url)=>{try{const c=new AbortController();const t=setTimeout(()=>c.abort(),6000);await fetch(url,{mode:"no-cors",signal:c.signal});clearTimeout(t);diag(name+" accessible",true)}catch(e){diag(name+" non accessible",false)}};
+  await probe("Podcasts (iTunes)","https://itunes.apple.com/search?term=english&media=podcast&limit=1");
+  await probe("YouTube","https://www.youtube-nocookie.com/favicon.ico");
+  await probe("Correction (LanguageTool)","https://api.languagetool.org/v2/languages");
+  await probe("Traduction (MyMemory)","https://api.mymemory.translated.net/get?q=hi&langpair=en|fr");
+  const e=envInfo();diag("Version "+APP_VERSION+" · "+(e.ios?"iOS "+e.ios+" · ":"")+(e.standalone?"app installée":"navigateur")+" · "+e.w+"×"+e.h);
+}
+function openSettings(section){
+  buildSheet();
+  const sh=$("settingsSheet");sh.classList.remove("hidden");document.body.classList.add("sheetOpen");
+  markTheme();renderReports();
+  const c=reportContext();$("rpCtx").textContent="Joint automatiquement : "+c.modeName+(c.question?" · « "+c.question.slice(0,60)+" »":"")+" · "+c.device;
+  if(section==="report"){const el=$("setReport");setTimeout(()=>{el.scrollIntoView({block:"start"});$("rpTxt").focus()},60)}else sh.scrollTop=0;
+}
+function closeSettings(){const sh=$("settingsSheet");if(sh)sh.classList.add("hidden");document.body.classList.remove("sheetOpen")}
+function initSettings(){
+  buildSheet();
+  // sauvegarde / réinitialisation : déplacées dans les paramètres
+  const moved=$("setMoved");
+  [...$("view-train").children].forEach(el=>{const h=(el.querySelector("h2")||{}).textContent||"";if(/^(Sauvegarde|Réinitialiser)/.test(h.trim()))moved.appendChild(el)});
+  const b=$("settingsBtn");if(b)b.onclick=()=>openSettings();
+  const tb=document.querySelector(".toolbar");
+  if(tb){const r=document.createElement("button");r.type="button";r.className="ghost";r.id="reportBtn";r.textContent="Signaler";r.onclick=()=>openSettings("report");tb.appendChild(r)}
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSettings()});
 }
 
 sanitizeVisualErrors(document);
