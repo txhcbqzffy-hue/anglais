@@ -1276,10 +1276,7 @@ header{justify-content:space-between!important}
       <div>
         <div id="conceptProfile" class="profileList"></div>
       </div>
-      <div>
-        <div style="font-weight:800;margin-bottom:8px">Dernières erreurs</div>
-        <div id="errorLog" class="errorLog"></div>
-      </div>
+      <div id="errorLog" class="hidden"></div>
     </div>
   </section>
 
@@ -2643,21 +2640,21 @@ function updateUI(){
 }
 
 function renderConceptProfile(){
-  const entries=Object.values(state.conceptStats||{}).filter(s=>s.t>0)
+  const entries=Object.values(state.conceptStats||{}).filter(s=>s.t>s.c)
     .sort((a,b)=>{
-      const pa=a.c/a.t,pb=b.c/b.t;
-      if(pa!==pb)return pa-pb;
-      return b.t-a.t;
-    }).slice(0,8);
+      const ea=a.t-a.c,eb=b.t-b.c;
+      if(ea!==eb)return eb-ea;
+      return a.c/a.t-b.c/b.t;
+    }).slice(0,10);
   $("conceptProfile").innerHTML=entries.length?entries.map(s=>{
     const pct=conceptAccuracy(s);
     return `<div class="profileRow">
-      <div><div class="profileName">${escapeHtml(s.label)}</div><div class="profileMeta">${s.t} réponse(s)</div></div>
+      <div><div class="profileName">${entries.indexOf(s)+1}. ${escapeHtml(s.label)}</div><div class="profileMeta">${s.t-s.c} erreur(s) sur ${s.t}</div></div>
       <div class="profileBar"><i style="width:${pct}%"></i></div>
       <div class="profilePct">${pct}%</div>
       <button class="ghost reviewConcept" data-concept-mode="${escapeHtml(s.mode)}">Réviser</button>
     </div>`;
-  }).join(""):`<div class="small">Ton profil se construira au fur et à mesure des exercices.</div>`;
+  }).join(""):`<div class="small">Aucune erreur pour l’instant.</div>`;
 
   document.querySelectorAll("[data-concept-mode]").forEach(b=>b.onclick=()=>setMode(b.dataset.conceptMode));
 
