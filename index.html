@@ -25,11 +25,11 @@ if(t==="dark"){document.addEventListener("DOMContentLoaded",function(){var m=doc
   /* Charte v28 : lime · anthracite · rouge. Thème clair par défaut. */
   color-scheme:light;
   --anthracite:#1f2326; --anthracite2:#2a2f33;
-  --lime:#c3f53c; --red:#e5383b;
+  --lime:#3b82f6; --red:#e5383b;
   --bg:#eef1f6; --panel:#ffffff; --panel2:#f5f7fb; --field:#eef1f6; --deep:#e1e6ee; --panel3:#e7ebf2;
   --line:#e1e6ee; --accent-line:#8cb11c;
   --text:#14181a; --text-soft:#343b3f; --muted:#6a747a;
-  --accent:#c3f53c; --accent2:#a9e01c; --accent-rgb:150,205,10; --accent-text:#456300; --on-accent:#15180b;
+  --accent:#3b82f6; --accent2:#2563eb; --accent-rgb:59,130,246; --accent-text:#1d4ed8; --on-accent:#ffffff;
   --good:#1f9d55; --good-rgb:63,138,0; --good-text:#14703b; --good-line:#93d6ae; --good-bg:#e8f8ef;
   --bad:#e5484d; --bad-rgb:217,45,51; --bad-text:#b0252a; --bad-line:#f3aaad; --bad-bg:#fff0f0; --bad-bg2:#fadadb;
   --warn:#d98a00; --warn-rgb:217,138,0; --warn-text:#7d5200; --warn-text2:#5f3f00; --warn-bg:#fff0c9; --warn-line:#e3b862;
@@ -41,7 +41,7 @@ if(t==="dark"){document.addEventListener("DOMContentLoaded",function(){var m=doc
   --bg:#0c0f14; --panel:#151a21; --panel2:#11151a; --field:#0f1318; --deep:#080a0d; --panel3:#1d232b;
   --line:#232a33; --accent-line:#6f8a2a;
   --text:#f3f5f1; --text-soft:#d6dbd4; --muted:#8f999f;
-  --accent:#c3f53c; --accent2:#9fd41c; --accent-rgb:195,245,60; --accent-text:#d5f96e; --on-accent:#14170a;
+  --accent:#3b82f6; --accent2:#3b82f6; --accent-rgb:96,165,250; --accent-text:#93c5fd; --on-accent:#0b1220;
   --good:#4fd18b; --good-rgb:182,238,58; --good-text:#9be8bf; --good-line:#2c6b4a; --good-bg:#12251b;
   --bad:#ff6b70; --bad-rgb:255,90,95; --bad-text:#ffb3b5; --bad-line:#7a2b2f; --bad-bg:#2a1719; --bad-bg2:#4a1c20;
   --warn:#ffc233; --warn-rgb:255,194,51; --warn-text:#ffd98a; --warn-text2:#fff0b8; --warn-bg:#4a3d0a; --warn-line:#6f5a1c;
@@ -452,8 +452,8 @@ button.adaptiveStep:hover{border-color:var(--accent-line);background:rgba(var(--
 
 /* ===================== v28 ===================== */
 body{background:radial-gradient(circle at 92% -8%,rgba(var(--accent-rgb),var(--glow)),transparent 34%),radial-gradient(circle at -8% 30%,rgba(var(--bad-rgb),.04),transparent 34%),var(--bg)!important}
-:root{--glow:.09;--sel-bg:#1f2326;--sel-text:#c3f53c}
-:root[data-theme="dark"]{--glow:.15;--sel-bg:#c3f53c;--sel-text:#14170a}
+:root{--glow:.09;--sel-bg:#1f2326;--sel-text:#3b82f6}
+:root[data-theme="dark"]{--glow:.15;--sel-bg:#3b82f6;--sel-text:#0b1220}
 .cefrHead .badge{white-space:nowrap;flex:0 0 auto;align-self:flex-start}
 .logo{border:1px solid #3a4147;background:var(--anthracite)!important;color:var(--lime)!important;position:relative;box-shadow:none!important;border-radius:5px}
 .logo::after{content:"";position:absolute;right:-3px;top:-3px;width:11px;height:11px;border-radius:50%;background:var(--red);border:2px solid var(--bg)}
@@ -471,14 +471,14 @@ body{background:radial-gradient(circle at 92% -8%,rgba(var(--accent-rgb),var(--g
 /* Onglets */
 .tabs{border:1px solid #3a4147;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px;margin:0 0 14px;background:var(--anthracite);border-radius:6px;position:sticky;top:6px;z-index:40;box-shadow:0 8px 24px rgba(0,0,0,.18)}
 .tab{border:0;background:transparent;color:#b4bbb6;font-weight:800;min-height:42px;border-radius:4px;padding:8px 6px;font-size:14px}
-.tab.active{background:var(--lime);color:#15180b}
+.tab.active{background:var(--lime);color:#ffffff}
 .tab:not(.active):hover{color:#fff;background:rgba(255,255,255,.07)}
 .view.hidden{display:none!important}
 
 /* Barre du bas : anthracite */
 .bottomNav{background:rgba(31,35,38,.96)!important;border-color:#3a4147!important}
 .bottomNav button{color:#aab2ad!important}
-.bottomNav button.active{background:var(--lime)!important;color:#15180b!important}
+.bottomNav button.active{background:var(--lime)!important;color:#ffffff!important}
 @media(max-width:720px){.bottomNav{grid-template-columns:repeat(5,1fr)!important}.bottomNav span{font-size:17px}}
 .updateBar{position:fixed;left:10px;right:10px;bottom:84px;z-index:70;display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--anthracite);color:#fff;border-radius:5px;padding:10px 12px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
 .updateBar button{min-height:38px;padding:7px 12px}
@@ -576,8 +576,8 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 .planIc{font-size:22px;line-height:1;flex:none}
 .planTx{display:flex;flex-direction:column;gap:2px;min-width:0}
 .planTx small{font-size:12px;opacity:.8}
-.chip2.ghost.on{background:#1f2326!important;color:#c3f53c!important;border-color:#1f2326!important}
-:root[data-theme="dark"] .chip2.ghost.on{background:#c3f53c!important;color:#1f2326!important;border-color:#c3f53c!important}
+.chip2.ghost.on{background:#1f2326!important;color:#3b82f6!important;border-color:#1f2326!important}
+:root[data-theme="dark"] .chip2.ghost.on{background:#3b82f6!important;color:#ffffff!important;border-color:#3b82f6!important}
 .coin,.headTools .coin{display:none!important}
 
 /* v29 : 5 pages */
@@ -651,7 +651,7 @@ body.sheetOpen{overflow:hidden}
    v30 : design mobile moderne (arrondis, verre dépoli, animations)
    ===================================================================== */
 :root{--r:10px;--rs:7px;--ease:cubic-bezier(.22,.9,.28,1);--glass:rgba(255,255,255,.74);--glass-line:rgba(255,255,255,.7);--nav-ink:#1f2326;--nav-off:#7b858b}
-:root[data-theme="dark"]{--glass:rgba(24,27,30,.72);--glass-line:rgba(255,255,255,.08);--nav-ink:#14170a;--nav-off:#8f999f}
+:root[data-theme="dark"]{--glass:rgba(24,27,30,.72);--glass-line:rgba(255,255,255,.08);--nav-ink:#0b1220;--nav-off:#8f999f}
 html{scroll-behavior:smooth}
 body{background:radial-gradient(120% 60% at 100% -10%,rgba(var(--accent-rgb),.22),transparent 55%),radial-gradient(90% 50% at -10% 20%,rgba(var(--accent-rgb),.10),transparent 60%),var(--bg)!important;background-attachment:fixed!important;letter-spacing:-.005em}
 .app{padding-bottom:calc(120px + env(safe-area-inset-bottom))!important}
@@ -702,7 +702,7 @@ select{appearance:none;-webkit-appearance:none;padding-right:42px!important;back
 .exerciseChoice{border-radius:8px!important}
 .chip2,.seg2 button{border-radius:10px!important;border:1px solid var(--line)!important;background:var(--panel)!important;transition:all .2s var(--ease)}
 .chip2.on,.seg2 button.on{background:var(--anthracite)!important;color:var(--lime)!important;border-color:var(--anthracite)!important}
-:root[data-theme="dark"] .chip2.on,:root[data-theme="dark"] .seg2 button.on{background:var(--lime)!important;color:#14170a!important;border-color:var(--lime)!important}
+:root[data-theme="dark"] .chip2.on,:root[data-theme="dark"] .seg2 button.on{background:var(--lime)!important;color:#0b1220!important;border-color:var(--lime)!important}
 .badge{border-radius:10px!important}
 .pbField select{min-height:52px!important;font-weight:700}
 
@@ -1044,6 +1044,7 @@ background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.30),transp
 
 .roundRes{display:flex;gap:10px;margin-top:12px}
 .roundRes button{flex:1}
+.bottomNav button.active{color:var(--on-accent)!important}
 </style>
 </head>
 <body>
@@ -6257,7 +6258,22 @@ function expFor(m){
   if(l)return{t:l.title,s:[["Règle",[l.rule]],["Exemples",l.examples.map(x=>"• "+x)],["Piège fréquent",[l.trap]]]};
   return{t:modeNames[m]||"Exercice",s:[["Conseil",["• Lis bien la consigne, réponds sans te presser et lis toujours l’explication après chaque question : c’est là que tu progresses le plus."]]]};
 }
+function expHow(){
+  const vis=id=>{const e=$(id);return e&&!e.closest(".hidden")&&e.offsetParent!==null};
+  const h=[];
+  const d=(typeof modeDescriptions==="object"&&modeDescriptions[mode])||"";
+  if(d)h.push("• But : "+d);
+  if(mode==="wordOrder")h.push("• Comment répondre : touche les mots un par un pour les placer dans la barre, dans le bon ordre. Touche un mot de la barre pour le retirer, puis « Valider ».");
+  else if(vis("options")&&$("options").children.length)h.push("• Comment répondre : touche la bonne réponse parmi les propositions. La correction s’affiche tout de suite, puis touche « Suivant ».");
+  else if(vis("textZone")||vis("grammarZone")||vis("answerInput")||vis("grammarInput"))h.push("• Comment répondre : écris ta réponse dans le champ, puis touche « Valider ». Les majuscules et la ponctuation finale ne comptent pas.");
+  else h.push("• Comment répondre : suis la consigne affichée au-dessus, puis touche « Valider » ou la réponse choisie.");
+  if(vis("speakBtn"))h.push("• Le bouton haut-parleur relit la phrase à voix haute (accent américain) : réécoute autant que tu veux.");
+  h.push("• Une série = 10 questions. La barre se remplit, puis ton score s’affiche avec « Rejouer ». « Voir la réponse » est pratique pour apprendre mais compte comme une erreur.");
+  h.push("• Les mots et règles ratés reviennent plus souvent dans la séance du jour (révision espacée).");
+  return h;
+}
 function expHtml(e){
+  e={t:e.t,s:[["Comment fonctionne cet exercice",expHow()],...e.s]};
   const f=x=>escapeHtml(x).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
   return `<h4>${escapeHtml(e.t)}</h4>`+e.s.map(([h,ls])=>`<details class="expSec"><summary>${escapeHtml(h)}</summary>${ls.map(x=>`<p>${f(x)}</p>`).join("")}</details>`).join("");
 }
