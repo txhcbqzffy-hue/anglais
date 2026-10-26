@@ -1007,6 +1007,7 @@ body.sessionOn .sessHead{display:block;margin-bottom:8px}
 body.sessionOn .dailyBanner{display:none}
 @keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+body.sessionOn #exerciseCard{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 </style>
 </head>
 <body>
@@ -5913,6 +5914,7 @@ function renderDailyBanner(){
   const exOpenNow=($("exerciseCard")&&$("exerciseCard").offsetParent!==null);
   const show=!sessOpen&&!active&&(!done&&!exOpenNow&&currentView!=="audio"&&currentView!=="write");
   document.body.classList.toggle("sessionOn",sessOpen);
+  lockScroll(sessOpen);
   sessHeadUpdate();
   b.classList.toggle("hidden",!show);
   document.body.classList.toggle("hasBanner",show);
@@ -5947,7 +5949,7 @@ function sessHeadEnsure(){
   c.insertBefore(h,c.firstChild);
   $("sessClose").onclick=()=>{
     if(state.adaptive&&state.adaptive.active){try{toggleAdaptive()}catch(e){console.error(e)}}
-    sessOpen=false;document.body.classList.remove("sessionOn");
+    sessOpen=false;document.body.classList.remove("sessionOn");lockScroll(false);
     try{showView(sessFrom,true)}catch(e){}
     try{applyPageVisibility()}catch(e){}
     const b=$("dailyBanner");if(b)b.dataset.k="";
@@ -5959,6 +5961,13 @@ function sessHeadUpdate(){
   const a=state.adaptive||{};
   $("sessCount").textContent=a.active?`Question ${Math.min(a.index+1,a.queue.length)}/${a.queue.length}`:"Terminée";
   $("sessClose").textContent=a.active?"Arrêter":"Fermer";
+}
+
+let lockY=null;
+function lockScroll(on){
+  const b=document.body;
+  if(on&&lockY===null){lockY=window.scrollY||0;b.style.position="fixed";b.style.top=(-lockY)+"px";b.style.left="0";b.style.right="0";b.style.width="100%";document.documentElement.style.overflow="hidden"}
+  else if(!on&&lockY!==null){b.style.position="";b.style.top="";b.style.left="";b.style.right="";b.style.width="";document.documentElement.style.overflow="";const y=lockY;lockY=null;try{window.scrollTo(0,y)}catch(e){}}
 }
 /* =====================================================================
    v42 : ajouter un mot (anglais ou français) -> traduction, explication, exemple
