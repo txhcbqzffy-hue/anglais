@@ -1155,6 +1155,8 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .topline>span:last-child{margin-left:auto}
 .backIc{width:44px;height:44px;min-height:44px!important;padding:0!important;border-radius:50%!important;display:inline-grid!important;place-items:center;font-size:30px!important;line-height:1;font-weight:700;flex:none;padding-bottom:3px!important}
 .favT .backIc,.blkBar .backIc{min-width:44px}
+#whyBox .whyRow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#whyBox .whyRow .optFav{margin-right:-8px;margin-left:0}
 </style>
 </head>
 <body>
@@ -1163,7 +1165,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v43</span></h1>
+        <h1>English Trainer<span class="ver">v44</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -8347,6 +8349,7 @@ function whyLoad(){
   return WHY;
 }
 function whyGet(en){const m=whyLoad(),k=String(en).toLowerCase().trim();return m.get(k)||m.get(k.startsWith("to ")?k.slice(3):"to "+k)||null}
+function whyStar(w){const on=isFavorite(w);return `<span class="optFav${on?" on":""}" role="button" aria-label="Ajouter aux favoris : ${escapeHtml(w)}" data-en="${escapeHtml(w)}" data-star="${on?"★":"☆"}"></span>`}
 function whyClear(){const b=$("whyBox");if(b)b.remove()}
 function whyShow(){
   whyClear();
@@ -8357,9 +8360,9 @@ function whyShow(){
   const lis=others.map(t=>{
     const e=trLookup(t);if(!e)return "";
     const w=whyGet(e.en),first=w?w.note.split(/(?<=[.!?])\s/)[0]:"";
-    return `<li><b>${escapeHtml(e.en)}</b> = ${escapeHtml(e.fr)}${first?" — "+escapeHtml(first):""}</li>`;
+    return `<li class="whyRow"><span><b>${escapeHtml(e.en)}</b> = ${escapeHtml(e.fr)}${first?" — "+escapeHtml(first):""}</span>${whyStar(e.en)}</li>`;
   }).filter(Boolean).join("");
-  box.innerHTML=`<h4>Pourquoi « ${escapeHtml(en)} » ?</h4><p><b>${escapeHtml(en)}</b> = ${escapeHtml(fr)}</p>`
+  box.innerHTML=`<h4>Pourquoi « ${escapeHtml(en)} » ?</h4><p class="whyRow"><span><b>${escapeHtml(en)}</b> = ${escapeHtml(fr)}</span>${whyStar(en)}</p>`
     +(n?`<p>${escapeHtml(n.note)}</p><div class="whyEx" data-say="${escapeHtml(n.ex)}">${escapeHtml(n.ex)}<i>${escapeHtml(n.fr)}</i></div>`:"")
     +(lis?`<p style="margin-top:10px"><b>À ne pas confondre avec :</b></p><ul class="whyOthers">${lis}</ul>`:"");
   box.addEventListener("click",e=>{const x=e.target.closest("[data-say]");if(x){try{speak(x.dataset.say)}catch(z){}}});
@@ -8369,7 +8372,7 @@ const __checkOptionWhy=checkOption;
 checkOption=function(){
   const first=!$("options").classList.contains("answered");
   const r=__checkOptionWhy.apply(this,arguments);
-  try{if(first)whyShow()}catch(e){console.error(e)}
+  try{if(first){whyShow();if(["quiz","quizReverse","quizMix"].includes(mode)){const f=$("feedback");if(f&&/^❌/.test(f.textContent))f.textContent="❌ Incorrect"}}}catch(e){console.error(e)}
   return r;
 };
 const __nqWhy=newQuestion;
