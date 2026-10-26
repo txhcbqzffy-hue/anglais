@@ -1150,7 +1150,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v35</span></h1>
+        <h1>English Trainer<span class="ver">v36</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -6349,11 +6349,13 @@ grammar:{t:"Construire une phrase",s:[
 EXP.quizReverse=EXP.quizMix=EXP.quiz;
 EXP.irregularPast=EXP.irregularPart=EXP.irregularMix;
 EXP.write=EXP.reverse;EXP.listening=EXP.dictation;EXP.edDict=EXP.edListen;
-function expFor(m){
+const EXP_DROP=["Méthode","Astuce pour l’exercice","Comment réussir","Pour mémoriser vraiment","Méthode d’écoute","Rappel actif","Étapes","Pourquoi c’est puissant","Conseil"];
+function expFor(m){const e=expFor0(m);return{t:e.t,s:e.s.filter(x=>!EXP_DROP.includes(x[0]))}}
+function expFor0(m){
   if(EXP[m])return EXP[m];
   const l=typeof miniLessons==="object"&&miniLessons[m];
   if(l)return{t:l.title,s:[["Règle",[l.rule]],["Exemples",l.examples.map(x=>"• "+x)],["Piège fréquent",[l.trap]]]};
-  return{t:modeNames[m]||"Exercice",s:[["Conseil",["• Lis bien la consigne, réponds sans te presser et lis toujours l’explication après chaque question : c’est là que tu progresses le plus."]]]};
+  return{t:modeNames[m]||"Exercice",s:[]};
 }
 function expHow(){
   const vis=id=>{const e=$(id);return e&&!e.closest(".hidden")&&e.offsetParent!==null};
@@ -6370,7 +6372,7 @@ function expHow(){
   return h;
 }
 function expHtml(e){
-  e={t:e.t,s:[["Comment fonctionne cet exercice",expHow()],...e.s]};
+  e={t:e.t,s:e.s};
   const f=x=>escapeHtml(x).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
   return `<h4>${escapeHtml(e.t)}</h4>`+e.s.map(([h,ls])=>`<details class="expSec"><summary>${escapeHtml(h)}</summary>${ls.map(x=>`<p>${f(x)}</p>`).join("")}</details>`).join("");
 }
@@ -6386,7 +6388,7 @@ function expEnsure(){
 const __expNQ=newQuestion;
 newQuestion=function(){
   __expNQ.apply(this,arguments);
-  try{const w=expEnsure();if(w){$("expPanel").classList.add("hidden");$("expBtn").classList.remove("open");$("expBtn").setAttribute("aria-expanded","false");w.style.display=(typeof mode==="string"&&mode.indexOf("view:")!==0)?"":"none"}}catch(e){}
+  try{const w=expEnsure();if(w){$("expPanel").classList.add("hidden");$("expBtn").classList.remove("open");$("expBtn").setAttribute("aria-expanded","false");w.style.display=(typeof mode==="string"&&mode.indexOf("view:")!==0&&expFor(mode).s.length)?"":"none"}}catch(e){}
 };
 
 /* ----- série de 10 questions : la barre se remplit, puis le résultat ----- */
