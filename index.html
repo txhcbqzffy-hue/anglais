@@ -1122,6 +1122,25 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .optFav::before{content:attr(data-star);font-size:22px;line-height:1;color:var(--muted)}
 .optFav.on::before{color:var(--warn)}
 .optFav:active{background:rgba(var(--accent-rgb),.14)}
+
+/* Mes favoris */
+#favSheet #favBody,#favSheet .sheetHead{max-width:720px;margin-left:auto;margin-right:auto}
+.favHead{flex-wrap:nowrap!important;gap:8px}
+.favT{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.favT h2{font-size:17px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.favT h2 span{color:var(--muted);font-weight:600}
+.favT .ghost{min-height:40px;padding:8px 10px;font-size:14px;flex:none}
+.favBtns{display:flex;gap:6px;margin-left:auto;flex:none}
+.favBtns button{min-height:40px;padding:8px 11px;font-weight:800;font-size:14px}
+.favBtns .ghost.on{background:rgba(var(--accent-rgb),.14);border-color:var(--accent-line);color:var(--accent-text)}
+.favBtns button:disabled{opacity:.45}
+.fList{border:1px solid var(--line);background:var(--panel);border-radius:12px;overflow:hidden}
+.fRow{display:grid;grid-template-columns:1fr 1fr 40px;align-items:center;gap:10px;padding:6px 6px 6px 14px;border-bottom:1px solid var(--line)}
+.fRow:last-child{border-bottom:0}
+.fEn{background:transparent;border:0;text-align:left;padding:8px 0;min-height:44px;font-size:15.5px;font-weight:800;color:var(--text)}
+.fFr{font-size:14.5px;color:var(--muted);border-left:2px solid var(--accent-line);padding-left:10px;line-height:1.35}
+.fStar{width:40px;height:40px;border:0;background:transparent;font-size:22px;color:var(--warn);border-radius:50%}
+.fStar:active{background:rgba(var(--accent-rgb),.14)}
+.fRow.hide:not(.peek) .fEn span{filter:blur(7px);-webkit-user-select:none;user-select:none}
 </style>
 </head>
 <body>
@@ -1130,7 +1149,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v32</span></h1>
+        <h1>English Trainer<span class="ver">v33</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -6845,6 +6864,56 @@ document.addEventListener("click",e=>{
   document.querySelectorAll(".optFav").forEach(x=>{if(x.dataset.en===w)optFavSync(x)});
   try{updateFavButton()}catch(x){}
 },true);
+
+/* =====================================================================
+   Mes favoris : liste anglais / français, bouton pour cacher l’anglais, bouton QCM
+   ===================================================================== */
+let favHide=false;try{favHide=localStorage.getItem("et_fav_hide")==="1"}catch(e){}
+function favList(){
+  trMaps();
+  return state.favorites.map(w=>{const e=__en2fr.get(String(w).toLowerCase())||trLookup(w);return{en:w,fr:e?e.fr:"—"}});
+}
+function favRender(){
+  const L=favList(),box=$("favBody");
+  $("favCount").textContent=L.length?" ("+L.length+")":"";
+  const hb=$("favHide");hb.textContent=favHide?"Show EN":"Hide EN";hb.classList.toggle("on",favHide);
+  hb.disabled=!L.length;$("favQcm").disabled=!L.length;
+  if(!L.length){box.innerHTML=`<div class="small" style="margin:18px 2px">Aucun favori</div><div class="small" style="margin:0 2px">Touche l’étoile à côté d’un mot dans un exercice pour l’ajouter ici.</div>`;return}
+  box.innerHTML=`<div class="fList">${L.map((x,i)=>`<div class="fRow${favHide?" hide":""}" data-fi="${i}"><button type="button" class="fEn" data-say="${coursEsc(x.en)}"><span>${coursEsc(x.en)}</span></button><span class="fFr">${coursEsc(x.fr)}</span><button type="button" class="fStar" data-frm="${i}" aria-label="Retirer des favoris">★</button></div>`).join("")}</div>`;
+}
+function favOpen(){
+  let s=$("favSheet");
+  if(!s){
+    s=document.createElement("div");s.id="favSheet";s.className="sheet hidden";s.setAttribute("role","dialog");s.setAttribute("aria-label","Mes favoris");
+    s.innerHTML=`<div class="sheetHead favHead"><div class="favT"><button type="button" id="favBack" class="ghost">‹ Retour</button><h2>Mes favoris<span id="favCount"></span></h2></div><div class="favBtns"><button type="button" id="favHide" class="ghost">Hide EN</button><button type="button" id="favQcm" class="primary">QCM</button></div></div><div id="favBody"></div>`;
+    document.body.appendChild(s);
+    $("favBack").onclick=favClose;
+    $("favHide").onclick=()=>{favHide=!favHide;try{localStorage.setItem("et_fav_hide",favHide?"1":"0")}catch(e){}favRender()};
+    $("favQcm").onclick=()=>{
+      const L=favList().filter(x=>x.fr!=="—");
+      if(L.length<4){const b=$("favQcm");b.textContent="4 words min.";setTimeout(()=>{b.textContent="QCM"},1800);return}
+      let items=L.map(x=>[x.en,x.fr,"fav"]);
+      if(items.length<8){const have=new Set(items.map(x=>x[0]));items=items.concat(shuffle(vocab().filter(v=>!have.has(v[0]))).slice(0,8-items.length))}
+      favClose();window.__focus=items;jFocusNext=true;openExercise("quizMix");
+    };
+    s.addEventListener("click",e=>{
+      const rm=e.target.closest("[data-frm]");
+      if(rm){const L=favList(),x=L[+rm.dataset.frm];if(x){state.favorites=state.favorites.filter(w=>w!==x.en);
+        const ai=state.custom.findIndex(c=>c.en===x.en&&c.auto);if(ai>=0){state.custom.splice(ai,1);__trSig=""}
+        saveState();favRender();try{updateFavButton()}catch(z){}}return}
+      const en=e.target.closest(".fEn");
+      if(en){const row=en.closest(".fRow");if(row.classList.contains("hide"))row.classList.toggle("peek");else{try{speak(en.dataset.say)}catch(z){}}return}
+    });
+  }
+  favRender();s.classList.remove("hidden");document.body.classList.add("sheetOpen");s.scrollTop=0;
+}
+function favClose(){const s=$("favSheet");if(s)s.classList.add("hidden");document.body.classList.remove("sheetOpen")}
+const __openExBeforeFav=openExercise;
+openExercise=function(m,k){
+  if(m==="favorites"){favOpen();return}
+  return __openExBeforeFav.apply(this,arguments);
+};
+
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
