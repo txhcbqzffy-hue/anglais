@@ -5607,7 +5607,9 @@ penalize=function(item,r){__jPen(item,r);jRecord(false,item)};
 let jLast=Date.now(),jDirty=0;
 ["pointerdown","keydown","touchstart","scroll","click"].forEach(ev=>window.addEventListener(ev,()=>{jLast=Date.now()},{passive:true,capture:true}));
 setInterval(()=>{
-  if(document.visibilityState!=="visible"||Date.now()-jLast>120000)return;
+  if(document.visibilityState!=="visible"||Date.now()-jLast>20000)return;
+  const ex=$("exerciseCard"),onTask=(ex&&ex.offsetParent!==null)||currentView==="audio"||currentView==="write";
+  if(!onTask)return;
   const d=jDay(JD(new Date()),true);d.sec+=5;jDirty+=5;
   if(jDirty>=30){jDirty=0;saveState();try{jRender()}catch(e){}}
 },5000);
