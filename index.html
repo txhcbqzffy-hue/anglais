@@ -1142,6 +1142,15 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .fStar:active{background:rgba(var(--accent-rgb),.14)}
 .fRow.hide:not(.peek) .fEn span{filter:blur(7px);-webkit-user-select:none;user-select:none}
 #modeHelp,.modeHelp{display:none!important}
+
+#whyBox{margin-top:14px;margin-bottom:110px;padding:14px 14px 12px;border:1px solid var(--accent-line);border-radius:16px;background:rgba(var(--accent-rgb),.07);font-size:14.5px;line-height:1.45;text-align:left}
+#whyBox h4{margin:0 0 6px;font-size:15px;color:var(--accent-text)}
+#whyBox p{margin:6px 0}
+#whyBox .whyEx{padding:8px 10px;border-left:3px solid var(--accent);background:rgba(255,255,255,.55);border-radius:8px;cursor:pointer}
+#whyBox .whyEx i{display:block;color:var(--muted);font-style:normal;font-size:13.5px;margin-top:2px}
+#whyBox .whyOthers{margin:8px 0 0;padding:0;list-style:none}
+#whyBox .whyOthers li{margin:5px 0;color:var(--muted)}
+#whyBox .whyOthers b{color:var(--text)}
 </style>
 </head>
 <body>
@@ -1150,7 +1159,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v39</span></h1>
+        <h1>English Trainer<span class="ver">v40</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -1691,6 +1700,266 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
   <button data-view="write"><i class="ic ic-write"></i>Écriture</button>
 </nav>
 
+<script id="whyData" type="text/plain">eager§Plus enthousiaste que « willing » (prêt à) : on a vraiment envie. Se construit avec to + verbe.§She is eager to start the project.§Elle est impatiente de commencer le projet.
+upper-hand§Toujours avec « the » : to have the upper hand = dominer la situation, pas seulement « avoir un avantage » (benefit).§Our offer gave us the upper hand.§Notre offre nous a donné l'avantage.
+bursaries§Aide financière britannique accordée selon les besoins ; « scholarship » = selon le mérite.§He got a bursary to study abroad.§Il a eu une bourse pour étudier à l'étranger.
+trade fair§Salon réservé aux professionnels ; « exhibition » = exposition au grand public.§We met clients at a trade fair in Lyon.§Nous avons rencontré des clients à un salon professionnel à Lyon.
+foot in the door§Expression : la première occasion qui ouvre la voie (stage, petit poste). Souvent avec « get ».§An internship is a foot in the door.§Un stage, c'est un premier pas dans l'entreprise.
+one-off§Adjectif ou nom : qui n'arrive qu'une fois (≠ « regular »). S'écrit avec un trait d'union.§It was a one-off payment.§C'était un paiement exceptionnel.
+under their belt§« Have X under your belt » = avoir déjà acquis X (expérience, diplômes). Le possessif s'accorde au sujet.§She has five years under her belt.§Elle a déjà cinq ans d'expérience derrière elle.
+fields§Au pluriel : domaines d'activité. « Domain » est plus technique (web, maths).§He works in several fields.§Il travaille dans plusieurs domaines.
+versatile§Qui sait faire plein de choses différentes ; positif, ne dit pas « versatile » pour une personne instable (≠ français).§A versatile employee can cover many roles.§Un employé polyvalent peut remplir plusieurs rôles.
+open-minded§Prêt à écouter d'autres idées ; contraire : narrow-minded (étroit d'esprit).§Be open-minded about new methods.§Sois ouvert aux nouvelles méthodes.
+towards§Direction ou but ; en anglais américain on dit souvent « toward ». Pas de différence de sens.§We are moving towards a solution.§Nous allons vers une solution.
+labour laws§« Labour » = orthographe britannique (« labor » en américain). Toujours au pluriel pour l'ensemble des textes.§Labour laws protect employees.§Le droit du travail protège les salariés.
+oversight§Piège : signifie surveillance/contrôle, mais aussi « oubli » selon le contexte. Regarde la phrase.§The board provides oversight of spending.§Le conseil supervise les dépenses.
+behaviour§Indénombrable : pas de « s » (« behaviours » est rare). US : behavior.§His behaviour was unprofessional.§Son comportement n'était pas professionnel.
+to avoid§Suivi de V-ing, jamais de to + verbe : avoid making, pas avoid to make.§Avoid sending long emails.§Évite d'envoyer de longs e-mails.
+an incentive§Ce qui pousse à agir (prime, avantage) ; plus concret que « motivation » (état d'esprit).§A bonus is a good incentive.§Une prime est une bonne incitation.
+meet deadlines§Collocation : on « meets » une deadline (pas « respect »). Aussi : miss a deadline = la rater.§We always meet deadlines.§Nous respectons toujours les délais.
+stakes§Ce qu'on peut gagner ou perdre ; high stakes = gros enjeux. Ne pas confondre avec « steak » (viande).§The stakes are high for this launch.§Les enjeux sont importants pour ce lancement.
+nerve-wracking§Qui stresse beaucoup (entretien, examen). Plus fort que « stressful ».§The interview was nerve-wracking.§L'entretien était éprouvant pour les nerfs.
+browser§Logiciel pour naviguer (Chrome, Safari). Ne pas confondre avec « search engine » = moteur de recherche (Google).§Clear your browser cache.§Vide le cache de ton navigateur.
+a piece of software§« Software » est indénombrable : on ne dit jamais « a software » ni « softwares ». On compte avec « a piece of ».§This is a useful piece of software.§C'est un logiciel utile.
+to raise funds§Collecter de l'argent pour un projet. Avec « raise » on lève ; « collect » s'utilise plutôt pour des objets.§They raised funds for charity.§Ils ont levé des fonds pour une association.
+below§Préposition ou adverbe de position (≠ « under » qui suggère le contact ou la couverture) ; contraire : above.§Sales are below target.§Les ventes sont en dessous de l'objectif.
+to sort out§Phrasal verb familier : régler un problème (≠ « to solve » plus formel). Séparable : sort it out.§Let's sort out the schedule.§Réglons le planning.
+break through the clutter§Se faire remarquer dans un flot de messages/pubs. « Clutter » = désordre, fouillis.§Our ad must break through the clutter.§Notre pub doit sortir du lot.
+several§Plus que « a few », moins que « many ». Suivi d'un nom pluriel, sans « of » (several clients).§Several clients called today.§Plusieurs clients ont appelé aujourd'hui.
+foreign§Adjectif : étranger (pays, langue). « Stranger » = inconnu, personne, pas étranger.§She speaks two foreign languages.§Elle parle deux langues étrangères.
+mean wage§« Mean » = moyenne arithmétique (vocabulaire statistique) ; « median » = valeur du milieu.§The mean wage rose by 2 %.§Le salaire moyen a augmenté de 2 %.
+fuelled§Au sens figuré : alimenté, stimulé (fuelled by demand). Double « l » en UK, « fueled » en US.§Growth was fuelled by exports.§La croissance était alimentée par les exportations.
+hailed§Salué comme (hailed as a success). Registre journalistique.§The launch was hailed as a success.§Le lancement a été salué comme un succès.
+ramifications§Conséquences complexes et souvent multiples (pas seulement « ramification » d'un arbre).§The law has wide ramifications.§La loi a de larges conséquences.
+although§Introduit une proposition complète (sujet + verbe) ; avec un nom, utilise « despite ». Pas de « but » ensuite.§Although it rained, we went out.§Bien qu'il ait plu, nous sommes sortis.
+therefore§Conséquence logique, plus formel que « so ». Souvent en début de phrase, avec une virgule.§Costs rose; therefore, we raised prices.§Les coûts ont augmenté ; nous avons donc augmenté les prix.
+crackdowns§Actions fermes des autorités (« crackdown on » + nom). Registre presse.§There was a crackdown on fraud.§Il y a eu une répression de la fraude.
+fines§Amendes. Attention : « fine » adjectif = bien / fin, selon le contexte.§Late payment leads to fines.§Un paiement tardif entraîne des amendes.
+widespread§Qui touche beaucoup de personnes ou de lieux ; ne s'emploie pas pour une personne.§Concern is widespread.§L'inquiétude est très répandue.
+seek§Plus formel que « look for » (seek advice, seek a job). Irrégulier : seek – sought – sought.§She sought advice from her manager.§Elle a demandé conseil à son manager.
+sooner§Comparatif de « soon » : plus tôt. Expression : sooner or later = tôt ou tard.§Sooner or later, we'll finish.§Tôt ou tard, nous finirons.
+hired§Participe/passé de hire : embauché. Ne pas confondre avec « fired » (renvoyé).§He was hired last week.§Il a été embauché la semaine dernière.
+grasped§To grasp = saisir physiquement ou comprendre une idée difficile. Plus fort que « understand ».§She grasped the concept quickly.§Elle a vite compris le concept.
+whether§Introduit une alternative indirecte (si… ou non) ; « if » est aussi possible, mais pas après une préposition.§I don't know whether he'll come.§Je ne sais pas s'il viendra.
+thereby§Formel : « de ce fait / ainsi ». Souvent suivi d'un V-ing.§He saved time, thereby cutting costs.§Il a gagné du temps, réduisant ainsi les coûts.
+harmful§Qui fait du mal (harmful to). Contraire : harmless. Plus général que « toxic ».§Too much sugar is harmful.§Trop de sucre est nocif.
+western people§Plus naturel : « Westerners ». « Western » prend une majuscule quand il désigne l'Ouest géopolitique.§Westerners often eat later.§Les Occidentaux mangent souvent plus tard.
+slipping through the net§Passer à travers un contrôle sans être repéré. Net = filet ; US : « fall through the cracks ».§Some cases slip through the net.§Certains cas passent entre les mailles du filet.
+jet lag§Indénombrable : « I have jet lag », jamais « a jet lag ».§I always get jet lag after long flights.§J'ai toujours un décalage horaire après les longs vols.
+accommodation§Indénombrable en anglais britannique (UK) : pas de « s ». En US : « accommodations ».§We booked accommodation near the station.§Nous avons réservé un hébergement près de la gare.
+to attend§Piège : « attend » = assister à, pas « attendre » (= to wait for). Pas de préposition après.§She attended the conference.§Elle a assisté à la conférence.
+hospitality industry§L'hôtellerie-restauration au sens large. « Hospitality » ne veut pas dire « hospitalité » au sens strict.§He works in the hospitality industry.§Il travaille dans l'hôtellerie-restauration.
+catering§Service de repas pour événements ou entreprises (≠ « restaurant »).§The catering was excellent.§Le service traiteur était excellent.
+to land an opportunity§Familier : décrocher (to land a job, a deal). « Land » = atterrir au sens propre.§She landed a great job.§Elle a décroché un super poste.
+cash in hand§Payé en espèces, sans déclaration (informel, souvent illégal). À éviter dans un CV.§The job paid cash in hand.§Le travail était payé en liquide, au noir.
+upsides§Côtés positifs ; contraire : downsides. Souvent dans « pros and cons ».§One upside is flexible hours.§Un avantage, ce sont les horaires flexibles.
+touristy§Informel, plutôt négatif : trop fait pour les touristes. Neutre : « popular with tourists ».§That café is a bit touristy.§Ce café est un peu trop touristique.
+productivity tools§« Productivity » est indénombrable ; on le met en tête comme adjectif (pas de s).§We use productivity tools daily.§Nous utilisons des outils de productivité tous les jours.
+health benefits§« Benefits » au pluriel = avantages ; peut aussi signifier avantages sociaux de l'employeur.§Walking has health benefits.§La marche a des bienfaits pour la santé.
+rather§Rather = plutôt ; « would rather + base verbale » = préférer (I'd rather stay). Ne signifie pas « plutôt que » seul.§It was rather cold.§Il faisait plutôt froid.
+experienced§Adjectif : qui a de l'expérience (an experienced manager). Verbe « experience » = vivre/ressentir.§We need an experienced developer.§Nous cherchons un développeur expérimenté.
+workload§Indénombrable : « a heavy workload », jamais « workloads » au quotidien. = volume de travail.§My workload is heavy this month.§Ma charge de travail est lourde ce mois-ci.
+deadline§Date limite fixe (≠ « delay » = retard). Collocations : meet / miss / extend a deadline.§The deadline is Friday.§La date limite est vendredi.
+to hire§Embaucher (≠ « employ » plus formel, ≠ « rent » louer un objet). Contraire : to fire.§We want to hire two analysts.§Nous voulons embaucher deux analystes.
+to resign§Démissionner (formel) : resign from a post. « Quit » est plus familier. Pas « démission » = resignation.§He resigned from his position.§Il a démissionné de son poste.
+promotion§Passage à un poste supérieur ; en marketing = promo/offre. Contexte obligatoire.§She got a promotion in May.§Elle a eu une promotion en mai.
+raise§Augmentation de salaire (US : raise ; UK : pay rise). Verbe « to raise » = lever/élever.§I asked for a raise.§J'ai demandé une augmentation.
+colleague§Personne avec qui on travaille ; « coworker » = plus familier (surtout US). Piège : pas « collègue » d'école = classmate.§My colleague is on leave.§Mon collègue est en congé.
+manager§Responsable d'une équipe ou d'un service ; ne désigne pas forcément un directeur (director).§My manager approved it.§Mon responsable l'a approuvé.
+to delegate§Confier une tâche à quelqu'un d'autre : delegate X to Y. Pas « déléguer son pouvoir » seulement.§Delegate smaller tasks to the team.§Déléguez les petites tâches à l'équipe.
+to be in charge of§Être responsable de, suivi d'un nom ou d'un V-ing. « Take charge » = prendre les rênes.§She is in charge of recruitment.§Elle est responsable du recrutement.
+to handle§Gérer un problème, un client ou un dossier ; plus pratique que « manage » (diriger).§I'll handle the complaint.§Je m'occupe de la réclamation.
+to get promoted§Forme passive naturelle : « get promoted » plutôt que « be promoted » à l'oral.§He got promoted last year.§Il a été promu l'an dernier.
+permanent contract§CDI. En entreprise : « permanent job ». Contraire : fixed-term contract.§She has a permanent contract.§Elle est en CDI.
+fixed-term contract§CDD : durée limitée et écrite. Pas « short-term » qui est plus vague.§He signed a fixed-term contract.§Il a signé un CDD.
+apprenticeship§Alternance (travail + formation). Plus long qu'un « internship » (stage). Pas « alternate ».§She is doing an apprenticeship at KLESIA.§Elle fait une alternance chez KLESIA.
+internship§Stage (court, souvent en fin d'études). En UK aussi « placement ».§He did an internship in marketing.§Il a fait un stage en marketing.
+notice period§Préavis : période entre la démission et le départ. « Notice » seul = avis.§My notice period is one month.§Mon préavis est d'un mois.
+job opening§Poste à pourvoir ; synonymes : vacancy (UK), position. Pas « job opportunity » au sens strict.§There's an opening in sales.§Il y a un poste à pourvoir aux ventes.
+to apply for§Postuler À un poste : apply FOR a job, apply TO a company. Pas « apply a job ».§I applied for the role.§J'ai postulé au poste.
+to be laid off§Licenciement lié à la situation de l'entreprise ; « fired » = renvoyé pour faute.§Many staff were laid off.§Beaucoup de salariés ont été licenciés.
+to burn out§Épuisement professionnel ; nom : burnout. Se dit aussi pour une machine ou une ampoule.§She burned out after two years.§Elle a fait un burn-out après deux ans.
+work-life balance§Équilibre entre travail et vie privée ; expression figée, sans « the » dans l'usage général.§I value work-life balance.§Je tiens à l'équilibre vie pro / vie perso.
+to work overtime§Faire des heures supplémentaires ; « overtime » est indénombrable (jamais « overtimes »).§He worked overtime all week.§Il a fait des heures sup toute la semaine.
+day off§Jour de congé ponctuel (≠ « holiday » = vacances). Au pluriel : days off.§I'm taking a day off Friday.§Je prends un jour de congé vendredi.
+to be on leave§Absent avec autorisation (vacances, maternité…). « On leave » reste invariable.§She is on leave until June.§Elle est en congé jusqu'en juin.
+remote work§Télétravail ; « work from home » est plus familier. « Remote » = à distance.§Remote work saves commuting time.§Le télétravail fait gagner du temps de trajet.
+skill set§Ensemble des compétences d'une personne. Deux mots (ou « skillset » en un seul).§Her skill set suits this role.§Ses compétences correspondent à ce poste.
+strengths§Points forts, toujours au pluriel en entretien ; contraire : weaknesses.§My strengths are analysis and rigour.§Mes points forts sont l'analyse et la rigueur.
+to take initiative§Sans article : « take initiative » ou « take the initiative ». = agir sans attendre qu'on le demande.§He takes initiative on projects.§Il prend des initiatives sur les projets.
+career path§Parcours évolutif d'une carrière ; « career » = ensemble de la vie pro, non « carrière » dans un sens péjoratif.§Her career path is varied.§Son parcours professionnel est varié.
+résumé§US : résumé (avec accents) ; UK : CV (curriculum vitae). Même document.§Send your résumé by Friday.§Envoie ton CV avant vendredi.
+cover letter§Lettre accompagnant le CV : motivée par l'offre précise. Pas « motivation letter » en anglais d'entreprise.§Write a short cover letter.§Rédige une courte lettre de motivation.
+reference§Personne qui peut recommander le candidat, ou la lettre de recommandation. Contexte important.§She gave two references.§Elle a donné deux références.
+candidate§Personne qui postule ou se présente (élections). Pas « candidat libre » en un mot.§We interviewed six candidates.§Nous avons reçu six candidats.
+to shortlist§Réduire à quelques noms pour la suite du processus. Nom : shortlist.§Three candidates were shortlisted.§Trois candidats ont été présélectionnés.
+to be a good fit§S'accorder au poste ou à la culture de l'entreprise : « a good fit for the team ».§He is a good fit for us.§Il correspond bien à notre profil.
+background§Formation + expérience passée. Ne désigne pas seulement l'arrière-plan visuel.§Her background is in finance.§Son parcours est dans la finance.
+achievement§Réalisation concrète dont on est fier (chiffrée si possible) ; verbe : achieve.§List your main achievements.§Liste tes principales réalisations.
+weakness§Point faible ; en entretien, on cite aussi une manière d'y remédier. Au pluriel : weaknesses.§My weakness is perfectionism.§Mon point faible, c'est le perfectionnisme.
+to tackle§Affronter un problème de face (tackle an issue). Familier et dynamique.§We must tackle the backlog.§Nous devons nous attaquer au retard accumulé.
+challenge§Défi stimulant ; « problem » est négatif. Verbe : to challenge = remettre en question.§This is a big challenge.§C'est un gros défi.
+to be motivated§Éprouver de l'envie d'agir ; contraire : demotivated. Prép. : motivated to + verbe.§She is motivated to learn.§Elle est motivée pour apprendre.
+salary expectations§Montant que le candidat espère. Pluriel dans cette expression.§Our salary expectations are flexible.§Nos prétentions salariales sont flexibles.
+to negotiate§Discuter pour obtenir un accord ; « negotiate with someone ». Nom : negotiation.§Negotiate the salary politely.§Négocie le salaire poliment.
+job offer§Proposition officielle d'embauche (≠ job opening = poste ouvert).§She received a job offer.§Elle a reçu une offre d'emploi.
+to accept an offer§Collocation : accept an offer (≠ « agree an offer »). Contraire : decline an offer.§He accepted the offer.§Il a accepté l'offre.
+probation period§Période d'essai ; durée écrite au contrat.§I'm still in my probation period.§Je suis encore en période d'essai.
+onboarding§Processus d'accueil et d'intégration d'un nouvel arrivant ; indénombrable.§Onboarding lasts two weeks.§L'intégration dure deux semaines.
+to follow up§Relancer ou faire un suivi après un premier contact. Nom : follow-up (avec trait d'union).§I'll follow up by email.§Je relancerai par e-mail.
+to set goals§Fixer des objectifs : « set » est invariable (set – set – set). Collocation fixe.§Set realistic goals each month.§Fixe des objectifs réalistes chaque mois.
+leadership§Capacité à guider un groupe ; indénombrable.§She shows strong leadership.§Elle fait preuve d'un fort leadership.
+teamwork§Travail en équipe ; un seul mot, indénombrable, pas de « s ».§Teamwork is essential here.§Le travail d'équipe est essentiel ici.
+to work under pressure§« Under pressure » = sous la pression. Se dit en entretien comme qualité.§I work well under pressure.§Je travaille bien sous pression.
+reliable§Sur qui on peut compter ; un faux ami n'existe pas (« reliable » ≠ « relié »).§He is a reliable colleague.§C'est un collègue fiable.
+adaptable§Qui s'adapte vite aux changements ; synonyme : flexible.§She is adaptable to any team.§Elle s'adapte à toute équipe.
+a quick learner§Quelqu'un qui apprend vite ; « learner » = apprenant, pas seulement « élève ».§He is a quick learner.§Il apprend vite.
+to stand out§Se démarquer du lot ; s'emploie avec from the crowd / from others.§Your résumé must stand out.§Ton CV doit se démarquer.
+hands-on experience§Expérience pratique, concrète (≠ théorique). Adjectif composé avec trait d'union.§We value hands-on experience.§Nous valorisons l'expérience pratique.
+agenda§Ordre du jour d'une réunion ; en anglais pas un « agenda » de poche (diary / planner).§Check the agenda before the meeting.§Vérifie l'ordre du jour avant la réunion.
+minutes§Compte rendu de réunion ; toujours au pluriel. Piège : n'a rien à voir avec les minutes de temps.§Who is taking the minutes?§Qui rédige le compte rendu ?
+to schedule§Planifier à une date/heure ; plus fixe que « plan ». US : /ˈskɛdʒuːl/, UK : /ˈʃɛdjuːl/.§Let's schedule a call for Monday.§Planifions un appel pour lundi.
+to postpone§Repousser à une date ultérieure ; « put off » est le phrasal verb familier.§The meeting was postponed.§La réunion a été reportée.
+to cancel§Annuler : un seul « l » en US (cancel – cancelled en UK).§We had to cancel the call.§Nous avons dû annuler l'appel.
+attendee§Personne présente à un événement ; verbe : to attend. Ne pas confondre avec « attendant » (agent).§Ten attendees joined the webinar.§Dix participants ont rejoint le webinaire.
+to chair a meeting§Présider : « chair » est aussi un verbe. Nom : the chair / the chairperson.§She chaired the meeting.§Elle a présidé la réunion.
+to take notes§Prendre des notes ; on dit take notes, pas « make notes » en usage courant.§Take notes during the call.§Prends des notes pendant l'appel.
+action item§Tâche concrète décidée en réunion, avec un responsable et une date.§List the action items at the end.§Liste les actions à mener à la fin.
+to wrap up§Terminer / conclure ; informel. Nom : wrap-up.§Let's wrap up the meeting.§Concluons la réunion.
+to brainstorm§Chercher des idées librement en groupe. Verbe et nom (a brainstorm / brainstorming).§We brainstormed new slogans.§Nous avons fait un brainstorming sur de nouveaux slogans.
+stakeholder§Toute personne concernée par un projet (client, équipe, direction). Pas « actionnaire » (shareholder).§Inform all stakeholders.§Informez toutes les parties prenantes.
+milestone§Étape clé d'un projet (≠ « deadline » = date limite). Sur une route : borne.§We reached an important milestone.§Nous avons atteint une étape importante.
+roadmap§Plan chronologique de ce qu'on veut faire ; un seul mot en tech/produit.§The roadmap covers three quarters.§La feuille de route couvre trois trimestres.
+scope§Étendue d'un projet : ce qui est inclus ou non. « Scope creep » = dérive du périmètre.§The scope of the project changed.§Le périmètre du projet a changé.
+budget§Prononcé /ˈbʌdʒɪt/. Verbe aussi : to budget for = prévoir dans le budget.§We are over budget.§Nous dépassons le budget.
+to be on track§Avancer comme prévu ; contraire : to be off track. « Track » = voie.§The project is on track.§Le projet est dans les temps.
+to fall behind§Prendre du retard sur un planning ou un concurrent ; contraire : be ahead of schedule.§We fell behind schedule.§Nous avons pris du retard.
+bottleneck§Point qui ralentit tout le processus (goulot de bouteille).§Approval is the bottleneck.§La validation est le goulot d'étranglement.
+to raise a concern§Dire poliment qu'on est inquiet ; « raise » + concern/issue/question.§I'd like to raise a concern.§Je voudrais soulever une inquiétude.
+to reach a consensus§On « reach » un consensus, on ne le « trouve » pas ; pas de « a » après « consensus of ».§We reached a consensus quickly.§Nous avons rapidement trouvé un consensus.
+to get back to someone§Répondre plus tard après avoir vérifié ; poli et fréquent par e-mail.§I'll get back to you tomorrow.§Je reviens vers vous demain.
+to keep someone posted§Informer régulièrement de l'avancement ; « keep » + personne + posted.§Keep me posted on progress.§Tiens-moi au courant de l'avancement.
+heads-up§Alerte informelle avant qu'un événement arrive ; « give someone a heads-up ».§Thanks for the heads-up.§Merci de m'avoir prévenu.
+follow-up§Nom avec trait d'union (le verbe : to follow up) : suivi ou relance.§Send a follow-up email.§Envoie un e-mail de relance.
+to align§Mettre en cohérence (objectifs, équipes) ; « align with » = être en phase avec.§Let's align on priorities.§Alignons-nous sur les priorités.
+deliverable§Ce qu'on doit livrer dans un projet (document, rapport…). Souvent au pluriel.§The main deliverable is a report.§Le principal livrable est un rapport.
+kickoff§Réunion de lancement d'un projet ; aussi « kick-off meeting ». Aussi coup d'envoi au foot.§The kickoff is on Monday.§Le lancement est lundi.
+to prioritize§Classer par ordre d'importance. UK : prioritise. Nom : priority.§We need to prioritize tasks.§Nous devons prioriser les tâches.
+to attach§Joindre un fichier : attach « à » l'e-mail. Ne pas confondre avec « attach to » (s'attacher à).§I've attached the report.§J'ai joint le rapport.
+attachment§Pièce jointe (accent sur la 2e syllabe : /əˈtætʃmənt/).§Open the attachment.§Ouvre la pièce jointe.
+to forward§Transférer un message à une autre personne ; « forward to ».§Please forward this to the team.§Merci de transférer ceci à l'équipe.
+to reply§Répondre à un message (reply TO an email). Moins formel que « respond ».§I'll reply today.§Je répondrai aujourd'hui.
+to copy someone§Mettre en cc : « copy » est un verbe ; « cc » = carbon copy. « Bcc » = copie cachée.§Can you copy me in?§Peux-tu me mettre en copie ?
+recipient§Personne qui reçoit un message ou un paiement. Ne pas confondre avec « receipt » (reçu).§The recipient didn't reply.§Le destinataire n'a pas répondu.
+subject line§Ligne « Objet » d'un e-mail : « subject » seul suffit aussi. Écris-la courte.§Write a clear subject line.§Écris un objet clair.
+regards§Clôture d'e-mail : « Kind regards » (poli) ; « Best regards » (neutre). Pas « cordially ».§Kind regards, Benjamin§Cordialement, Benjamin
+to whom it may concern§Formule officielle quand on ignore le destinataire ; plutôt vieillie, préférer « Dear Sir or Madam ».§To whom it may concern, I am writing…§À qui de droit, je vous écris…
+I am writing to§Début classique d'un e-mail formel, suivi d'un verbe : I am writing to ask…§I am writing to confirm our meeting.§Je vous écris pour confirmer notre rendez-vous.
+please find attached§Très formel : « Please find attached the report ». À l'oral : « I've attached ».§Please find attached my résumé.§Veuillez trouver ci-joint mon CV.
+as discussed§Rappel d'un échange précédent ; poli : « as discussed on the phone ».§As discussed, I'm sending the file.§Comme convenu, j'envoie le fichier.
+at your earliest convenience§Formule polie pour « dès que vous pourrez » : moins pressante que « ASAP ».§Reply at your earliest convenience.§Répondez dès que vous le pourrez.
+I look forward to hearing from you§« Look forward to » est suivi de V-ing (jamais de verbe nu). Formule de fin.§I look forward to hearing from you.§J'attends votre réponse avec impatience.
+apologies for the delay§Plus formel que « sorry for the delay » ; excuse un retard de réponse.§Apologies for the delay in replying.§Désolé du retard à répondre.
+I would appreciate it if§Formule polie de demande ; « if » + prétérit : I would appreciate it if you could…§I would appreciate it if you could reply.§Je vous serais reconnaissant de bien vouloir répondre.
+to confirm§Dire que quelque chose est certain (confirm a meeting) ; pas « confirmer » une idée vague.§Please confirm your attendance.§Merci de confirmer votre présence.
+to remind§Rappeler QUELQU'UN de quelque chose : remind someone TO do / OF. « Remember » = se souvenir.§Remind me to call him.§Rappelle-moi de l'appeler.
+reminder§Nom : message ou notification qui rappelle ; « a gentle reminder » = rappel poli.§I'm sending a gentle reminder.§J'envoie un petit rappel.
+to be out of office§Absent du bureau ; sigle OOO. Pas « outside office ».§I'm out of office until Monday.§Je suis absent jusqu'à lundi.
+automatic reply§Message envoyé automatiquement en cas d'absence (out-of-office reply).§Set an automatic reply.§Configure une réponse automatique.
+to get in touch§Prendre contact : « get in touch with ». Plus courant que « contact » à l'oral.§Get in touch if you have questions.§Contactez-nous si vous avez des questions.
+to reach out§Informel et très courant dans le monde pro : initier le contact. À éviter dans un courrier très formel.§I'm reaching out about the offer.§Je vous contacte au sujet de l'offre.
+in the meantime§En attendant que quelque chose arrive ; « meanwhile » est plus littéraire.§In the meantime, please review the file.§En attendant, merci de relire le fichier.
+to keep in mind§Garder en tête ; impératif fréquent : « keep in mind that… ».§Keep in mind the deadline.§Garde la date limite à l'esprit.
+to let someone know§Informer quelqu'un ; ordre : let + personne + know.§Let me know if it works.§Dis-moi si ça marche.
+inbox§Boîte de réception ; « mailbox » peut désigner toute la boîte mail.§My inbox is full.§Ma boîte de réception est pleine.
+draft§Version non finale ; aussi « drafts » = dossier des brouillons. Verbe : to draft.§Save it as a draft.§Enregistre-le comme brouillon.
+to proofread§Relire pour corriger fautes et coquilles ; ne pas dire « re-read » dans ce sens.§Proofread before sending.§Relis avant d'envoyer.
+signature§Pied de mail ou signature manuscrite ; une e-mail signature = nom, poste, coordonnées.§Add your signature.§Ajoute ta signature.
+income§Revenu régulier (salaire, loyers) ; indénombrable. « Revenue » = pour une entreprise.§Her income is stable.§Ses revenus sont stables.
+expenses§Dépenses (au pluriel) ; contraire : income. « Expenses » en entreprise = notes de frais.§Track your monthly expenses.§Suis tes dépenses mensuelles.
+savings§Au pluriel : économies déposées (compte). « Save » = économiser ou sauvegarder.§She has savings for a house.§Elle a des économies pour une maison.
+to save up§Mettre de l'argent de côté pour un but précis : save up FOR / TO.§I'm saving up for a trip.§J'économise pour un voyage.
+to borrow§Emprunter : TO borrow FROM someone ; « lend » = prêter. Ne pas inverser.§Can I borrow your pen?§Puis-je emprunter ton stylo ?
+to lend§Prêter à quelqu'un : lend – lent – lent. « Loan » = nom du prêt, aussi verbe.§He lent me 50 euros.§Il m'a prêté 50 euros.
+loan§Somme d'argent prêtée par une banque ; « a student loan ».§She took out a loan.§Elle a contracté un prêt.
+interest rate§Taux d'intérêt : « interest » est indénombrable, « rate » = taux.§Interest rates are rising.§Les taux d'intérêt augmentent.
+mortgage§Le « t » est muet : /ˈmɔːrɡɪdʒ/. Crédit pour acheter un bien immobilier.§They have a 20-year mortgage.§Ils ont un crédit immobilier de 20 ans.
+debt§Le « b » est muet : /det/. Somme due (≠ « loan » = ce qu'on emprunte).§He is in debt.§Il est endetté.
+tax§Impôt ou taxe, selon contexte ; verbe : to tax. « Income tax » = impôt sur le revenu.§Taxes are due in April.§Les impôts sont à payer en avril.
+VAT§Abréviation de « value-added tax » (TVA en UK/EU) ; aux États-Unis : « sales tax ».§Prices include VAT.§Les prix incluent la TVA.
+invoice§Facture envoyée à un client pour qu'il paie ; « bill » est plus courant pour les particuliers.§Send the invoice by Friday.§Envoie la facture avant vendredi.
+receipt§Reçu prouvant un paiement ; le « p » est muet : /rɪˈsiːt/.§Keep the receipt.§Garde le reçu.
+refund§Remboursement d'un achat ; verbe : to refund. « Reimburse » = rembourser des frais engagés.§I asked for a refund.§J'ai demandé un remboursement.
+to afford§Toujours avec can/could : « I can't afford it ». Suivi de to + verbe ou d'un nom.§We can't afford a new car.§Nous n'avons pas les moyens d'acheter une voiture neuve.
+cheap§Peu cher, parfois de mauvaise qualité (négatif). Positif : « inexpensive », « affordable ».§This phone is cheap.§Ce téléphone est bon marché.
+expensive§Cher (prix élevé) ; piège : pas « expensiv » ni « chère ». Contraire : cheap.§It's too expensive for me.§C'est trop cher pour moi.
+fee§Somme payée pour un service (inscription, avocat) ; ≠ « fare » (billet de transport).§There is a small fee.§Il y a de petits frais.
+cost of living§Dépenses nécessaires pour vivre dans un lieu ; invariable, sans « the » en général.§The cost of living is high in Paris.§Le coût de la vie est élevé à Paris.
+bank account§Compte bancaire : « open / close an account ». Pas « bank count ».§I opened a bank account.§J'ai ouvert un compte bancaire.
+to withdraw§Retirer de l'argent d'un compte ; nom : withdrawal. Contraire : deposit.§I withdrew 100 euros.§J'ai retiré 100 euros.
+to deposit§Verser de l'argent sur un compte ; nom : deposit (aussi acompte, caution).§She deposited a cheque.§Elle a déposé un chèque.
+overdraft§Compte à découvert autorisé ou non. « Be overdrawn » = être à découvert.§My overdraft is 200 euros.§Mon découvert est de 200 euros.
+credit card§Paiement différé ; ≠ « debit card » (débit immédiat). Pas « credit carte ».§I paid by credit card.§J'ai payé par carte de crédit.
+to invest§Placer de l'argent : invest IN something. Nom : investment.§They invest in startups.§Ils investissent dans des start-ups.
+profit§Bénéfice net après coûts (≠ « revenue » = chiffre d'affaires). Verbe : to profit from.§The company made a profit.§L'entreprise a fait un bénéfice.
+loss§Perte d'argent ou de quelque chose ; pluriel : losses. Ne pas confondre avec « lose » (verbe).§They reported a loss.§Ils ont annoncé une perte.
+revenue§Total des ventes avant déduction des coûts ; ≠ profit.§Revenue grew by 10 %.§Le chiffre d'affaires a progressé de 10 %.
+to go bankrupt§Faire faillite ; « bankrupt » est un adjectif. Aussi « go bust » (familier).§The shop went bankrupt.§Le magasin a fait faillite.
+traffic§Indénombrable : « web traffic ». Au sens routier : la circulation.§Website traffic doubled.§Le trafic du site a doublé.
+visitor§Personne qui visite un site ou un lieu ; « user » = utilisateur identifié sur GA4.§We had 5,000 visitors today.§Nous avons eu 5 000 visiteurs aujourd'hui.
+unique visitors§Nombre de personnes distinctes (comptées une fois) ; ≠ visits (visites répétées).§Unique visitors rose in May.§Les visiteurs uniques ont augmenté en mai.
+page view§Chaque affichage d'une page, même par la même personne. Parfois « pageview ».§The page had 800 page views.§La page a eu 800 pages vues.
+session§Groupe d'interactions pendant une visite. Dans GA4 : se termine après 30 min d'inactivité.§Each session lasts two minutes.§Chaque session dure deux minutes.
+bounce rate§Part des visites sans interaction ; dans GA4, c'est l'inverse de l'engagement rate.§The bounce rate is 40 %.§Le taux de rebond est de 40 %.
+conversion rate§Part des visiteurs qui font l'action visée (achat, formulaire).§The conversion rate improved.§Le taux de conversion s'est amélioré.
+click-through rate§CTR : clics ÷ impressions. Mesure l'attrait d'une annonce ou d'un lien.§CTR rose on mobile.§Le CTR a augmenté sur mobile.
+impression§Une fois qu'une publicité ou un lien est affiché ; ≠ « click ».§The ad had 10,000 impressions.§La pub a eu 10 000 impressions.
+reach§Nombre de personnes distinctes touchées par un contenu ; ≠ impressions (répétées).§The post reached 3,000 people.§La publication a touché 3 000 personnes.
+engagement§Interactions (likes, partages, temps passé). Dans GA4 : session engagée.§Engagement is up this month.§L'engagement est en hausse ce mois-ci.
+funnel§Entonnoir : étapes menant à la conversion. En GA4 : exploration en entonnoir.§Users drop off in the funnel.§Les utilisateurs abandonnent dans l'entonnoir.
+landing page§Première page vue par un visiteur après un clic ; conçue pour convertir.§Optimise the landing page.§Optimise la page d'atterrissage.
+call to action§CTA : phrase ou bouton qui invite à agir (« Subscribe now »).§Add a clear call to action.§Ajoute un appel à l'action clair.
+lead§Contact commercial potentiel qui a montré de l'intérêt ; « lead » (verbe) = mener.§We generated 200 leads.§Nous avons généré 200 leads.
+lead generation§Collecter des contacts qualifiés ; « lead gen » en abrégé.§Lead generation is our priority.§La génération de leads est notre priorité.
+target audience§Groupe visé par une campagne ; « audience » reste invariable dans ce sens.§Define your target audience.§Définis ton public cible.
+customer journey§Toutes les étapes d'un client, de la découverte à l'achat et après.§Map the customer journey.§Cartographie le parcours client.
+touchpoint§Un moment de contact entre client et marque (e-mail, site, appel). Aussi « touch point ».§Each touchpoint matters.§Chaque point de contact compte.
+attribution§Attribution d'une conversion à un canal ; modèle « last click » ou « data-driven ».§Attribution shows which channel works.§L'attribution montre quel canal fonctionne.
+tracking tag§Extrait de code (GTM, GA4) qui envoie des données ; « tag » seul suffit souvent.§Install the tracking tag.§Installe la balise de suivi.
+tag manager§Outil (Google Tag Manager) pour déployer des tags sans modifier le code du site.§We use Google Tag Manager.§Nous utilisons Google Tag Manager.
+event§Dans GA4, toute interaction mesurée (clic, scroll, achat) ; sens général : évènement.§Create a custom event in GA4.§Crée un évènement personnalisé dans GA4.
+custom dimension§Attribut supplémentaire créé pour enrichir l'analyse (ex. type de contenu).§We added a custom dimension.§Nous avons ajouté une dimension personnalisée.
+metric§Valeur chiffrée qu'on mesure (sessions, taux) ; ≠ dimension (attribut qualitatif).§Choose the right metric.§Choisis le bon indicateur.
+KPI§Key Performance Indicator : indicateur lié à un objectif. Pluriel : KPIs.§Our KPIs are updated monthly.§Nos KPI sont mis à jour chaque mois.
+dashboard§Écran qui regroupe les indicateurs principaux. Verbe : n'existe pas ; on dit « build a dashboard ».§The dashboard shows sales.§Le tableau de bord montre les ventes.
+report§Document ou rapport de données ; verbe : to report. En GA4 : « Reports ».§Send me the monthly report.§Envoie-moi le rapport mensuel.
+data source§Origine des données (GA4, CRM, fichier) ; pluriel : data sources. « Data » reste singulier ou pluriel.§Connect a new data source.§Connecte une nouvelle source de données.
+data layer§Objet JavaScript qui transmet les données de la page à GTM ; écrit « dataLayer » dans le code.§Push the event to the data layer.§Envoie l'évènement dans la couche de données.
+segment§Groupe d'utilisateurs défini par un critère ; verbe : to segment.§Create a mobile segment.§Crée un segment mobile.
+cohort§Groupe d'utilisateurs partageant une caractéristique (date d'inscription). Analyse de cohorte.§Look at the January cohort.§Regarde la cohorte de janvier.
+A/B test§Comparer deux versions pour voir laquelle performe mieux ; prononcer « A-B ».§We ran an A/B test on the button.§Nous avons fait un test A/B sur le bouton.
+to track§Suivre l'évolution d'une donnée ou d'un colis ; « to measure » est plus technique.§We track every click.§Nous suivons chaque clic.
+to filter out§Retirer certaines données d'une analyse (trafic interne, robots).§Filter out internal traffic.§Exclus le trafic interne.
+sampling§Analyse sur une partie des données quand il y en a trop ; peut fausser les chiffres.§Sampling affects accuracy.§L'échantillonnage affecte la précision.
+real-time report§Rapport actualisé en continu (dernières 30 minutes dans GA4).§Check the real-time report.§Consulte le rapport en temps réel.
+organic search§Résultats non payants des moteurs de recherche (SEO) ; ≠ paid search.§Organic search drives most visits.§La recherche naturelle génère la plupart des visites.
+paid search§Annonces payantes sur les moteurs (Google Ads / SEA).§Paid search brought many leads.§La recherche payante a apporté beaucoup de leads.
+keyword§Mot ou expression tapés dans un moteur ; en SEO on cible des « keywords ».§Choose the right keywords.§Choisis les bons mots-clés.
+search engine ranking§Position d'une page dans les résultats ; « rank » = être classé.§Our ranking improved.§Notre classement s'est amélioré.
+backlink§Lien d'un autre site vers le vôtre ; important pour le référencement.§Backlinks boost authority.§Les liens entrants renforcent l'autorité.
+meta description§Court texte sous le titre dans les résultats Google (~155 caractères).§Write a clear meta description.§Écris une méta-description claire.
+crawl§Exploration d'un site par un robot ; verbe aussi « to crawl ». Googlebot « crawls » les pages.§Googlebot crawls the site daily.§Googlebot explore le site tous les jours.
+sitemap§Fichier listant les pages d'un site pour aider les robots à les trouver.§Submit the sitemap in Search Console.§Soumets le sitemap dans la Search Console.
+bounce§Rebondir (balle) ou quitter vite un site ; un e-mail « bounces » = n'est pas délivré.§Many emails bounced.§Beaucoup d'e-mails ont rebondi.
+newsletter§Courrier d'information régulier ; un seul mot en anglais comme en français (accent sur « news »).§We send a weekly newsletter.§Nous envoyons une newsletter hebdomadaire.
+open rate§Part des destinataires qui ouvrent l'e-mail ; limité par la protection de la vie privée (Apple Mail).§The open rate is 28 %.§Le taux d'ouverture est de 28 %.
+unsubscribe§Se désabonner : lien obligatoire dans une newsletter. Contraire : subscribe.§Click to unsubscribe.§Cliquez pour vous désabonner.
+mailing list§Liste de contacts qui reçoivent un e-mail ; « email list » aussi.§Join our mailing list.§Rejoignez notre liste de diffusion.
+email deliverability§Capacité d'un e-mail à atteindre la boîte de réception (et non le spam).§Check your email deliverability.§Vérifie la délivrabilité de tes e-mails.
+campaign§Ensemble d'actions marketing coordonnées ; « run a campaign » = mener une campagne.§We launched a campaign.§Nous avons lancé une campagne.
+ad spend§Budget dépensé en publicité ; indénombrable.§Ad spend rose by 15 %.§Les dépenses publicitaires ont augmenté de 15 %.
+return on investment§ROI = bénéfice ÷ coût ; « ROI » se prononce lettre par lettre.§The ROI was 3:1.§Le ROI était de 3 pour 1.
+cost per click§CPC : prix payé pour chaque clic sur une annonce.§Cost per click dropped.§Le coût par clic a baissé.</script>
 <script>
 "use strict";
 
@@ -6947,6 +7216,42 @@ openExercise=function(m,k){
     })();
   };
 })();
+
+/* ----- « Pourquoi ce mot ? » après chaque réponse du vocabulaire ----- */
+let WHY=null;
+function whyLoad(){
+  if(WHY)return WHY;WHY=new Map();
+  try{($("whyData").textContent||"").split("\n").forEach(l=>{const a=l.split("§");if(a.length>=4)WHY.set(a[0].toLowerCase().trim(),{note:a[1],ex:a[2],fr:a[3]})})}catch(e){}
+  return WHY;
+}
+function whyGet(en){const m=whyLoad(),k=String(en).toLowerCase().trim();return m.get(k)||m.get(k.startsWith("to ")?k.slice(3):"to "+k)||null}
+function whyClear(){const b=$("whyBox");if(b)b.remove()}
+function whyShow(){
+  whyClear();
+  if(!["quiz","quizReverse","quizMix"].includes(mode)||!current||!current.vocab)return;
+  const en=current.vocab[0],fr=current.vocab[1],n=whyGet(en);
+  const box=document.createElement("div");box.id="whyBox";
+  const others=[...$("options").children].map(x=>x.textContent).filter(t=>norm(t)!==norm(current.answer));
+  const lis=others.map(t=>{
+    const e=trLookup(t);if(!e)return "";
+    const w=whyGet(e.en),first=w?w.note.split(/(?<=[.!?])\s/)[0]:"";
+    return `<li><b>${escapeHtml(e.en)}</b> = ${escapeHtml(e.fr)}${first?" — "+escapeHtml(first):""}</li>`;
+  }).filter(Boolean).join("");
+  box.innerHTML=`<h4>Pourquoi « ${escapeHtml(en)} » ?</h4><p><b>${escapeHtml(en)}</b> = ${escapeHtml(fr)}</p>`
+    +(n?`<p>${escapeHtml(n.note)}</p><div class="whyEx" data-say="${escapeHtml(n.ex)}">${escapeHtml(n.ex)}<i>${escapeHtml(n.fr)}</i></div>`:"")
+    +(lis?`<p style="margin-top:10px"><b>À ne pas confondre avec :</b></p><ul class="whyOthers">${lis}</ul>`:"");
+  box.addEventListener("click",e=>{const x=e.target.closest("[data-say]");if(x){try{speak(x.dataset.say)}catch(z){}}});
+  $("options").insertAdjacentElement("afterend",box);
+}
+const __checkOptionWhy=checkOption;
+checkOption=function(){
+  const first=!$("options").classList.contains("answered");
+  const r=__checkOptionWhy.apply(this,arguments);
+  try{if(first)whyShow()}catch(e){console.error(e)}
+  return r;
+};
+const __nqWhy=newQuestion;
+newQuestion=function(){try{whyClear()}catch(e){}return __nqWhy.apply(this,arguments)};
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
