@@ -4428,7 +4428,7 @@ function tagPages(){
   const root=$("view-train"),H=e=>((e.querySelector("h2,h3,b")||{}).textContent||"").trim();
   pageTags=[...root.children].map(el=>{
     let pg="home";
-    if(el.id==="packsPanel")pg="none";
+    if(el.id==="packsPanel"||el.id==="planPanel")pg="none";
     
     else if(el.classList.contains("goalPanel"))pg="all";
     else if(["modeHelp","lessonPanel","exerciseCard"].includes(el.id)||el.classList.contains("toolbar"))pg="zone";
