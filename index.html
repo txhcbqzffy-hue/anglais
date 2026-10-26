@@ -5311,7 +5311,7 @@ function renderPageBar(){
     }
     h+=groups.map(([t,ms])=>`<div class="blkHead">${escapeHtml(t)}</div><div class="blkGrid">${ms.filter(m=>info[m]).map(m=>`<button type="button" class="blk" data-blk="${m}"><b>${escapeHtml(info[m][1])}</b><small>${escapeHtml(info[m][2]||"")}</small></button>`).join("")}</div>`).join("");
     host.innerHTML=h;
-    if(p==="vocab")host.insertBefore(avEl(),host.firstChild);
+//    if(p==="vocab")host.insertBefore(avEl(),host.firstChild);
     host.querySelectorAll("[data-blk]").forEach(b=>b.onclick=()=>openExercise(b.dataset.blk==="game"?GAME_MODES[Math.floor(Math.random()*GAME_MODES.length)]:b.dataset.blk));
     const t=$("pbTheme");
     if(t)t.onchange=()=>{state.packFocus=t.value||null;saveState();barSig=""};
