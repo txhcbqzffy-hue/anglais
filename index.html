@@ -1165,7 +1165,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v44</span></h1>
+        <h1>English Trainer<span class="ver">v45</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -8372,7 +8372,7 @@ const __checkOptionWhy=checkOption;
 checkOption=function(){
   const first=!$("options").classList.contains("answered");
   const r=__checkOptionWhy.apply(this,arguments);
-  try{if(first){whyShow();if(["quiz","quizReverse","quizMix"].includes(mode)){const f=$("feedback");if(f&&/^❌/.test(f.textContent))f.textContent="❌ Incorrect"}}}catch(e){console.error(e)}
+  try{if(first){whyShow();if(["quiz","quizReverse","quizMix"].includes(mode)){const f=$("feedback");if(f){f.textContent="";f.className="feedback"}}}}catch(e){console.error(e)}
   return r;
 };
 const __nqWhy=newQuestion;
