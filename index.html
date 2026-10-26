@@ -4520,7 +4520,7 @@ function T(){
 const esc=s=>escapeHtml(String(s??""));
 function safeUrl(u){return /^https?:\/\//i.test(u||"")?u:""}
 function fmtDur(ms){if(!ms)return"";const m=Math.round(ms/60000);return m>=1?m+" min":""}
-function fmtDate(d){try{return new Date(d).toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"})}catch(e){return""}}
+function fmtDate(d){try{return new Date(d).toLocaleDateString("en-US",{day:"numeric",month:"short",year:"numeric"})}catch(e){return""}}
 function fmtClock(s){s=Math.max(0,Math.floor(s||0));const m=Math.floor(s/60),r=s%60;return m+":"+String(r).padStart(2,"0")}
 
 /* ---------- thème ---------- */
@@ -5750,7 +5750,7 @@ function startWordOrder(words){
    v33 : calendrier de la semaine, journal par jour, progression des mots
    ===================================================================== */
 const JD=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-const JDAYS=["LUN","MAR","MER","JEU","VEN","SAM","DIM"];
+const JDAYS=["MON","TUE","WED","THU","FRI","SAT","SUN"];
 let jSel=JD(new Date()),jSig="",jOpenList="",jFocusNext=false,jMore=false;
 function jDay(k,create){
   if(!state.log)state.log={};
@@ -5823,7 +5823,7 @@ function jRender(force){
       cells+=`<button type="button" class="wd${on?" on":""}${k===todayK?" today":""}${k===jSel?" sel":""}${fut?" fut":""}" data-d="${k}" ${fut?"disabled":""}><small>${JDAYS[i]}</small><b>${d.getDate()}</b><i class="flame"></i></button>`;
     }
     const e=new Date(m);e.setDate(e.getDate()+6);
-    const f=x=>x.toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
+    const f=x=>x.toLocaleDateString("en-US",{day:"numeric",month:"short"});
     weeks+=`<div class="wk" data-t="${w===0?"Cette semaine":f(m)+" – "+f(e)}">${cells}</div>`;
   }
   const st=jStreak();
@@ -5839,7 +5839,7 @@ function jRender(force){
 function jDetail(){
   const box=$("dayDetail");if(!box)return;
   const d=jDay(jSel),dt=new Date(jSel+"T12:00:00");
-  const title=(jSel===JD(new Date())?"Aujourd’hui · ":"")+dt.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+  const title=(jSel===JD(new Date())?"Today · ":"")+dt.toLocaleDateString("en-US",{weekday:"long",day:"numeric",month:"long"});
   const GOAL=20,sec=d?d.sec:0,pct=Math.min(100,Math.round(sec/60/GOAL*100));
   const gauge=`<div class="gauge"><div class="gaugeTop"><span>Temps passé</span><b>${Math.floor(sec/60)} min <small>/ ${GOAL}</small></b></div><div class="gaugeBar"><i style="width:${pct}%"></i></div></div>`;
   const wl=jWordLists();
@@ -5893,7 +5893,7 @@ function lvlTrack(){
 }
 function lvlRender(){
   const lv=estimatedLevel(),cur=currentCEFR(),p=cefrLevelProgress(cur),missing=p.rows.filter(x=>!x.validated);
-  const hist=(state.lvlHist||[]).slice(-6).reverse().map(h=>`<div class="dRow"><span>${new Date(h.d+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long"})}</span><b>${h.l}</b></div>`).join("");
+  const hist=(state.lvlHist||[]).slice(-6).reverse().map(h=>`<div class="dRow"><span>${new Date(h.d+"T12:00:00").toLocaleDateString("en-US",{day:"numeric",month:"long"})}</span><b>${h.l}</b></div>`).join("");
   $("lvlTop").innerHTML=`<div class="lvlScale">${LVLS.map(l=>`<div class="lvlStep${l===lv?" cur":""}${LVLS.indexOf(l)<LVLS.indexOf(lv)?" past":""}"><b>${l}</b>${l==="C1"?"<small>objectif</small>":""}</div>`).join("")}</div>
     <div class="small" style="margin:8px 2px">Niveau estimé d’après ta précision : <b>${lv}</b>. Parcours validé : <b>${cur}</b>${p.complete?" (complet)":""}.</div>
     ${missing.length?`<h3 class="lvlH">Il te manque pour valider ${cur}</h3><div class="dRows">${missing.map(x=>`<div class="dRow"><span>${escapeHtml(x.label)}</span><b>à faire</b></div>`).join("")}</div>`:""}
@@ -6332,6 +6332,175 @@ function roundResult(){
   try{state.resume=null;saveState()}catch(e){}
   try{const dd=jDay(JD(new Date()),true);saveState()}catch(e){}
 }
+/* ----- Interface en anglais (les "Explications" restent en français) ----- */
+const I18N_DICT={
+"Niveau":"Level","Écriture":"Writing","Écrire":"Write","Vidéos":"Videos","Écouter":"Listen","Oral":"Speaking","Podcasts":"Podcasts",
+"Français → Anglais":"French → English","Anglais → Français":"English → French","Texte en français":"French text","Ta traduction en anglais":"Your English translation",
+"Corriger et comparer":"Check and compare","Écouter ma version":"Listen to my version","Cette semaine":"This week","Aucune série en cours":"No streak yet",
+"Temps passé":"Time spent","Mots en cours":"Words in progress","Mots appris":"Words learned","Rien de fait ce jour-là.":"Nothing done that day.",
+"Séance du jour":"Daily session","Profil d’erreurs":"Error profile","Progression":"Progress","Aucune erreur pour l’instant.":"No errors yet.","Aucune erreur enregistrée.":"No errors recorded.",
+"Pas encore de réponse":"No answer yet","Réviser":"Review","Révision":"Review","Révision espacée":"Spaced review","Mes erreurs":"My mistakes","Mes favoris":"My favorites","Favoris":"Favorites",
+"Aucune erreur enregistrée":"No mistakes recorded","Aucun favori":"No favorites","Verbes irréguliers":"Irregular verbs","Test de niveau":"Level test",
+"Tester mon niveau":"Test my level","Vocabulaire":"Vocabulary","Grammaire":"Grammar","Écoute":"Listening","Temps":"Tenses","Prépositions":"Prepositions","Définitions":"Definitions","Phrases à trous":"Fill in the blanks",
+"Quiz":"Quiz","Jeux":"Games","Phrasal verbs":"Phrasal verbs","Faux amis":"False friends","Retour":"Back","‹ Retour":"‹ Back","Commencer":"Start","Reprendre":"Resume","Réduire":"Minimize","Fermer":"Close",
+"Valider":"Submit","Vérifier":"Check","Suivant":"Next","Question suivante →":"Next question →","Voir la réponse / traduction":"Show answer / translation","Rejouer":"Play again","Détail":"Details",
+"Thème":"Theme","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
+"Questions et négations":"Questions & negatives","Questions & négations":"Questions & negatives","Ordre des mots":"Word order","Choisir le bon temps":"Choose the right tense","Construire une phrase":"Build a sentence","Transformer une phrase":"Transform a sentence",
+"Transformer":"Transform","Trouver l’erreur":"Find the mistake","Articles":"Articles","Modaux":"Modals","Comparatifs":"Comparatives","3e personne":"3rd person","Irréguliers":"Irregulars","Verbes en -ED":"-ED verbs",
+"Prépositions : in / on / at":"Prepositions: in / on / at","Comparatifs & superlatifs":"Comparatives & superlatives","Connecteurs":"Connectors","Collocations":"Collocations",
+"Past régulier : orthographe -ed":"Regular past: -ed spelling","Irréguliers : past simple":"Irregulars: past simple","Irréguliers : participe passé":"Irregulars: past participle","Irréguliers : mix":"Irregulars: mix",
+"QCM vocabulaire · EN → FR":"Vocabulary quiz · EN → FR","QCM vocabulaire · FR → EN":"Vocabulary quiz · FR → EN","QCM vocabulaire · Mix EN ↔ FR":"Vocabulary quiz · Mixed EN ↔ FR","QCM anglais → français":"Quiz English → French",
+"Écriture EN → FR":"Writing EN → FR","Écriture FR → EN":"Writing FR → EN","Écoute → écrire":"Listen → write","Dictée de phrases":"Sentence dictation","Dictée":"Dictation",
+"Dialogues audio & compréhension":"Audio dialogues","Dialogues audio":"Audio dialogues","Lecture & compréhension":"Reading comprehension","Traduction de texte EN → FR":"Text translation EN → FR",
+"Prononciation de mots":"Word pronunciation","Prononciation":"Pronunciation","Laboratoire des sons":"Sound lab","Accent tonique des mots":"Word stress","Accent tonique":"Word stress","Rythme & accent de phrase":"Sentence rhythm & stress","Rythme de phrase":"Sentence rhythm",
+"Mini-rédaction":"Short writing","Conversation simulée":"Simulated conversation","Diagnostic de niveau":"Level diagnostic","Mode examen":"Exam mode","Shadowing":"Shadowing",
+"Jeu · Paires":"Game · Pairs","Jeu · Lettres mélangées":"Game · Scrambled letters","Jeu · Vrai ou faux":"Game · True or false","Jeu · Lettres manquantes":"Game · Missing letters",
+"-ED : écoute et son":"-ED: listen and sound","-ED : écoute et écris":"-ED: listen and write","-ED · Écoute et choisis le son":"-ED · Listen and pick the sound","-ED · Écoute et écris":"-ED · Listen and write","-ED · Orthographe du past":"-ED · Past spelling","-ED : prononciation":"-ED: pronunciation","-ED : orthographe":"-ED: spelling","-S/-ES : prononciation":"-S/-ES: pronunciation",
+"Mélange anglais et français":"Mix of English and French","Quiz de mots":"Word quiz","Choisis la définition qui correspond au mot":"Pick the definition that matches the word","Tu vois l’anglais et choisis le français":"You see English, pick French","Tu vois le français et choisis l’anglais":"You see French, pick English",
+"Écrire la traduction française":"Write the French translation","Retrouver le mot anglais":"Recall the English word","Relie chaque mot anglais à sa traduction.":"Match each English word with its translation.","Remets les lettres dans l’ordre pour former le mot.":"Put the letters in order to form the word.",
+"10 cartes : la traduction est-elle juste ?":"10 cards: is the translation right?","Complète les lettres qui manquent.":"Fill in the missing letters.","Compléter une phrase en contexte":"Complete a sentence in context",
+"Pour parler du passé et du présent au travail":"To talk about past and present at work","Relier ses idées à l’écrit et à l’oral":"Link your ideas in writing and speech","Temps et verbes":"Tenses and verbs","Créer une phrase avec un temps imposé":"Build a sentence with a given tense","Passer d’un temps à un autre":"Switch from one tense to another","Past simple + participe passé":"Past simple + past participle",
+"Structure de la phrase":"Sentence structure","do / does / did, auxiliaires, négation":"do / does / did, auxiliaries, negation","Construire une phrase dans l’ordre naturel":"Build a sentence in natural order","Repérer puis corriger une faute":"Spot then fix a mistake","Petits mots":"Small words","Entends le verbe, choisis /t/ /d/ /ɪd/":"Hear the verb, pick /t/ /d/ /ɪd/","Past régulier -ED":"Regular past -ED","Entends le verbe, écris-le":"Hear the verb, write it",
+"Podcasts et vidéos":"Podcasts and videos","Écoute réelle : podcasts et vidéos YouTube sous-titrées":"Real listening: podcasts and subtitled YouTube videos","Accent et vitesse réglables + questions":"Adjustable accent and speed + questions","Écouter puis écrire la phrase entière":"Listen then write the whole sentence","Écoute de mots":"Word listening","Écouter puis écrire un mot/expression":"Listen then write a word/phrase","Répéter des mots et expressions":"Repeat words and phrases","Trouver la syllabe accentuée":"Find the stressed syllable","Travailler les mots forts":"Practise the strong words","Écouter puis répéter immédiatement":"Listen then repeat right away","Entretien, réunion, voyage, networking":"Interview, meeting, travel, networking",
+"Écoute une phrase complète puis écris-la. Excellent pour l’oreille et l’orthographe.":"Listen to a full sentence then write it. Great for your ear and spelling.","Écoute la phrase puis écris-la exactement.":"Listen to the sentence then write it exactly.","Chercher un podcast":"Search a podcast","Chercher":"Search","Écris toute la phrase en anglais":"Write the whole sentence in English","Écoute réelle":"Real listening",
+"Exercice":"Exercise","Écriture & lecture":"Writing & reading","Traduire, corriger avec LanguageTool et comparer":"Translate, check with LanguageTool and compare","Écrire un court texte guidé":"Write a short guided text","Lire un texte et restituer son sens":"Read a text and restate its meaning","Traduire le texte et cliquer sur les mots inconnus":"Translate the text and tap unknown words",
+"Écris ou colle ton texte ici…":"Write or paste your text here…","Ta traduction…":"Your translation…","Ta réponse":"Your answer","Écris ta phrase en anglais...":"Write your sentence in English...","Écris ta réponse en anglais...":"Write your answer in English...","Écris ici ta traduction française...":"Write your French translation here...","Ce que j’ai compris...":"What I understood...",
+"Envoyé à LanguageTool et MyMemory au clic.":"Sent to LanguageTool and MyMemory on click.","Tes dernières traductions apparaîtront ici (20 maximum).":"Your latest translations will appear here (20 max).",
+"Maîtrise des mots et règles":"Mastery of words and rules","Maîtrise des mots & règles":"Mastery of words & rules","Maîtrisés":"Mastered","À travailler":"To work on","Mots":"Words","Règles":"Rules","Aucun mot personnel pour le moment.":"No personal words yet.","Tout écouter":"Listen to all",
+"Paramètres":"Settings","Voix et micro":"Voice and microphone","Tester la voix":"Test voice","Tester le micro":"Test microphone","Signaler un problème":"Report a problem","Contenu faux ou bizarre":"Wrong or odd content","Idée ou amélioration":"Idea or improvement","Détail : que s’est-il passé ?":"Details: what happened?","Envoyer sur GitHub":"Send to GitHub",
+"Exporter la sauvegarde":"Export backup","Importer une sauvegarde":"Import backup","Exporter mes erreurs CSV":"Export my mistakes (CSV)","Réinitialiser":"Reset","Effacer ma progression":"Erase my progress","Mon niveau":"My level","Faire le test de niveau (20 questions)":"Take the level test (20 questions)",
+"Écoute le modèle puis lis le mot ou la phrase à voix haute.":"Listen to the model then read the word or sentence aloud.","Anglais américain":"American English","▶ Écouter":"▶ Listen","Afficher le script après réponse":"Show script after answering","Mots reconnus":"Recognized words","Écouter le modèle":"Listen to the model","Écouter le texte":"Listen to the text",
+"Analyser ma rédaction":"Analyze my writing","Vérifier ma traduction":"Check my translation","Voir la traduction modèle":"Show model translation","Voir une traduction modèle":"Show a model translation","Mini-leçon":"Mini lesson","Question 1":"Question 1",
+"Remets les mots dans le bon ordre.":"Put the words in the right order.","Touche les mots dans l’ordre":"Tap the words in order","Remets les éléments dans l’ordre naturel anglais.":"Put the elements in natural English order.",
+"Choisis la forme correcte.":"Choose the correct form.","Écris la phrase complète":"Write the full sentence","Corrige cette phrase.":"Correct this sentence.","Transforme en question.":"Turn it into a question.","Transforme à la forme négative.":"Make it negative.","Phrase transformée":"Transformed sentence",
+"Réponse en français":"Answer in French","Réponse en anglais":"Answer in English","Mot ou expression en anglais":"English word or phrase","Écoute puis écris ce que tu entends.":"Listen then write what you hear.","Écoute le dialogue puis réponds.":"Listen to the dialogue then answer.",
+"Complète avec la forme correcte :":"Complete with the correct form:","Choisis la syllabe la plus accentuée.":"Pick the most stressed syllable.","Mot cible :":"Target word:","Choisis le son final de -s/-es.":"Pick the final sound of -s/-es.","Écoute le verbe : quel est le son final de -ed ?":"Listen to the verb: what is the final sound of -ed?",
+"Le mot est caché. Réécoute autant que tu veux avec le bouton audio.":"The word is hidden. Replay as often as you like with the audio button.","Écoute le verbe au past simple, puis écris-le.":"Listen to the past simple verb, then write it.","Réécoute avec le bouton audio.":"Replay with the audio button.",
+"Quelle définition correspond le mieux ?":"Which definition fits best?","Un mot anglais, quatre définitions : choisis celle qui correspond le mieux.":"One English word, four definitions: pick the best match.","Relie chaque mot à sa traduction":"Match each word with its translation","Remets les lettres dans l’ordre":"Put the letters in order","Complète le mot":"Complete the word","Le mot en entier":"The whole word",
+"Tu entends un verbe au past simple : choisis le son final /t/, /d/ ou /ɪd/.":"You hear a past simple verb: choose the final sound /t/, /d/ or /ɪd/.","Tu entends un verbe au past simple : écris-le.":"You hear a past simple verb: write it.","Écrire un verbe en -ED":"Write an -ED verb",
+"Revoir ce qui est dû aujourd’hui":"Review what is due today","Retravailler ce que tu as raté":"Rework what you missed","Réviser les mots enregistrés":"Review saved words","Aucune révision due.":"No review due.","Aucun favori.":"No favorites.","Appuie sur ☆ à côté d’un mot pour l’ajouter.":"Tap ☆ next to a word to add it.",
+"Les mots reviennent automatiquement : 10 min → 1 jour → 3 jours → 7 jours.":"Words come back automatically: 10 min → 1 day → 3 days → 7 days.","Traduction française":"French translation","20 questions. Pas d’indice. Résultat indicatif avec points faibles.":"20 questions. No hints. Indicative result with weak points.",
+"Réunion de travail":"Work meeting","Tu participes à une réunion et tu dois donner ton avis.":"You are in a meeting and have to give your opinion.","Comparer deux façons de travailler":"Compare two ways of working",
+"Écris ton avis en 5 à 7 phrases sur le mode de vie des digital nomads.":"Write your opinion in 5 to 7 sentences about the digital nomad lifestyle.","Donne un avantage et un inconvénient.":"Give one advantage and one disadvantage.",
+"Compare le travail au bureau et le travail à distance en 6 phrases.":"Compare working in the office and remotely in 6 sentences.","Donne un avantage à chaque option.":"Give one advantage for each option.","Lis le texte et restitue son sens.":"Read the text and restate its meaning.","Traduis le texte anglais en français.":"Translate the English text into French.",
+"Écris en français ce que tu as compris. Pas besoin de traduire mot à mot : restitue le sens.":"Write in French what you understood. No need to translate word for word: give the meaning.",
+"Les longues vidéos (30 min à 1 h) se regardent par morceaux de 10 minutes. Connexion nécessaire.":"Long videos (30 min to 1 h) are best watched in 10-minute chunks. Internet needed.","Voix en-US non trouvée : le navigateur utilisera sa meilleure voix anglaise disponible.":"en-US voice not found: the browser will use its best available English voice.",
+"Écouter une conversation, puis répondre aux questions":"Listen to a conversation, then answer questions","Écouter puis écrire un mot ou une expression":"Listen then write a word or phrase","Répéter des mots et des expressions":"Repeat words and phrases","Entretien, réunion, voyage":"Interview, meeting, travel","Rythme et accent de phrase":"Sentence rhythm and stress",
+"Pas besoin de traduire mot à mot":"No need to translate word for word","Pour aujourd’hui · Voyage":"For today · Travel","Échange":"Exchange","Jeux de guerre":"War games","Idées & société":"Ideas & society","Hors-ligne":"Offline",
+"Stratégie marketing":"Marketing strategy","Gestion de projet & agilité":"Project management & agile","Travail & carrière":"Work & career","Réunions & projets":"Meetings & projects","Présentations & prise de parole":"Presentations & public speaking","Négociation & relation client":"Negotiation & customer relations","Économie & entreprise":"Economy & business","Idées & argumentation":"Ideas & argument","Adjectifs précis (B2-C1)":"Precise adjectives (B2-C1)","Études & formation":"Studies & training","Santé & corps":"Health & body","Technologie & numérique":"Technology & digital","Achats & vêtements":"Shopping & clothes","Émotions & caractère":"Emotions & character","Temps & fréquence":"Time & frequency","Médias & actualité":"Media & news","Expressions du bureau":"Office expressions","Assurance & protection sociale":"Insurance & social protection",
+"Précision":"Accuracy","Série":"Streak","Niveau estimé":"Estimated level","Parcours adaptatif du jour":"Today’s adaptive path","▶ Commencer 10 questions":"▶ Start 10 questions","■ Arrêter la séance":"■ Stop session","Focus conseillé :":"Suggested focus:","Lancer le focus":"Start focus","Évaluation courte avec note /20":"Short test scored out of 20",
+"Sections de l’application":"App sections","Fiches de référence":"Reference sheets","Temps essentiels":"Essential tenses","Règles essentielles : articles, prépositions, modaux, comparatifs...":"Essential rules: articles, prepositions, modals, comparatives...","Verbes irréguliers · 100 verbes":"Irregular verbs · 100 verbs","3 formes différentes":"3 different forms","Participe passé":"Past participle","Français":"French",
+"Règle de prononciation de -ED":"-ED pronunciation rule","Orthographe du past simple régulier":"Regular past simple spelling","Consonne finale doublée":"Doubled final consonant","contrôles essentiels réussis":"essential checks passed","Ajouter ton vocabulaire":"Add your vocabulary","Verbes en -ED · écouter":"-ED verbs · listen","Écoute et choisis le son":"Listen and pick the sound","Écoute et écris":"Listen and write",
+"Après un son non voisé":"After a voiceless sound","Après une voyelle ou un son voisé":"After a vowel or voiced sound","Après /t/ ou /d/ : une syllabe de plus":"After /t/ or /d/: one more syllable",
+"se déconnecter":"sign out","Mots travaillés":"Words practised","révisions dues":"reviews due","Tu peux réécouter avec":"You can replay with",
+"Mois":"Month","Aujourd’hui":"Today","Répondre":"Answer","Parler":"Speak","Arrêter":"Stop","Effacer":"Clear","Copier":"Copy","Envoyer":"Send","Annuler":"Cancel","Enregistrer":"Save","Oui":"Yes","Non":"No",
+"Écoute d’abord le sens global, puis les groupes de mots. Réécoute pour les terminaisons et les petits mots.":"Listen first for the overall meaning, then the word groups. Replay for endings and small words.",
+"Aucune révision due pour le moment.":"No review due right now.","Rien de dû pour le moment":"Nothing due right now","Révision rapide des formes":"Quick review of the forms","20 questions, A1 à B2":"20 questions, A1 to B2","20 questions pour repérer tes forces/faiblesses":"20 questions to spot your strengths/weaknesses","Tous les thèmes mélangés":"All themes mixed","Mots par métier et par sujet":"Words by job and subject","Vocabulaire par thème":"Vocabulary by theme","Révisions + 10 mots":"Reviews + 10 words","Réviser et tester":"Review and test",
+"Comprendre et produire des échanges très simples sur soi, les besoins courants et les routines.":"Understand and produce very simple exchanges about yourself, everyday needs and routines.",
+"Gérer des tâches habituelles, parler du passé et comprendre des échanges courts sur des sujets familiers.":"Handle routine tasks, talk about the past and understand short exchanges on familiar topics.",
+"Comprendre des contenus plus complexes, argumenter et interagir avec davantage d’aisance et de précision.":"Understand more complex content, argue a point and interact with more ease and accuracy.",
+
+"Transforme des phrases pour automatiser do/does/did, les auxiliaires et la négation.":"Transform sentences to automate do/does/did, auxiliaries and negation.",
+"QCM anglais → français : reconnais le sens du mot ou de l’expression.":"Quiz English → French: recognize the meaning of the word or phrase.",
+"QCM français → anglais : pars du sens français et retrouve le mot ou l’expression anglaise.":"Quiz French → English: start from the French meaning and find the English word or phrase.",
+"Variante mixte : certaines questions vont de l’anglais vers le français, d’autres du français vers l’anglais.":"Mixed: some questions go from English to French, others from French to English.",
+"Apprends les phrasal verbs en contexte, pas comme une liste isolée.":"Learn phrasal verbs in context, not as an isolated list.",
+"Apprends les associations naturelles : meet a deadline, gain experience, make progress...":"Learn natural word pairs: meet a deadline, gain experience, make progress...",
+"Écoute des dialogues avec vitesse et accent sélectionnables, puis réponds sans lire le script.":"Listen to dialogues with adjustable speed and accent, then answer without reading the script.",
+"Travail ciblé des sons difficiles : TH, H, voyelles courtes/longues, V/W, R et NG.":"Targeted work on hard sounds: TH, H, short/long vowels, V/W, R and NG.",
+"Repère la syllabe accentuée dans des mots fréquents.":"Spot the stressed syllable in common words.",
+"Travaille le rythme anglais et les mots porteurs d’accent dans une phrase.":"Practise English rhythm and the stressed words in a sentence.",
+"Écoute puis répète immédiatement. Le score mesure surtout les mots reconnus, pas la qualité exacte de l’accent.":"Listen then repeat right away. The score mostly measures recognized words, not exact accent quality.",
+"Écris un petit paragraphe. L’app vérifie des objectifs précis et te donne un modèle fiable.":"Write a short paragraph. The app checks specific goals and gives you a reliable model.",
+"Choisis des réponses naturelles dans des situations réelles : travail, voyage, entretien...":"Pick natural answers in real situations: work, travel, interviews...",
+"Diagnostic indicatif A1–B2. Ce n’est pas une certification CECR officielle.":"Indicative A1–B2 diagnostic. This is not an official CEFR certification.",
+"Travaille les pièges fréquents pour les francophones.":"Work on the traps common for French speakers.","Apprends à relier tes idées correctement à l’écrit et à l’oral.":"Learn to link your ideas correctly in writing and speech.",
+"Réponse en français":"Answer in French",
+"Clique sur l’un des 10 éléments pour le travailler directement.":"Tap any of the 10 items to work on it directly.",
+"Present continuous — Parle de ce qui se passe maintenant.":"Present continuous — Talk about what is happening now.","Present simple — Parle d’une habitude.":"Present simple — Talk about a habit.",
+"Contraste ciblé":"Targeted contrast","Mode dédié":"Dedicated mode","Écris 5 à 7 phrases pour expliquer pourquoi l’anglais est utile pour toi.":"Write 5 to 7 sentences explaining why English is useful for you.","Parle d’un objectif futur.":"Mention a future goal.","Donne un exemple concret.":"Give a concrete example.","Tu demandes des informations à la gare.":"You ask for information at the station.",
+"1. Écoute avec 2. Répète immédiatement 3. Appuie sur Parler. Le score vérifie surtout les mots reconnus.":"1. Listen with 2. Repeat right away 3. Tap Speak. The score mostly checks recognized words.",
+"Traduis le texte en français. Si un mot te bloque, clique directement dessus : tu verras sa traduction, un exemple de phrase.":"Translate the text into French. If a word blocks you, tap it: you will see its translation and an example sentence.",
+"Pense à la forme utilisée après have / has / had.":"Think of the form used after have / has / had.","Mets au négatif.":"Make it negative.","🟡 améliorable · 🔴 erreur importante / mauvais temps":"🟡 could be better · 🔴 major mistake / wrong tense","Tu peux réécouter avec . La ponctuation finale n’est pas obligatoire.":"You can replay with the audio button. Final punctuation is optional.","Past continuous — Décris une action en cours interrompue dans le passé.":"Past continuous — Describe an action in progress that was interrupted in the past.","Ce que tu faisais, ce que tu attendais, ce qui s’est passé":"What you were doing, what you expected, what happened","Chercher un podcast":"Search a podcast","-ED : écoute du son":"-ED: listen to the sound","-ED : écoute et écriture":"-ED: listen and write",
+"Niveau estimé d’après ta précision :":"Estimated level from your accuracy:",". Parcours validé :":". Path completed:","à faire":"to do","Articles de base":"Basic articles","Écoute simple":"Simple listening","Questions simples":"Simple questions","Vocabulaire courant":"Everyday vocabulary","Prononciation intelligible":"Intelligible pronunciation","Évolution":"Progress over time",
+"Comprendre l’essentiel d’un anglais standard clair et produire un discours simple et cohérent sur des sujets familiers.":"Understand the main points of clear standard English and produce simple, coherent speech on familiar topics.",
+"Clair":"Light","Sombre":"Dark","Connexion":"Connection","Apparence":"Appearance","Reconnaissance vocale":"Speech recognition","Sauvegarde & export":"Backup & export","Aucun mot pour l’instant.":"No words yet.","Garder ici":"Keep here","Copier":"Copy",
+"English at Work : phrases de réunion":"English at Work: meeting phrases","Meetings · Office English, épisode 2":"Meetings · Office English, episode 2","Voix en-US non trouvée":"en-US voice not found",
+"objectif":"goal","Parcours CECR A1 → B2":"CEFR path A1 → B2","Accueil":"Home","Vocab.":"Vocab","Audio":"Audio","Garder ici":"Keep here","Choix des temps":"Choosing tenses","Grammaire avancée":"Advanced grammar"
+};
+const I18N_RULES=[
+[/^Réviser (.+)$/,(m,t)=>"Review "+I18N(t)],
+[/^Question (\d+)\/(\d+) · en pause$/,(m,a,b)=>`Question ${a}/${b} · paused`],
+[/^(\d+)\/(\d+) · (Révision|Vocabulaire|Grammaire|Écoute)$/,(m,a,b,p)=>`${a}/${b} · ${I18N(p)}`],
+[/^10 questions · niveau (\w+)$/,(m,l)=>`10 questions · level ${l}`],
+[/^(\d+) juste\(s\) sur (\d+)$/,(m,a,b)=>`${a} correct out of ${b}`],
+[/^(\d+) erreur\(s\) sur (\d+)$/,(m,a,b)=>`${a} mistake(s) out of ${b}`],
+[/^(\d+) à retravailler$/,(m,a)=>`${a} to rework`],
+[/^Mots travaillés \((\d+)\)$/,(m,a)=>`Words practised (${a})`],
+[/^(Règle|Mot) · (\d+) essai\(s\)$/,(m,k,a)=>`${k==="Règle"?"Rule":"Word"} · ${a} attempt(s)`],
+[/^(\w+(?: \w+)*) — (\d+)% sur tes exercices enregistrés\.$/,(m,k,p)=>`${I18N(k)} — ${p}% on your recorded exercises.`],
+[/^Ta réponse : (.*)$/,(m,x)=>"Your answer: "+x],
+[/^Attendu : (.*)$/,(m,x)=>"Expected: "+x],
+[/^(\S+ )?Réponse : (.*)$/,(m,e,x)=>(e||"")+"Answer: "+x],
+[/^(\S+ )?Correct( \(.+?\))?( — .*)?$/,(m,e,w,x)=>(e||"")+"Correct"+(w||"")+(x||"")],
+[/^(\d+) jours? d’affilée$/,(m,a)=>`${a} day${a==="1"?"":"s"} in a row`],
+[/^Question (\d+)\/(\d+) · (\d+) bonne\(s\) réponse\(s\) · .*$/,(m,a,b,c)=>`Question ${a}/${b} · ${c} correct`],
+[/^(.+) \((\d+)\)$/,(m,t,n)=>I18N_DICT[t]?`${I18N_DICT[t]} (${n})`:m],
+[/^(.+) · (\d+)$/,(m,t,n)=>I18N_DICT[t]?`${I18N_DICT[t]} · ${n}`:m],
+[/^Résultat : (\d+)\/(\d+) \((\d+) %\)\. (.*)$/,(m,a,b,p,x)=>`Result: ${a}/${b} (${p}%). `+({"Très bien, continue comme ça.":"Very good, keep it up.","Bon travail, les erreurs reviendront en révision.":"Good work, your mistakes will come back in review."}[x]||"Read the explanations (+) then try another series.")],
+[/^Résultat : (\d+)\/(\d+)\./,(m,a,b)=>`Result: ${a}/${b}.`],
+[/^Quel est le mot \/ l’expression en anglais pour (.*) \?$/,(m,x)=>`What is the English word / phrase for ${x}?`],
+[/^(.*) → choisis l’anglais$/,(m,x)=>`${x} → pick the English`],
+[/^(.*) → choisis le français$/,(m,x)=>`${x} → pick the French`],
+[/^Traduis en anglais : (.*)$/,(m,x)=>"Translate into English: "+x],
+[/^Past simple de (.*)$/,(m,x)=>"Past simple of "+x],[/^Participe passé de (.*)$/,(m,x)=>"Past participle of "+x],
+[/^Comment se prononce la terminaison de (.*) \?$/,(m,x)=>`How is the ending of ${x} pronounced?`],
+[/^Traduis le texte en français\. Si un mot te bloque.*$/,()=>"Translate the text into French. If a word blocks you, tap it: you will see its translation and an example sentence."],
+[/^Il te manque pour valider (.+)$/,(m,x)=>"Missing to complete "+x],
+[/^(\w+) · en cours$/,(m,x)=>x+" · in progress"],
+[/^(\d+)\/(\d+) compétences validées$/,(m,a,b)=>`${a}/${b} skills completed`],
+[/^Travailler : (.+)$/,(m,x)=>"Work on: "+I18N(x)],
+[/^Joint automatiquement : (.*)$/,(m,x)=>"Automatically attached: "+x],
+[/^(\d+)\/(\d+) regardées$/,(m,a,b)=>`${a}/${b} watched`],
+[/^(.+) · épisodes (\d+) à (\d+)$/,(m,t,a,b)=>`${t} · episodes ${a} to ${b}`],
+[/^(.+ · .+)$/,(m,x)=>{const p=x.split(" · ").map(q=>I18N_DICT[q]!==undefined?I18N_DICT[q]:q);const r=p.join(" · ");return r}],
+[/^(\d+)\. (.+)$/,(m,n,x)=>n+". "+I18N(x)]
+];
+const I18N_FRAG={"Quel est le mot / l’expression en anglais pour":"What is the English word / phrase for","→ choisis l’anglais":"→ pick the English","→ choisis le français":"→ pick the French",
+"Comment se prononce la terminaison de":"How is the ending pronounced:","Choisis le":"Pick the","son":"sound","de -ed, pas son orthographe.":"of -ed, not its spelling.","de -s/-es.":"of -s/-es.","Donne le":"Give the","participe passé":"past participle",
+"Past simple de":"Past simple of","Participe passé de":"Past participle of","Pense à la forme utilisée après have / has / had.":"Think of the form used after have / has / had.","Mets au négatif.":"Make it negative.","🟡 améliorable · 🔴 erreur importante / mauvais temps":"🟡 could be better · 🔴 major mistake / wrong tense","Tu peux réécouter avec . La ponctuation finale n’est pas obligatoire.":"You can replay with the audio button. Final punctuation is optional.","Past continuous — Décris une action en cours interrompue dans le passé.":"Past continuous — Describe an action in progress that was interrupted in the past.","Ce que tu faisais, ce que tu attendais, ce qui s’est passé":"What you were doing, what you expected, what happened","Tu peux réécouter avec":"You can replay with",". La ponctuation finale n’est pas obligatoire.":". Final punctuation is optional.",
+"Le mot en entier":"The whole word","Phrase transformée":"Transformed sentence","Question 1":"Question 1"};
+function I18NF(t){const k=t.trim();if(I18N_FRAG[k])return t.replace(k,I18N_FRAG[k]);let m;
+  if(m=k.match(/^de (.+)\.$/))return t.replace(k,"of "+m[1]+".");
+  if(m=k.match(/^Français : (.*) · Base : (.*)$/))return t.replace(k,`French: ${m[1]} · Base: ${m[2]}`);
+  return t}
+function I18N(t){
+  if(typeof t!=="string")return t;
+  const k=t.trim();if(!k)return t;
+  if(I18N_DICT[k]!==undefined)return t.replace(k,I18N_DICT[k]);
+  for(const [re,f] of I18N_RULES){const m=k.match(re);if(m){const r=f.apply(null,m);if(r!==k)return t.replace(k,r)}}
+  return t;
+}
+function i18nSkip(n){const e=n.nodeType===1?n:n.parentElement;return !e||e.closest("#expWrap,#lessonPanel,script,style")||(n.nodeType===3&&e.closest("textarea"))}
+function i18nNode(n){
+  if(n.nodeType===3){if(!i18nSkip(n)){let v=I18N(n.nodeValue);if(v===n.nodeValue&&n.parentElement&&n.parentElement.closest("#question,#info,#modeHelp,#feedback,#translationBox"))v=I18NF(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v}return}
+  if(n.nodeType!==1||i18nSkip(n))return;
+  if(n.tagName==="INPUT"||n.tagName==="TEXTAREA"){}
+  for(const a of ["placeholder","title","aria-label"]){const v=n.getAttribute&&n.getAttribute(a);if(v){const t=I18N(v);if(t!==v)n.setAttribute(a,t)}}
+  n.childNodes.forEach(i18nNode);
+}
+(function(){
+  try{
+    // objets de libellés réutilisés par l'app
+    for(const o of [modeNames,modeDescriptions,conceptModeLabels]){if(o)for(const k in o)o[k]=I18N(o[k])}
+    if(typeof goalModeGroups==="object")Object.values(goalModeGroups).forEach(g=>{if(g.modes)g.modes.forEach(x=>{for(let i=1;i<x.length;i++)if(typeof x[i]==="string")x[i]=I18N(x[i])})});
+    if(typeof miniLessons==="object")Object.values(miniLessons).forEach(l=>{l.title=I18N(l.title)});
+  }catch(e){console.error(e)}
+  const mo=new MutationObserver(ms=>{mo.disconnect();try{ms.forEach(m=>{if(m.type==="characterData")i18nNode(m.target);else if(m.type==="attributes")i18nNode(m.target);else m.addedNodes.forEach(i18nNode)})}finally{mo.observe(document.body,cfg)}});
+  const cfg={childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["placeholder","title","aria-label"]};
+  const go=()=>{i18nNode(document.body);mo.observe(document.body,cfg);document.documentElement.lang="en"};
+  let tries=0;const wait=()=>{if((typeof pagesReady!=="undefined"&&pagesReady)||++tries>100)go();else setTimeout(wait,50)};wait();
+})();
 
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
