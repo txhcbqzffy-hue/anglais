@@ -1019,6 +1019,12 @@ body.sessionOn #exerciseCard{overscroll-behavior:contain;-webkit-overflow-scroll
 /* iOS : pas de zoom ni de clavier parasite */
 input,textarea,select{font-size:16px!important}
 .woW,.woBar{-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+/* fond : calque fixe plein écran (fiable sur iOS), dégradé doux */
+body,:root[data-theme="dark"] body{background:transparent!important;background-attachment:scroll!important}
+html{background:var(--bg)!important;min-height:100%}
+html::before{content:"";position:fixed;left:0;right:0;top:0;bottom:0;z-index:-1;pointer-events:none;
+background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.30),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(90,150,255,.18),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(170,120,255,.16),transparent 70%)}
+:root[data-theme="dark"] html::before{background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.16),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(70,120,255,.16),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(150,100,255,.14),transparent 70%)}
 </style>
 </head>
 <body>
