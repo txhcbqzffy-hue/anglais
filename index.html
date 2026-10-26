@@ -911,6 +911,19 @@ header{margin-bottom:2px!important}
 .gaugeTop b{font-size:15px;color:var(--text)}.gaugeTop b small{font-size:12px;color:var(--muted);font-weight:700}
 .gaugeBar{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
 .gaugeBar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#22c55e,var(--accent));transition:width .5s var(--ease)}
+
+/* v36 : pastille de niveau */
+header{justify-content:space-between!important}
+.lvlBadge{display:flex;align-items:baseline;gap:6px;padding:7px 14px;border-radius:99px;border:1px solid var(--glass-line);background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--shadow);color:var(--text)}
+.lvlBadge small{font-size:11px;color:var(--muted);font-weight:700}
+.lvlBadge b{font-size:16px;color:var(--text)}
+.lvlScale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.lvlStep{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 0;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
+.lvlStep b{font-size:17px}.lvlStep small{font-size:9.5px}
+.lvlStep.past{color:var(--text);border-color:#22c55e}
+.lvlStep.cur{background:var(--accent);color:var(--on-accent);border-color:transparent}
+.lvlH{font-size:13px;margin:14px 2px 4px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+#lvlSheet .cefrPanel{margin-top:14px}
 </style>
 </head>
 <body>
@@ -4433,7 +4446,7 @@ function tagPages(){
   const root=$("view-train"),H=e=>((e.querySelector("h2,h3,b")||{}).textContent||"").trim();
   pageTags=[...root.children].map(el=>{
     let pg="home";
-    if(el.id==="packsPanel"||el.id==="planPanel")pg="none";
+    if(el.id==="packsPanel"||el.id==="planPanel"||el.classList.contains("stats"))pg="none";
     
     else if(el.classList.contains("goalPanel"))pg="all";
     else if(["modeHelp","lessonPanel","exerciseCard"].includes(el.id)||el.classList.contains("toolbar"))pg="zone";
@@ -5576,7 +5589,7 @@ function jRecord(correct,item){
     d.n++;if(correct)d.ok++;
     const m=d.modes[mode]||(d.modes[mode]={n:0,ok:0});m.n++;if(correct)m.ok++;
     if(item&&item[0]){const w=d.words[item[0]]||(d.words[item[0]]={c:0,w:0});if(correct)w.c++;else w.w++}
-    saveState();jRender();
+    saveState();jRender();lvlTrack();
   }catch(e){}
 }
 const __jReward=reward,__jPen=penalize;
@@ -5693,6 +5706,39 @@ function initJournal(){
   const first=vt.firstChild;
   vt.insertBefore(w,first);vt.insertBefore(p,first);
   jRender(true);
+  try{initLevel()}catch(e){console.error(e)}
+}
+
+/* ----- niveau estimé : pastille en haut, détail dans une fenêtre ----- */
+const LVLS=["A1","A2","B1","B2","C1"];
+function lvlTrack(){
+  const lv=estimatedLevel();
+  if(!Array.isArray(state.lvlHist))state.lvlHist=[];
+  const last=state.lvlHist[state.lvlHist.length-1];
+  if(!last||last.l!==lv){state.lvlHist.push({d:JD(new Date()),l:lv});if(state.lvlHist.length>30)state.lvlHist.shift();saveState()}
+  const b=$("lvlBtn");if(b)b.innerHTML=`<small>Niveau</small><b>${lv}</b>`;
+}
+function lvlRender(){
+  const lv=estimatedLevel(),cur=currentCEFR(),p=cefrLevelProgress(cur),missing=p.rows.filter(x=>!x.validated);
+  const hist=(state.lvlHist||[]).slice(-6).reverse().map(h=>`<div class="dRow"><span>${new Date(h.d+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long"})}</span><b>${h.l}</b></div>`).join("");
+  $("lvlTop").innerHTML=`<div class="lvlScale">${LVLS.map(l=>`<div class="lvlStep${l===lv?" cur":""}${LVLS.indexOf(l)<LVLS.indexOf(lv)?" past":""}"><b>${l}</b>${l==="C1"?"<small>objectif</small>":""}</div>`).join("")}</div>
+    <div class="small" style="margin:8px 2px">Niveau estimé d’après ta précision : <b>${lv}</b>. Parcours validé : <b>${cur}</b>${p.complete?" (complet)":""}.</div>
+    ${missing.length?`<h3 class="lvlH">Il te manque pour valider ${cur}</h3><div class="dRows">${missing.map(x=>`<div class="dRow"><span>${escapeHtml(x.label)}</span><b>à faire</b></div>`).join("")}</div>`:""}
+    ${hist?`<h3 class="lvlH">Évolution</h3><div class="dRows">${hist}</div>`:""}`;
+}
+function openLevel(){const s=$("lvlSheet");lvlTrack();lvlRender();try{renderCEFR()}catch(e){}s.classList.remove("hidden");document.body.classList.add("sheetOpen");s.scrollTop=0}
+function closeLevel(){const s=$("lvlSheet");if(s)s.classList.add("hidden");document.body.classList.remove("sheetOpen")}
+function initLevel(){
+  const hd=document.querySelector("header");if(!hd||$("lvlBtn"))return;
+  const b=document.createElement("button");b.type="button";b.id="lvlBtn";b.className="lvlBadge";b.setAttribute("aria-label","Niveau estimé");b.onclick=openLevel;
+  hd.insertBefore(b,hd.firstChild);
+  const s=document.createElement("div");s.id="lvlSheet";s.className="sheet hidden";s.setAttribute("role","dialog");
+  s.innerHTML=`<div class="sheetHead"><h2>Mon niveau</h2><button type="button" id="lvlClose" class="ghost">Fermer</button></div><div id="lvlTop"></div><div id="lvlCefr"></div>`;
+  document.body.appendChild(s);
+  const cp=document.querySelector(".cefrPanel");if(cp)$("lvlCefr").appendChild(cp);
+  $("lvlClose").onclick=closeLevel;
+  s.addEventListener("click",e=>{if(e.target.closest("[data-cefr-level]"))closeLevel()},true);
+  lvlTrack();
 }
 
 sanitizeVisualErrors(document);
