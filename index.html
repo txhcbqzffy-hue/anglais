@@ -1112,6 +1112,16 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .cNav{display:flex;justify-content:space-between;gap:10px}
 .cNav button{flex:1;font-size:12.5px;min-height:40px;padding:8px 10px}
 @media(max-width:380px){.cRow{grid-template-columns:1fr}.cRow .fr{border-left:0;padding-left:0}}
+
+/* traduction + favori à côté de chaque choix */
+.option.hasTr{display:flex!important;align-items:center;gap:6px 10px;flex-wrap:wrap}
+.option.hasTr[data-tr]::after{content:attr(data-tr);order:1;font-size:.82em;font-weight:500;color:var(--muted);font-style:italic}
+.option.hasTr.optDone{cursor:default}
+.option.hasTr.good[data-tr]::after,.option.hasTr.bad[data-tr]::after{color:inherit;opacity:.75}
+.optFav{order:2;margin-left:auto;flex:none;width:40px;height:40px;margin-right:-8px;border-radius:50%;display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.optFav::before{content:attr(data-star);font-size:22px;line-height:1;color:var(--muted)}
+.optFav.on::before{color:var(--warn)}
+.optFav:active{background:rgba(var(--accent-rgb),.14)}
 </style>
 </head>
 <body>
@@ -1120,7 +1130,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v31</span></h1>
+        <h1>English Trainer<span class="ver">v32</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -6759,6 +6769,82 @@ function initCours(){
 }
 
 try{initCours()}catch(e){console.error(e)}
+
+/* =====================================================================
+   Choix de réponse : traduction à côté du mot + étoile « favori » sur chaque mot
+   ===================================================================== */
+const EXTRA_TR=[["culture change","changement de culture"],["retainer","provision (honoraires versés d’avance)"],["forecasts","prévisions"],["trade fairs","salons professionnels"],
+["take off","décoller / enlever"],["took off","a décollé / a enlevé"],["look after","s’occuper de"],["looked after","s’est occupé de"],["looking after","s’occupant de"],["give back","rendre"],["set off","partir / déclencher"],["brought up","élevé / évoqué"],["gave away","a donné / a divulgué"],["give away","donner / divulguer"],["ran out","est arrivé à épuisement"],["put on","mettre / enfiler"],["look for","chercher"],["looking for","à la recherche de"],["look up","chercher (une information)"],["looking up","cherchant (une information)"],["looking into","examinant"],["looked into","a examiné"],["break up","rompre"],["broke up","a rompu"],["wake up","se réveiller"],["turned down","a refusé"],["took over","a repris"],["came across","est tombé sur"],["gave up","a abandonné"],["give in","céder"],["take back","reprendre"],["ran into","est tombé sur / a rencontré"],["turned into","s’est transformé en"],["broke down","est tombé en panne"],["found out","a découvert"],["put out","éteindre"],["go off","sonner / exploser"],["go under","faire faillite"]];
+const OPT_TR_MODES=["quiz","quizReverse","quizMix","phrases","phrasal"];
+let __trSig="",__en2fr=new Map(),__fr2en=new Map(),__extraSet=new Set();
+function trMaps(){
+  const sig=baseVocab.length+"|"+PACKS.length+"|"+state.custom.length;
+  if(sig===__trSig)return;
+  __trSig=sig;__en2fr=new Map();__fr2en=new Map();
+  const add=(en,fr)=>{if(!en||!fr)return;const k=String(en).toLowerCase().trim(),f=String(fr).toLowerCase().trim();if(!__en2fr.has(k))__en2fr.set(k,{en:String(en),fr:String(fr)});if(!__fr2en.has(f))__fr2en.set(f,{en:String(en),fr:String(fr)})};
+  baseVocab.forEach(x=>add(x[0],x[1]));
+  PACKS.forEach(p=>p.words.forEach(w=>add(w[0],w[1])));
+  state.custom.forEach(x=>add(x.en,x.fr));
+  __extraSet=new Set();
+  EXTRA_TR.forEach(([en,fr])=>{const k=en.toLowerCase();if(!__en2fr.has(k)){__en2fr.set(k,{en,fr});__extraSet.add(k)}});
+}
+function trLookup(text){
+  trMaps();const k=String(text).toLowerCase().trim();
+  let e=__en2fr.get(k)||__en2fr.get(k.startsWith("to ")?k.slice(3):"to "+k);
+  if(e)return{kind:"en",en:e.en,fr:e.fr};
+  e=__fr2en.get(k);
+  if(e)return{kind:"fr",en:e.en,fr:e.fr};
+  return null;
+}
+function optFavSync(star){star.dataset.star=isFavorite(star.dataset.en)?"★":"☆";star.classList.toggle("on",isFavorite(star.dataset.en))}
+const __makeOptionBase=makeOption;
+makeOption=function(text,correct){
+  __makeOptionBase(text,correct);
+  try{
+    const box=$("options");
+    if(box.children.length===1)box.classList.remove("answered");
+    if(!OPT_TR_MODES.includes(mode))return;
+    const b=box.lastElementChild,e=trLookup(text);if(!b||!e)return;
+    b.classList.add("hasTr");
+    /* la traduction du mot proposé : visible tout de suite quand elle ne donne pas la réponse, sinon après la réponse */
+    const tr=e.kind==="en"?e.fr:e.en;
+    const spoil=e.kind==="fr"||(current&&current.direction==="fr-en");
+    if(spoil)b.dataset.trLater=tr;else b.dataset.tr=tr;
+    const star=document.createElement("span");star.className="optFav";star.setAttribute("role","button");star.setAttribute("aria-label","Ajouter aux favoris : "+e.en);star.dataset.en=e.en;optFavSync(star);
+    Object.defineProperty(b,"textContent",{configurable:true,get(){return text},set(v){Object.defineProperty(b,"textContent",{value:v,writable:true,configurable:true})}});
+    b.appendChild(star);
+  }catch(err){console.error(err)}
+};
+const __checkOptionBase=checkOption;
+checkOption=function(){
+  const r=__checkOptionBase.apply(this,arguments);
+  try{
+    const box=$("options");box.classList.add("answered");
+    [...box.children].forEach(x=>{if(x.dataset&&x.dataset.trLater){x.dataset.tr=x.dataset.trLater}
+      /* les boutons restent touchables après la réponse (pour l’étoile) ; checkOption ignore déjà les nouveaux clics */
+      if(x.querySelector&&x.querySelector(".optFav")){x.disabled=false;x.classList.add("optDone")}});
+  }catch(err){console.error(err)}
+  return r;
+};
+document.addEventListener("click",e=>{
+  const st=e.target.closest&&e.target.closest(".optFav");if(!st)return;
+  e.stopPropagation();e.preventDefault();
+  const w=st.dataset.en;
+  const was=isFavorite(w);
+  state.favorites=was?state.favorites.filter(x=>x!==w):[...state.favorites,w];
+  /* mot absent des listes de l’appli : on l’ajoute au vocabulaire perso pour qu’il apparaisse dans « Mes favoris » */
+  try{
+    const ai=state.custom.findIndex(c=>c.en===w&&c.auto);
+    if(was&&ai>=0){state.custom.splice(ai,1);__trSig=""}
+    else if(!was&&__extraSet.has(w.toLowerCase())){
+      const x=EXTRA_TR.find(q=>q[0].toLowerCase()===w.toLowerCase());
+      if(x){state.custom.push({en:w,fr:x[1],auto:true});__trSig=""}
+    }
+  }catch(e){console.error(e)}
+  saveState();
+  document.querySelectorAll(".optFav").forEach(x=>{if(x.dataset.en===w)optFavSync(x)});
+  try{updateFavButton()}catch(x){}
+},true);
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
