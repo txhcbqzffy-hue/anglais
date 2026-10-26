@@ -4124,7 +4124,7 @@ let pagesReady=false;
 function A(){
   const a=state.audio=state.audio||{};
   a.shows=Array.isArray(a.shows)?a.shows:[];
-  a.pos=a.pos||{};a.seen=a.seen||{};a.vids=a.vids||{};
+  a.pos=a.pos||{};a.seen=a.seen||{};a.vids=a.vids||{};a.vmeta=a.vmeta||{};
   a.speed=a.speed||1;a.seg=(a.seg==="ex"?"ear":a.seg)||"pod";
   return a;
 }
@@ -4290,7 +4290,7 @@ function renderAudioEx(host){
 
 /* ---------- Podcasts (iTunes Search / Lookup) ---------- */
 const pod={q:"",results:null,show:null,eps:null,ep:null};
-const POD_SUGG=["6 Minute English","The English We Speak","TED Talks Daily","All Ears English","Luke’s English Podcast","BBC Learning English"];
+const POD_SUGG=["All Ears English","TED Talks Daily","The Daily","Planet Money","HBR IdeaCast","Freakonomics Radio","How I Built This","Up First"];
 const SPEEDS=[0.75,1,1.25,1.5];
 const epKey=e=>String(e.trackId||e.episodeGuid||e.episodeUrl||"");
 function showFromRes(r){return{id:String(r.collectionId),name:r.collectionName||r.trackName||"Podcast",artist:r.artistName||""}}
@@ -4352,7 +4352,10 @@ function renderPodEp(host){
   ${url?`<audio id="pAudio" class="pAudio" controls preload="metadata" src="${esc(url)}"></audio>`:'<div class="noteBox err">Cet épisode n’a pas de fichier audio lisible.</div>'}
   <div class="pTools"><button class="chip2" id="pBk" type="button">−15 s</button><button class="chip2" id="pFw" type="button">+15 s</button>${SPEEDS.map(s=>`<button class="chip2${s===a.speed?" on":""}" type="button" data-sp="${s}">${String(s).replace(".",",")}×</button>`).join("")}</div>
   <div class="row2" style="margin-top:12px"><button id="pDone" class="ghost" type="button">${a.seen[key]?"Écouté ✓":"Marquer comme écouté"}</button>${page?`<a class="ghost" style="padding:11px 14px;border-radius:12px;text-decoration:none;color:inherit;border:1px solid var(--line)" href="${esc(page)}" target="_blank" rel="noopener">Page de l’épisode</a>`:""}</div>
-  <div class="noteBox">Astuce : écoute 5 à 10 minutes, note 5 expressions, puis ajoute-les dans l’onglet Vidéos (étape « expressions ») ou dans « Mes mots ».</div></section>`;
+  <div class="vStep"><b>Écris ce que tu comprends</b>
+   <textarea id="pwTxt" class="trBox" placeholder="Mets en pause et écris ce que tu viens d’entendre ou le résumé du passage" spellcheck="false"></textarea>
+   <div class="row2" style="margin-top:8px"><button id="pwFix" class="ghost" type="button">Corriger avec LanguageTool</button></div><div id="pwRes"></div></div></section>`;
+  setTimeout(()=>{const f=$("pwFix");if(f)f.onclick=()=>{const t=$("pwTxt").value.trim();if(t.split(/\s+/).length<3){$("pwRes").innerHTML='<div class="small">Écris au moins une phrase.</div>';return}ltRun($("pwRes"),t,"en-US","fr",null)}},0);
   $("pBack2").onclick=()=>{stopAudioMedia();pod.ep=null;renderAudio()};
   const au=$("pAudio");
   if(au){
@@ -4425,17 +4428,20 @@ const VID_RAW=[
  ["-TL1vAxJ6xY","10 three-word English expressions","BBC Learning English","Expressions","B2","23 min","Expressions de trois mots."],
  ["zAFDy50EBkw","8 expressions with prepositions","BBC Learning English","Expressions","B2","19 min","Expressions avec prépositions."]
 ];
-const VIDS=VID_RAW.map(x=>({id:x[0],t:x[1],ch:x[2],cat:x[3],lvl:x[4],len:x[5],n:x[6]}));
+const VIDS=VID_RAW.map(x=>({id:x[0],t:x[1],ch:x[2],cat:x[3],lvl:x[4],len:x[5],n:x[6],acc:x[2]==="BBC Learning English"?"UK":""}));
+function vidEff(v){const m=A().vmeta[v.id]||{};return {acc:m.acc||v.acc||"",cc:m.cc}}
+function vidVisible(v){const e=vidEff(v);return e.acc!=="UK"&&e.cc!==0}
 const VCATS=["Business","Voyage","Échange","Jeux de guerre","Idées & société","Expressions"];
 const LVI={A1:0,A2:1,B1:2,B2:3,C1:4};
-const vid={cat:"Tous",lvl:"Tous",open:null};
+const vid={cat:"Tous",lvl:"Tous",open:null,all:false};
 function vidEmbed(v){return `https://www.youtube-nocookie.com/embed/${v.id}?cc_load_policy=1&cc_lang_pref=en&hl=en&rel=0&playsinline=1&modestbranding=1`}
 function vidWatch(v){return `https://www.youtube.com/watch?v=${v.id}`}
 function vidPick(){
   const a=A(),est=LVI[estimatedLevel()]||0,lo=Math.max(1,est),hi=Math.min(4,est+1);
-  let pool=VIDS.filter(v=>!a.vids[v.id]&&LVI[v.lvl]>=lo&&LVI[v.lvl]<=hi);
-  if(!pool.length)pool=VIDS.filter(v=>!a.vids[v.id]);
-  if(!pool.length)pool=VIDS;
+  const V=VIDS.filter(vidVisible);
+  let pool=V.filter(v=>!a.vids[v.id]&&LVI[v.lvl]>=lo&&LVI[v.lvl]<=hi);
+  if(!pool.length)pool=V.filter(v=>!a.vids[v.id]);
+  if(!pool.length)pool=V;
   const d=today();let h=0;for(let i=0;i<d.length;i++)h=(h*31+d.charCodeAt(i))>>>0;
   return pool[h%pool.length];
 }
@@ -4444,17 +4450,20 @@ function renderVideos(host){
   const a=A(),sug=vidPick(),mark=v=>{const s=a.vids[v.id];return s?(s.r===2?"✓✓":s.r===1?"✓":"·"):""};
   const lvOpts=[["Tous","Tous"],["A2-B1","A2–B1"],["B2","B2"],["C1","C1"]];
   const okLvl=v=>vid.lvl==="Tous"||(vid.lvl==="A2-B1"?(v.lvl==="A2"||v.lvl==="B1"):v.lvl===vid.lvl);
-  const list=VIDS.filter(v=>(vid.cat==="Tous"||v.cat===vid.cat)&&okLvl(v));
+  const hiddenN=VIDS.filter(v=>!vidVisible(v)).length;
+  const list=VIDS.filter(v=>(vid.all||vidVisible(v))&&(vid.cat==="Tous"||v.cat===vid.cat)&&okLvl(v));
   const seenN=VIDS.filter(v=>a.vids[v.id]).length;
   host.innerHTML=`<section class="secCard"><h2>Écoute réelle</h2>
   <div class="small">${seenN}/${VIDS.length} regardées</div>
   <div class="vToday"><span class="lvTag">${esc(sug.lvl)}</span> <span class="small">Pour aujourd’hui · ${esc(sug.cat)}</span><b class="t">${esc(sug.t)}</b><div class="small">${esc(sug.ch)}${sug.len?" · "+esc(sug.len):""}</div><div class="row2" style="margin-top:8px"><button id="vGo" class="primary" type="button">Regarder</button></div></div>
   <div class="chipRow2" id="vCats">${["Tous",...VCATS].map(c=>`<button class="chip2${c===vid.cat?" on":""}" type="button" data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div>
   <div class="chipRow2" id="vLv">${lvOpts.map(([k,l])=>`<button class="chip2${k===vid.lvl?" on":""}" type="button" data-l="${k}">${l}</button>`).join("")}</div>
+  ${hiddenN?`<div class="chipRow2"><button class="chip2${vid.all?" on":""}" type="button" id="vAll">${vid.all?"Masquer":"Afficher"} accent britannique ou sans sous-titres (${hiddenN})</button></div>`:""}
   <div class="vList" id="vList">${list.length?list.map(v=>`<button class="vCard" type="button" data-v="${esc(v.id)}"><span><b>${esc(v.t)}</b><small>${esc(v.ch)} · ${esc(v.cat)}${v.len?" · "+esc(v.len):""}</small></span><span class="vSide"><span class="lvTag">${esc(v.lvl)}</span><i>${mark(v)}</i></span></button>`).join(""):'<div class="small">Aucune vidéo avec ces filtres.</div>'}</div>
   <div class="small" style="margin-top:12px">Les longues vidéos (30 min à 1 h) se regardent par morceaux de 10 minutes. Connexion nécessaire.</div></section>`;
   $("vGo").onclick=()=>{vid.open=sug.id;renderVideos(host);try{window.scrollTo({top:0})}catch(e){}};
   host.querySelectorAll("#vCats [data-c]").forEach(b=>b.onclick=()=>{vid.cat=b.dataset.c;renderVideos(host)});
+  const va=$("vAll");if(va)va.onclick=()=>{vid.all=!vid.all;renderVideos(host)};
   host.querySelectorAll("#vLv [data-l]").forEach(b=>b.onclick=()=>{vid.lvl=b.dataset.l;renderVideos(host)});
   host.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{vid.open=b.dataset.v;renderVideos(host);try{window.scrollTo({top:0})}catch(e){}});
 }
@@ -4468,14 +4477,23 @@ function renderVideo(host,id){
   ${online?`<div class="vFrame"><iframe src="${esc(vidEmbed(v))}" title="${esc(v.t)}" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`:'<div class="noteBox err"><b>Hors connexion.</b> Les vidéos demandent du réseau.</div>'}
   <div class="row2"><a class="ghost" style="padding:11px 14px;border-radius:12px;text-decoration:none;color:inherit;border:1px solid var(--line)" href="${esc(vidWatch(v))}" target="_blank" rel="noopener">Ouvrir sur YouTube</a></div>
   <div class="small" style="margin-top:8px">Sous-titres : touche <b>CC</b> dans le lecteur. S’ils manquent : → Sous-titres → Anglais. Trop rapide : → Vitesse → 0,75.</div>
+  <div class="vStep"><b>Vérification</b>
+   <div class="small">Sous-titres anglais présents ?</div>
+   <div class="rate" id="vCC">${[[1,"Oui"],[0,"Non"]].map(([k,l])=>`<button type="button" data-cc="${k}" class="${(vidEff(v).cc===k)?"on":""}">${l}</button>`).join("")}</div>
+   <div class="small" style="margin-top:8px">Accent entendu</div>
+   <div class="rate" id="vAcc">${["US","UK","Autre"].map(k=>`<button type="button" data-acc="${k}" class="${(vidEff(v).acc===k)?"on":""}">${k}</button>`).join("")}</div>
+   <div class="small" id="vChkFb" style="margin-top:6px"></div></div>
   <div class="vStep"><b>1 · Regarde 10 minutes</b></div>
   <div class="vStep"><b>2 · Attrape jusqu’à 5 expressions</b>
    ${[0,1,2,3,4].map(i=>`<div class="exRow"><input class="input" id="xEn${i}" placeholder="expression en anglais" autocomplete="off" autocapitalize="off" spellcheck="false"><input class="input" id="xFr${i}" placeholder="sens en français" autocomplete="off" spellcheck="false"></div>`).join("")}
    <div class="row2"><button id="xAdd" class="ghost" type="button">Ajouter à mes révisions</button></div><div class="small" id="xFb" style="margin-top:6px"></div></div>
-  <div class="vStep"><b>3 · Résume en 3 ou 4 phrases</b>
+  <div class="vStep"><b>3 · Écris ce que tu entends</b>
+   <textarea id="hearTxt" class="trBox" placeholder="Mets la vidéo sur pause et écris les 2 ou 3 phrases que tu viens d’entendre" spellcheck="false"></textarea>
+   <div class="row2" style="margin-top:8px"><button id="hearFix" class="ghost" type="button">Corriger avec LanguageTool</button></div><div id="hearRes"></div></div>
+  <div class="vStep"><b>4 · Écris ce que tu as compris</b>
    <textarea id="sumTxt" class="trBox" placeholder="What I understood…" spellcheck="false"></textarea>
    <div class="row2" style="margin-top:8px"><button id="sumFix" class="ghost" type="button">Corriger avec LanguageTool</button></div><div id="sumRes"></div></div>
-  <div class="vStep"><b>4 · Ta compréhension</b>
+  <div class="vStep"><b>5 · Ta compréhension</b>
    <div class="rate">${[[2,"Presque tout"],[1,"Environ la moitié"],[0,"Peu"]].map(([r,l])=>`<button type="button" data-r="${r}" class="${prev&&prev.r===r?"on":""}">${l}</button>`).join("")}</div>
    <div id="rateFb" class="small" style="margin-top:8px">${prev?`Déjà regardée le ${esc(fmtDate(prev.d))}.`:""}</div></div></section>`;
   $("vBack").onclick=()=>{vid.open=null;renderVideos(host)};
@@ -4490,6 +4508,9 @@ function renderVideo(host,id){
     if(n){saveState();try{updateUI()}catch(e){}}
     $("xFb").textContent=n?`${n} expression${n>1?"s":""} ajoutée${n>1?"s":""}.`+(dup?` ${dup} déjà dans l’appli.`:""):(dup?`${dup} déjà dans l’appli.`:"Remplis l’anglais et le français d’au moins une ligne.");
   };
+  host.querySelectorAll("#vCC [data-cc]").forEach(b=>b.onclick=()=>{const m=a.vmeta[v.id]=a.vmeta[v.id]||{};m.cc=+b.dataset.cc;saveState();host.querySelectorAll("#vCC [data-cc]").forEach(x=>x.classList.toggle("on",x===b));$("vChkFb").textContent=m.cc===0?"Noté : cette vidéo sera masquée de la liste.":"Noté."});
+  host.querySelectorAll("#vAcc [data-acc]").forEach(b=>b.onclick=()=>{const m=a.vmeta[v.id]=a.vmeta[v.id]||{};m.acc=b.dataset.acc;saveState();host.querySelectorAll("#vAcc [data-acc]").forEach(x=>x.classList.toggle("on",x===b));$("vChkFb").textContent=m.acc==="UK"?"Noté : cette vidéo sera masquée (accent britannique).":"Noté."});
+  $("hearFix").onclick=()=>{const t=$("hearTxt").value.trim();if(t.split(/\s+/).length<3){$("hearRes").innerHTML='<div class="small">Écris au moins une phrase.</div>';return}ltRun($("hearRes"),t,"en-US","fr",null)};
   $("sumFix").onclick=()=>{const t=$("sumTxt").value.trim();if(t.split(/\s+/).length<3){$("sumRes").innerHTML='<div class="small">Écris au moins une phrase.</div>';return}ltRun($("sumRes"),t,"en-US","fr",null)};
   host.querySelectorAll(".rate [data-r]").forEach(b=>b.onclick=()=>{
     const r=+b.dataset.r,sum=$("sumTxt").value.trim();
