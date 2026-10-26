@@ -1,5 +1,5 @@
 /* English Trainer : service worker (hors ligne pour l'appli, jamais pour YouTube / podcasts / API) */
-const VERSION = "v28";
+const VERSION = "v29";
 const CACHE = "english-trainer-" + VERSION;
 const SHELL = [
   "./",

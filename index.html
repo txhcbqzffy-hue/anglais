@@ -568,6 +568,17 @@ input,textarea,select{font-size:16px!important}           /* évite le zoom auto
   .updateBar{bottom:calc(88px + env(safe-area-inset-bottom))}
 }
 button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+
+/* v29 : séance du jour + packs */
+.planList{display:grid;gap:8px;margin-top:10px}
+.planStep{display:flex;align-items:center;gap:12px;text-align:left;width:100%;padding:11px 12px;min-height:52px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer}
+.planStep.ok{border-color:var(--good-line);background:var(--good-bg);color:var(--good-text)}
+.planIc{font-size:22px;line-height:1;flex:none}
+.planTx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.planTx small{font-size:12px;opacity:.8}
+.chip2.ghost.on{background:#1f2326!important;color:#c3f53c!important;border-color:#1f2326!important}
+:root[data-theme="dark"] .chip2.ghost.on{background:#c3f53c!important;color:#1f2326!important;border-color:#c3f53c!important}
+.chip2.ghost:not(.on){opacity:.6;text-decoration:line-through}
 </style>
 </head>
 <body>
@@ -576,7 +587,7 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v28</span></h1>
+        <h1>English Trainer<span class="ver">v29</span></h1>
         <div class="sub">Vocabulaire · grammaire · lecture · écoute · oral</div>
       </div>
     </div>
@@ -590,6 +601,9 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
   </nav>
 
   <div id="view-train" class="view">
+
+  <section class="panel" id="planPanel"></section>
+  <section class="panel" id="packsPanel"></section>
 
   <div class="stats">
     <div class="stat"><b id="accuracy">0%</b><span>Précision</span></div>
@@ -2146,7 +2160,7 @@ function loadState(){
   }catch(e){return JSON.parse(JSON.stringify(defaults))}
 }
 function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
-function vocab(){return [...baseVocab,...state.custom.map(x=>[x.en,x.fr,"custom"])]}
+function vocab(){return [...baseVocab,...packWords(),...state.custom.map(x=>[x.en,x.fr,"custom"])]}
 function norm(s){return String(s||"").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’]/g,"'").replace(/[.,!?;:"]/g,"").replace(/\s+/g," ")}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 const recentPicks={};
@@ -2316,6 +2330,7 @@ function updateUI(){
   renderSkills();renderConceptProfile();renderMastery();renderCEFR();renderAdaptivePanel();
   const due=getDueItems().length;
   $("reviewInfo").textContent=due?`${due} révision(s) due(s) maintenant.`:"Aucune révision due pour le moment.";if($("focusText"))updateFocus();
+  planTick();
 }
 
 function renderConceptProfile(){
@@ -4050,10 +4065,11 @@ $("resetBtn").addEventListener("click",()=>{if(confirm("Effacer toute ta progres
 $("answerInput").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();locked?nextQuestion():checkText()}});
 $("grammarInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();locked?nextQuestion():checkGrammar()}});
 
+const PACKS=[{"id":"p_work","name":"Travail & carrière","words":[["workload","charge de travail"],["deadline","date limite"],["to hire","embaucher"],["to resign","démissionner"],["promotion","promotion"],["raise","augmentation"],["colleague","collègue"],["manager","responsable"],["to delegate","déléguer"],["to be in charge of","être responsable de"],["to handle","gérer / s'occuper de"],["to get promoted","être promu"],["permanent contract","CDI"],["fixed-term contract","CDD"],["apprenticeship","alternance"],["internship","stage"],["notice period","préavis"],["job opening","poste à pourvoir"],["to apply for","postuler à"],["to be laid off","être licencié (économique)"],["to burn out","faire un burn-out"],["work-life balance","équilibre vie pro / vie perso"],["to work overtime","faire des heures supplémentaires"],["day off","jour de congé"],["to be on leave","être en congé"],["remote work","télétravail"],["skill set","ensemble de compétences"],["strengths","points forts"],["to take initiative","prendre l'initiative"],["career path","parcours professionnel"]]},{"id":"p_interview","name":"Entretien d'embauche","words":[["résumé","CV"],["cover letter","lettre de motivation"],["reference","référence / recommandation"],["candidate","candidat"],["to shortlist","présélectionner"],["to be a good fit","correspondre au profil"],["background","parcours / formation"],["achievement","réalisation"],["weakness","point faible"],["to tackle","s'attaquer à"],["challenge","défi"],["to be motivated","être motivé"],["salary expectations","prétentions salariales"],["to negotiate","négocier"],["job offer","offre d'emploi"],["to accept an offer","accepter une offre"],["probation period","période d'essai"],["onboarding","intégration"],["to follow up","relancer"],["to set goals","fixer des objectifs"],["leadership","leadership"],["teamwork","travail d'équipe"],["to work under pressure","travailler sous pression"],["reliable","fiable"],["adaptable","adaptable"],["a quick learner","quelqu'un qui apprend vite"],["to stand out","se démarquer"],["hands-on experience","expérience pratique"]]},{"id":"p_meetings","name":"Réunions & projets","words":[["agenda","ordre du jour"],["minutes","compte rendu"],["to schedule","planifier"],["to postpone","reporter"],["to cancel","annuler"],["attendee","participant"],["to chair a meeting","présider une réunion"],["to take notes","prendre des notes"],["action item","action à mener"],["to wrap up","conclure"],["to brainstorm","faire un brainstorming"],["stakeholder","partie prenante"],["milestone","jalon"],["roadmap","feuille de route"],["scope","périmètre"],["budget","budget"],["to be on track","être dans les temps"],["to fall behind","prendre du retard"],["bottleneck","goulot d'étranglement"],["to raise a concern","soulever une inquiétude"],["to reach a consensus","parvenir à un consensus"],["to get back to someone","revenir vers quelqu'un"],["to keep someone posted","tenir quelqu'un informé"],["heads-up","avertissement / alerte"],["follow-up","suivi"],["to align","aligner"],["deliverable","livrable"],["kickoff","lancement"],["to prioritise","prioriser"]]},{"id":"p_emails","name":"E-mails professionnels","words":[["to attach","joindre"],["attachment","pièce jointe"],["to forward","transférer"],["to reply","répondre"],["to copy someone","mettre en copie"],["recipient","destinataire"],["subject line","objet"],["regards","cordialement"],["to whom it may concern","à qui de droit"],["I am writing to","je vous écris pour"],["please find attached","veuillez trouver ci-joint"],["as discussed","comme convenu"],["at your earliest convenience","dès que possible"],["I look forward to hearing from you","j'attends votre réponse"],["apologies for the delay","désolé pour le retard"],["I would appreciate it if","je vous serais reconnaissant de"],["to confirm","confirmer"],["to remind","rappeler"],["reminder","rappel"],["to be out of office","être absent du bureau"],["automatic reply","réponse automatique"],["to get in touch","prendre contact"],["to reach out","contacter"],["in the meantime","en attendant"],["to keep in mind","garder à l'esprit"],["to let someone know","faire savoir à quelqu'un"],["inbox","boîte de réception"],["draft","brouillon"],["to proofread","relire"],["signature","signature"]]},{"id":"p_finance","name":"Argent & finance","words":[["income","revenu"],["expenses","dépenses"],["savings","épargne"],["to save up","économiser"],["to borrow","emprunter"],["to lend","prêter"],["loan","prêt"],["interest rate","taux d'intérêt"],["mortgage","crédit immobilier"],["debt","dette"],["tax","impôt"],["VAT","TVA"],["invoice","facture"],["receipt","reçu"],["refund","remboursement"],["to afford","avoir les moyens de"],["cheap","bon marché"],["expensive","cher"],["fee","frais"],["cost of living","coût de la vie"],["bank account","compte bancaire"],["to withdraw","retirer"],["to deposit","déposer"],["overdraft","découvert"],["credit card","carte de crédit"],["to invest","investir"],["profit","bénéfice"],["loss","perte"],["revenue","chiffre d'affaires"],["to go bankrupt","faire faillite"]]},{"id":"p_web","name":"Analyse web & marketing digital","words":[["traffic","trafic"],["visitor","visiteur"],["unique visitors","visiteurs uniques"],["page view","page vue"],["session","session"],["bounce rate","taux de rebond"],["conversion rate","taux de conversion"],["click-through rate","taux de clics (CTR)"],["impression","impression"],["reach","portée"],["engagement","engagement"],["funnel","entonnoir de conversion"],["landing page","page d'atterrissage"],["call to action","appel à l'action"],["lead","prospect / lead"],["lead generation","génération de leads"],["target audience","public cible"],["customer journey","parcours client"],["touchpoint","point de contact"],["attribution","attribution"],["tracking tag","balise de suivi"],["tag manager","gestionnaire de balises"],["event","évènement"],["custom dimension","dimension personnalisée"],["metric","indicateur"],["KPI","indicateur clé de performance"],["dashboard","tableau de bord"],["report","rapport"],["data source","source de données"],["data layer","couche de données"],["segment","segment"],["cohort","cohorte"],["A/B test","test A/B"],["to track","suivre / mesurer"],["to filter out","exclure (du filtre)"],["sampling","échantillonnage"],["real-time report","rapport en temps réel"],["organic search","recherche naturelle"],["paid search","recherche payante"],["keyword","mot-clé"],["search engine ranking","classement dans les moteurs"],["backlink","lien entrant"],["meta description","méta-description"],["crawl","exploration (robot)"],["sitemap","plan du site"],["bounce","rebond"],["newsletter","lettre d'information"],["open rate","taux d'ouverture"],["unsubscribe","se désabonner"],["mailing list","liste de diffusion"],["email deliverability","délivrabilité des e-mails"],["campaign","campagne"],["ad spend","dépenses publicitaires"],["return on investment","retour sur investissement"],["cost per click","coût par clic"],["retargeting","reciblage"],["brand awareness","notoriété de marque"],["influencer","influenceur"],["content calendar","calendrier éditorial"],["user experience","expérience utilisateur"],["heatmap","carte de chaleur"],["cookie consent","consentement aux cookies"],["data privacy","confidentialité des données"],["data cleaning","nettoyage des données"],["to scrape","extraire (des données web)"],["dataset","jeu de données"],["spreadsheet","tableur"],["pivot table","tableau croisé dynamique"],["trend","tendance"],["outlier","valeur aberrante"],["correlation","corrélation"],["to forecast","prévoir"],["insight","enseignement / analyse utile"],["data-driven","fondé sur les données"]]},{"id":"p_insurance","name":"Assurance & protection sociale","words":[["insurance policy","contrat d'assurance"],["policyholder","assuré / souscripteur"],["premium","prime / cotisation"],["deductible","franchise"],["claim","déclaration de sinistre"],["to file a claim","déposer une demande d'indemnisation"],["coverage","couverture"],["benefit","prestation"],["health insurance","assurance maladie"],["supplementary health insurance","complémentaire santé"],["pension","retraite / pension"],["retirement plan","plan de retraite"],["provident fund","prévoyance"],["life insurance","assurance vie"],["liability","responsabilité civile"],["claimant","demandeur"],["beneficiary","bénéficiaire"],["underwriting","souscription"],["risk assessment","évaluation du risque"],["exclusion","exclusion"],["renewal","renouvellement"],["to lapse","expirer / être résilié"],["to terminate","résilier"],["sickness benefit","indemnité maladie"],["disability","invalidité"],["sick leave","arrêt maladie"],["employer contribution","cotisation patronale"],["employee benefits","avantages sociaux"],["mutual insurance","mutuelle"],["member","adhérent"],["customer service","service client"],["complaint","réclamation"],["settlement","règlement"],["compensation","indemnisation"],["fraud","fraude"],["compliance","conformité"],["regulation","réglementation"],["data protection","protection des données"]]},{"id":"p_travel","name":"Voyage & transports","words":[["flight","vol"],["boarding pass","carte d'embarquement"],["luggage","bagages"],["carry-on","bagage cabine"],["layover","escale"],["delay","retard"],["gate","porte d'embarquement"],["customs","douane"],["passport","passeport"],["visa","visa"],["to book","réserver"],["reservation","réservation"],["check-in","enregistrement"],["check-out","départ (hôtel)"],["single room","chambre simple"],["double room","chambre double"],["vacancy","chambre libre"],["tourist attraction","site touristique"],["sightseeing","visite touristique"],["guided tour","visite guidée"],["souvenir","souvenir"],["itinerary","itinéraire"],["timetable","horaire"],["platform","quai"],["ticket","billet"],["one-way ticket","aller simple"],["return ticket","aller-retour"],["fare","tarif"],["to miss a train","rater un train"],["to board","embarquer"],["to get off","descendre"],["to get lost","se perdre"],["traffic jam","embouteillage"],["roundabout","rond-point"],["speed limit","limitation de vitesse"],["fuel","carburant"],["to rent a car","louer une voiture"],["hitchhike","faire du stop"],["exchange rate","taux de change"],["currency","devise"],["tip","pourboire"]]},{"id":"p_food","name":"Restaurant & nourriture","words":[["menu","carte"],["starter","entrée"],["main course","plat principal"],["dessert","dessert"],["bill","addition"],["to order","commander"],["to book a table","réserver une table"],["waiter","serveur"],["vegetarian","végétarien"],["gluten-free","sans gluten"],["spicy","épicé"],["bland","fade"],["tasty","savoureux"],["raw","cru"],["rare","saignant"],["well done","bien cuit"],["leftovers","restes"],["to cook","cuisiner"],["to chop","hacher"],["to boil","faire bouillir"],["to fry","frire"],["to bake","cuire au four"],["to stir","remuer"],["ingredient","ingrédient"],["recipe","recette"],["groceries","courses"],["supermarket","supermarché"],["bakery","boulangerie"],["butcher","boucher"],["fruit and vegetables","fruits et légumes"],["dairy","produits laitiers"],["snack","en-cas"],["takeaway","plat à emporter"],["tap water","eau du robinet"],["sparkling water","eau gazeuse"]]},{"id":"p_health","name":"Santé & corps","words":[["headache","mal de tête"],["fever","fièvre"],["cough","toux"],["sore throat","mal de gorge"],["to sneeze","éternuer"],["to feel dizzy","avoir des vertiges"],["to be sick","être malade / vomir"],["injury","blessure"],["sprain","entorse"],["broken bone","os cassé"],["bruise","bleu / hématome"],["prescription","ordonnance"],["pharmacy","pharmacie"],["appointment","rendez-vous"],["side effect","effet secondaire"],["recovery","guérison"],["to recover","se rétablir"],["to get better","aller mieux"],["to get worse","empirer"],["allergy","allergie"],["vaccine","vaccin"],["check-up","bilan de santé"],["sleep","sommeil"],["to oversleep","se réveiller trop tard"],["insomnia","insomnie"],["stress","stress"],["to relax","se détendre"],["to work out","faire de l'exercice"],["to stretch","s'étirer"],["healthy","en bonne santé / sain"],["unhealthy","malsain"],["to lose weight","perdre du poids"],["to quit smoking","arrêter de fumer"]]},{"id":"p_tech","name":"Technologie & numérique","words":[["device","appareil"],["software","logiciel"],["hardware","matériel"],["update","mise à jour"],["to download","télécharger"],["to upload","téléverser"],["to install","installer"],["to log in","se connecter"],["password","mot de passe"],["username","identifiant"],["account","compte"],["to back up","sauvegarder"],["storage","stockage"],["cloud","cloud / informatique en nuage"],["network","réseau"],["Wi-Fi","Wi-Fi"],["battery","batterie"],["charger","chargeur"],["screen","écran"],["keyboard","clavier"],["to crash","planter"],["bug","bogue"],["glitch","pépin"],["to troubleshoot","dépanner"],["to reboot","redémarrer"],["to delete","supprimer"],["to scroll","faire défiler"],["to swipe","balayer"],["notification","notification"],["app","application"],["website","site web"],["search engine","moteur de recherche"],["artificial intelligence","intelligence artificielle"],["machine learning","apprentissage automatique"],["algorithm","algorithme"],["database","base de données"],["cybersecurity","cybersécurité"],["phishing","hameçonnage"],["to hack","pirater"],["encryption","chiffrement"],["social media","réseaux sociaux"],["to stream","diffuser en continu"],["podcast","podcast"]]},{"id":"p_home","name":"Maison & vie quotidienne","words":[["landlord","propriétaire (bailleur)"],["tenant","locataire"],["rent","loyer"],["lease","bail"],["flatmate","colocataire"],["neighbourhood","quartier"],["furniture","meubles"],["appliance","appareil ménager"],["fridge","réfrigérateur"],["washing machine","lave-linge"],["dishwasher","lave-vaisselle"],["vacuum cleaner","aspirateur"],["to do the laundry","faire la lessive"],["to do the dishes","faire la vaisselle"],["to tidy up","ranger"],["to clean","nettoyer"],["chore","corvée"],["rubbish","ordures"],["recycling","recyclage"],["bills","factures (de la maison)"],["electricity","électricité"],["heating","chauffage"],["leak","fuite"],["to fix","réparer"],["to move in","emménager"],["to move out","déménager"],["deposit","caution"],["shelves","étagères"],["wardrobe","armoire"]]},{"id":"p_shopping","name":"Achats & vêtements","words":[["to try on","essayer (vêtement)"],["fitting room","cabine d'essayage"],["size","taille / pointure"],["to fit","aller (taille)"],["to suit","aller bien (style)"],["discount","réduction"],["sale","soldes"],["bargain","bonne affaire"],["to exchange","échanger"],["to return","rendre / retourner"],["warranty","garantie"],["cashier","caissier"],["checkout","caisse"],["shopping basket","panier"],["delivery","livraison"],["to deliver","livrer"],["out of stock","en rupture de stock"],["in stock","en stock"],["brand","marque"],["second-hand","d'occasion"],["sleeve","manche"],["pocket","poche"],["zip","fermeture éclair"],["trainers","baskets"],["scarf","écharpe"]]},{"id":"p_feelings","name":"Émotions & caractère","words":[["cheerful","joyeux"],["grumpy","grincheux"],["anxious","anxieux"],["relieved","soulagé"],["embarrassed","gêné"],["jealous","jaloux"],["proud","fier"],["ashamed","honteux"],["disappointed","déçu"],["thrilled","ravi"],["exhausted","épuisé"],["fed up","en avoir marre"],["overwhelmed","débordé"],["down","déprimé / abattu"],["upset","contrarié"],["easy-going","facile à vivre"],["stubborn","têtu"],["shy","timide"],["outgoing","extraverti"],["generous","généreux"],["selfish","égoïste"],["bossy","autoritaire"],["clumsy","maladroit"],["hard-working","travailleur"],["lazy","paresseux"],["polite","poli"],["rude","impoli"],["patient","patient"],["curious","curieux"]]},{"id":"p_time","name":"Temps & fréquence","words":[["nowadays","de nos jours"],["meanwhile","pendant ce temps"],["eventually","finalement"],["lately","récemment"],["recently","récemment"],["formerly","auparavant"],["sooner or later","tôt ou tard"],["from now on","désormais"],["in the long run","à long terme"],["at the moment","en ce moment"],["on time","à l'heure"],["in time","à temps"],["ahead of schedule","en avance sur le planning"],["behind schedule","en retard sur le planning"],["overnight","du jour au lendemain"],["fortnight","quinze jours"],["weekday","jour de semaine"],["weekend","week-end"],["daily","quotidien"],["weekly","hebdomadaire"],["monthly","mensuel"],["annual","annuel"],["once in a while","de temps en temps"],["rarely","rarement"],["hardly ever","presque jamais"],["twice a week","deux fois par semaine"],["all day long","toute la journée"],["by the time","le temps que"],["as soon as","dès que"]]},{"id":"p_phrasal","name":"Phrasal verbs essentiels","words":[["to carry out","mener à bien / effectuer"],["to come up with","trouver (une idée)"],["to figure out","comprendre / trouver"],["to find out","découvrir"],["to give up","abandonner"],["to look into","examiner / enquêter sur"],["to look forward to","avoir hâte de"],["to point out","faire remarquer"],["to put off","reporter"],["to put up with","supporter"],["to run out of","manquer de"],["to set up","mettre en place"],["to take on","prendre en charge"],["to take over","reprendre"],["to turn down","refuser"],["to turn up","apparaître / arriver"],["to bring up","soulever (un sujet)"],["to break down","tomber en panne"],["to call off","annuler"],["to catch up with","rattraper"],["to cut down on","réduire"],["to deal with","traiter / gérer"],["to end up","finir par"],["to fall apart","s'effondrer"],["to get along with","s'entendre avec"],["to get over","surmonter"],["to go over","revoir / passer en revue"],["to hold on","patienter"],["to keep up with","suivre le rythme de"],["to make up for","compenser"],["to pull off","réussir (un coup)"],["to rule out","exclure"],["to show up","se présenter"],["to stand for","représenter / signifier"],["to step down","démissionner"],["to wear out","user / épuiser"],["to speed up","accélérer"],["to scale up","passer à l'échelle"]]},{"id":"p_idioms","name":"Expressions idiomatiques","words":[["a piece of cake","un jeu d'enfant"],["once in a blue moon","très rarement"],["to beat around the bush","tourner autour du pot"],["to bite the bullet","serrer les dents et y aller"],["to cut corners","bâcler"],["to hit the nail on the head","taper dans le mille"],["to be on the same page","être sur la même longueur d'onde"],["to get the ball rolling","lancer les choses"],["to call it a day","arrêter pour aujourd'hui"],["the ball is in your court","c'est à vous de jouer"],["to miss the boat","rater le coche"],["to read between the lines","lire entre les lignes"],["to spill the beans","vendre la mèche"],["under the weather","patraque"],["to be in hot water","avoir des ennuis"],["to go the extra mile","faire un effort supplémentaire"],["to kill two birds with one stone","faire d'une pierre deux coups"],["break a leg","bonne chance"],["it's not rocket science","ce n'est pas sorcier"],["at the end of the day","au final"],["to touch base","faire un point rapide"],["to think outside the box","sortir des sentiers battus"],["a blessing in disguise","un mal pour un bien"],["to be up in the air","être incertain"],["the tip of the iceberg","la partie émergée de l'iceberg"],["to see eye to eye","être d'accord"],["back to square one","retour à la case départ"],["to jump on the bandwagon","suivre la tendance"],["off the record","officieusement"],["to pull someone's leg","faire marcher quelqu'un"]]},{"id":"p_linkers","name":"Connecteurs & nuances (C1)","words":[["however","cependant"],["nevertheless","néanmoins"],["nonetheless","malgré tout"],["whereas","alors que"],["despite","malgré"],["in spite of","en dépit de"],["moreover","de plus"],["furthermore","en outre"],["besides","d'ailleurs"],["consequently","en conséquence"],["thus","ainsi"],["hence","d'où"],["as a result","par conséquent"],["owing to","en raison de"],["due to","à cause de"],["on account of","du fait de"],["provided that","à condition que"],["unless","à moins que"],["as long as","tant que"],["whether or not","que ce soit ou non"],["in contrast","en revanche"],["on the contrary","au contraire"],["on the other hand","d'un autre côté"],["by contrast","par contraste"],["rather than","plutôt que"],["instead of","au lieu de"],["apart from","à part"],["regardless of","indépendamment de"],["in terms of","en termes de"],["with regard to","en ce qui concerne"],["as far as I'm concerned","en ce qui me concerne"],["to a certain extent","dans une certaine mesure"],["by and large","dans l'ensemble"],["all in all","en somme"],["broadly speaking","en gros"],["in other words","autrement dit"],["that is to say","c'est-à-dire"],["for instance","par exemple"],["in particular","en particulier"]]},{"id":"p_falsefr","name":"Faux amis (FR/EN)","words":[["actually","en fait (≠ actuellement)"],["currently","actuellement"],["possibly","éventuellement / peut-être"],["sensible","raisonnable (≠ sensible)"],["sensitive","sensible"],["library","bibliothèque (≠ librairie)"],["bookshop","librairie"],["college","université / lycée (≠ collège)"],["lecture","cours magistral (≠ lecture)"],["reading","lecture"],["to wait for","attendre"],["to pretend","faire semblant (≠ prétendre)"],["to claim","prétendre"],["to resume","reprendre (≠ résumer)"],["to summarise","résumer"],["to assist","aider (≠ assister)"],["demand","exigence (≠ demande)"],["request","demande"],["advertisement","publicité (≠ avertissement)"],["warning","avertissement"],["journey","voyage (≠ journée)"],["day","journée"],["engaged","fiancé / occupé (≠ engagé)"],["committed","engagé"],["experience","expérience (vécue)"],["experiment","expérience (scientifique)"],["location","emplacement (≠ location)"],["rental","location"],["physician","médecin"],["chips","frites (UK)"]]}];
 /* =====================================================================
    v28 : onglets, thème, Audio (podcasts + vidéos), traduction libre, PWA
    ===================================================================== */
-const APP_VERSION="v28";
+const APP_VERSION="v29";
 const VIEWS=["train","audio","translate"];
 let currentView="train";
 
@@ -4576,6 +4592,90 @@ function initV28(){
   initPWA();
 }
 
+/* =====================================================================
+   v29 : packs de vocabulaire + séance du jour
+   ===================================================================== */
+function packsOff(){state.packsOff=state.packsOff||{};return state.packsOff}
+function packWords(){
+  const off=packsOff(),out=[];
+  PACKS.forEach(p=>{if(!off[p.id])p.words.forEach(w=>out.push([w[0],w[1],p.id]))});
+  return out;
+}
+function renderPacks(){
+  const host=$("packsPanel");if(!host)return;
+  const off=packsOff(),on=PACKS.filter(p=>!off[p.id]),n=on.reduce((s,p)=>s+p.words.length,0);
+  host.innerHTML=`<h2>Packs de vocabulaire</h2>
+  <div class="small">${n} mots actifs dans les quiz (en plus des mots de base et des tiens). Touche un thème pour l’activer ou le couper.</div>
+  <div class="chipRow2">${PACKS.map(p=>`<button type="button" class="chip2 ghost${off[p.id]?"":" on"}" data-pack="${p.id}" aria-pressed="${off[p.id]?"false":"true"}">${esc(p.name)} · ${p.words.length}</button>`).join("")}</div>
+  <div class="row" style="margin-top:6px"><button type="button" class="ghost" id="packWeb">Quiz « Analyse web & marketing »</button></div>`;
+  host.querySelectorAll("[data-pack]").forEach(b=>b.onclick=()=>{
+    const o=packsOff(),id=b.dataset.pack;
+    if(o[id])delete o[id];else o[id]=1;
+    saveState();renderPacks();
+  });
+  const wb=$("packWeb");if(wb)wb.onclick=()=>{const o=packsOff();delete o.p_web;saveState();renderPacks();openExercise("quizMix")};
+}
+
+/* ----- séance du jour ----- */
+const PLAN_GRAM=["tenses","prepositions","articles","modals","comparatives","connectors","wordOrder"];
+const ROADMAP=[
+  ["Mois 1-2","Consolider B1 : temps, prépositions, phrasal verbs, vocabulaire courant"],
+  ["Mois 3-4","Viser B2 : écoute de vidéos sans sous-titres, traduction libre, connecteurs"],
+  ["Mois 5-6","Passer vers C1 : vocabulaire précis, idiomes, rédaction argumentée"],
+  ["Mois 7-8","Entraînement C1 : écoute longue, expression orale, bilans réguliers"]
+];
+function planDay(){
+  const p=state.plan=state.plan||{};
+  if(!p.start)p.start=today();
+  const d=today();
+  if(!p.day||p.day.d!==d){
+    const s=state.skills,b={};Object.keys(s).forEach(k=>b[k]=s[k].t||0);
+    p.day={d,base:b,done:{}};
+  }
+  return p;
+}
+function planMonth(){
+  const p=planDay(),days=Math.floor((Date.now()-new Date(p.start+"T00:00:00").getTime())/864e5);
+  return Math.max(1,Math.min(8,Math.floor(days/30)+1));
+}
+function skDelta(k){const p=planDay();return ((state.skills[k]||{}).t||0)-(p.day.base[k]||0)}
+function sameDay(ts){return ts&&new Date(ts).toISOString().slice(0,10)===today()}
+function planSteps(){
+  const wd=new Date().getDay(),vidDay=[2,4,6].includes(wd),trDay=[1,3,5].includes(wd),a=A();
+  const packs=PACKS.filter(p=>!packsOff()[p.id]),pk=packs.length?packs[(Math.floor(Date.now()/864e5))%packs.length]:null;
+  const gm=PLAN_GRAM[wd%PLAN_GRAM.length];
+  const recentVid=Object.values(a.vids||{}).some(v=>sameDay(v.d));
+  const seenPod=Object.values(a.seen||{}).some(sameDay);
+  const trToday=((state.tr||{}).hist||[]).some(h=>sameDay(h.d));
+  return [
+    {id:"rev",ic:"🧠",t:"Révisions + 10 mots",s:pk?`Thème du jour : ${pk.name}`:"Vocabulaire",go:()=>{const due=getDueItems().length;openExercise(due?"review":"quizMix")},ok:skDelta("vocab")>=10},
+    {id:"gram",ic:"🧩",t:"Grammaire : 6 questions",s:conceptModeLabels[gm]||gm,go:()=>openExercise(gm),ok:skDelta("grammar")+skDelta("tenses")>=6},
+    vidDay?{id:"lis",ic:"▶️",t:"Écoute : 1 vidéo",s:"Vidéo sous-titrée, 5 expressions, résumé",go:()=>{A().seg="vid";saveState();showView("audio")},ok:recentVid||skDelta("listening")>=3}
+          :{id:"lis",ic:"🎧",t:"Écoute : 1 podcast",s:"10 à 20 minutes, vitesse au choix",go:()=>{A().seg="pod";saveState();showView("audio")},ok:seenPod||skDelta("listening")>=3},
+    trDay?{id:"prod",ic:"🔁",t:"Traduction libre",s:"Un texte FR ⇄ EN, corrigé par LanguageTool",go:()=>showView("translate"),ok:trToday}
+         :{id:"prod",ic:"✍️",t:"Écrire 3 phrases",s:"Rédaction guidée",go:()=>openExercise("writingTask"),ok:skDelta("writing")>=1||trToday},
+    {id:"oral",ic:"🎙️",t:"Oral : 5 phrases",s:"Prononciation à voix haute",go:()=>openExercise(wd===0?"shadowing":"pronunciation"),ok:skDelta("speaking")>=5}
+  ];
+}
+function renderPlan(){
+  const host=$("planPanel");if(!host)return;
+  const p=planDay(),steps=planSteps(),n=steps.filter(s=>s.ok).length,m=planMonth(),rm=ROADMAP[Math.min(3,Math.floor((m-1)/2))];
+  if(n===steps.length&&!p.day.all){p.day.all=1;state.coins=(state.coins||0)+10;p.days=p.days||{};p.days[p.day.d]=1;saveState();const c=$("coins");if(c)c.textContent=state.coins}
+  const dn=Object.keys(p.days||{}).length;
+  host.innerHTML=`<h2>Séance du jour <span class="badge">${n}/${steps.length}</span></h2>
+  <div class="small">${esc(rm[0])} (mois ${m}/8) : ${esc(rm[1])}. ${dn} séance(s) complète(s) au total.</div>
+  <div class="planList">${steps.map((s,i)=>`<button type="button" class="planStep${s.ok?" ok":""}" data-ps="${i}"><span class="planIc">${s.ok?"✅":s.ic}</span><span class="planTx"><b>${esc(s.t)}</b><small>${esc(s.s)}</small></span></button>`).join("")}</div>
+  ${n===steps.length?'<div class="noteBox">Séance terminée, +10 🪙. Bravo.</div>':""}`;
+  host.querySelectorAll("[data-ps]").forEach(b=>b.onclick=()=>{try{steps[+b.dataset.ps].go()}catch(e){}});
+}
+let planSig="";
+function planTick(){
+  try{
+    const sig=JSON.stringify(planSteps().map(s=>s.ok))+today()+JSON.stringify(packsOff());
+    if(sig!==planSig||!$("planPanel").firstChild){planSig=sig;renderPlan()}
+  }catch(e){}
+}
+
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
@@ -4583,7 +4683,7 @@ renderVerbTable();
 renderAdaptivePanel();
 renderGoalChoices("grammar");
 setMode("quiz");
-initV28();
+initV28();planTick();renderPacks();
 setTimeout(runBootChecks,80);
 </script>
 </body>
