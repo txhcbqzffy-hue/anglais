@@ -578,7 +578,6 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 .planTx small{font-size:12px;opacity:.8}
 .chip2.ghost.on{background:#1f2326!important;color:#c3f53c!important;border-color:#1f2326!important}
 :root[data-theme="dark"] .chip2.ghost.on{background:#c3f53c!important;color:#1f2326!important;border-color:#c3f53c!important}
-.chip2.ghost:not(.on){opacity:.6;text-decoration:line-through}
 .coin,.headTools .coin{display:none!important}
 
 /* v29 : 5 pages */
@@ -589,6 +588,8 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 .goalBtn span:empty,.bottomNav span:empty,.planIc:empty{display:none}
 .small:empty{display:none}
 .goalTop{display:none!important}
+.subHead{grid-column:1/-1;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:10px 2px 0}
+.subHead:first-child{margin-top:0}
 </style>
 </head>
 <body>
@@ -2162,7 +2163,7 @@ function loadState(){
   }catch(e){return JSON.parse(JSON.stringify(defaults))}
 }
 function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
-function vocab(){return [...baseVocab,...packWords(),...state.custom.map(x=>[x.en,x.fr,"custom"])]}
+function vocab(){if(state.packFocus){const w=packWords();if(w.length>=8)return w}return [...baseVocab,...packWords(),...state.custom.map(x=>[x.en,x.fr,"custom"])]}
 function norm(s){return String(s||"").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’]/g,"'").replace(/[.,!?;:"]/g,"").replace(/\s+/g," ")}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 const recentPicks={};
@@ -4648,24 +4649,75 @@ function initV28(){
    ===================================================================== */
 function packsOff(){state.packsOff=state.packsOff||{};return state.packsOff}
 function packWords(){
-  const off=packsOff(),out=[];
-  PACKS.forEach(p=>{if(!off[p.id])p.words.forEach(w=>out.push([w[0],w[1],p.id]))});
+  const f=state.packFocus,out=[];
+  PACKS.forEach(p=>{if(!f||p.id===f)p.words.forEach(w=>out.push([w[0],w[1],p.id]))});
   return out;
 }
+const PACK_ORDER=["p_web","p_insurance","p_work","p_meetings","p_emails","p_interview","p_finance","p_linkers","p_phrasal","p_idioms","p_falsefr"];
 function renderPacks(){
   const host=$("packsPanel");if(!host)return;
-  const off=packsOff(),on=PACKS.filter(p=>!off[p.id]),n=on.reduce((s,p)=>s+p.words.length,0);
-  host.innerHTML=`<h2>Packs de vocabulaire</h2>
-  <div class="small">${n} mots actifs</div>
-  <div class="chipRow2">${PACKS.map(p=>`<button type="button" class="chip2 ghost${off[p.id]?"":" on"}" data-pack="${p.id}" aria-pressed="${off[p.id]?"false":"true"}">${esc(p.name)} · ${p.words.length}</button>`).join("")}</div>
-  <div class="row" style="margin-top:6px"><button type="button" class="ghost" id="packWeb">Quiz « Analyse web & marketing »</button></div>`;
+  const f=PACKS.some(p=>p.id===state.packFocus)?state.packFocus:null;
+  if(!f)state.packFocus=null;
+  const list=[...PACKS].sort((a,b)=>{const ia=PACK_ORDER.indexOf(a.id),ib=PACK_ORDER.indexOf(b.id);return (ia<0?99:ia)-(ib<0?99:ib)});
+  const cur=PACKS.find(p=>p.id===f);
+  host.innerHTML=`<h2>Thèmes de vocabulaire</h2>
+  <div class="small">${cur?`Quiz limités à « ${esc(cur.name)} » (${cur.words.length} mots)`:"Tous les thèmes mélangés"}</div>
+  <div class="chipRow2"><button type="button" class="chip2 ghost${f?"":" on"}" data-pack="">Tous</button>${list.map(p=>`<button type="button" class="chip2 ghost${f===p.id?" on":""}" data-pack="${p.id}">${esc(p.name)} · ${p.words.length}</button>`).join("")}</div>`;
   host.querySelectorAll("[data-pack]").forEach(b=>b.onclick=()=>{
-    const o=packsOff(),id=b.dataset.pack;
-    if(o[id])delete o[id];else o[id]=1;
+    const id=b.dataset.pack;
+    state.packFocus=id&&state.packFocus!==id?id:null;
     saveState();renderPacks();
+    if(state.packFocus&&!["quiz","quizReverse","quizMix","write","reverse"].includes(mode))openExercise("quizMix");
+    else if(typeof newQuestion==="function"&&["quiz","quizReverse","quizMix","write","reverse"].includes(mode))newQuestion();
   });
-  const wb=$("packWeb");if(wb)wb.onclick=()=>{const o=packsOff();delete o.p_web;saveState();renderPacks();openExercise("quizMix")};
 }
+
+/* ----- exercices rangés par type, avec les priorités en tête ----- */
+const SUBGROUPS={
+  grammar:[
+    ["Temps et verbes",["tenses","grammar","transform","irregularPast","irregularPart","irregularMix"]],
+    ["Structure de la phrase",["questionsNeg","wordOrder","finderror"]],
+    ["Petits mots",["articles","prepositions","comparatives","modals","thirdPerson","connectors"]],
+    ["Orthographe et prononciation",["edSpell","edPron","sPron"]]
+  ],
+  vocab:[
+    ["Quiz de mots",["quizMix","quiz","quizReverse","write","reverse"]],
+    ["En contexte",["phrases","phrasal","collocations","falseFriends","connectors"]]
+  ]
+};
+function priorityModes(goal){
+  const out=[];
+  if(goal==="grammar"){
+    Object.values(state.conceptStats||{}).filter(x=>x.t>=3&&x.mode&&x.c/x.t<.8).sort((a,b)=>a.c/a.t-b.c/b.t).slice(0,2)
+      .forEach(x=>out.push([x.mode,"Point faible : "+Math.round(100*x.c/x.t)+" %"]));
+    [["tenses","Pour parler du passé et du présent au travail"],["prepositions","in / on / at : dates, lieux, projets"],["connectors","Relier ses idées à l’écrit et à l’oral"],["modals","Formules polies : could, would, should"]]
+      .forEach(x=>{if(!out.some(o=>o[0]===x[0]))out.push(x)});
+  }
+  if(goal==="vocab"){
+    const due=getDueItems().length;
+    if(due)out.push(["review",due+" mot(s) à revoir maintenant"]);
+    out.push(["quizMix","Mélange anglais et français"]);
+  }
+  return out.slice(0,4);
+}
+renderGoalChoices=function(goal){
+  const G=goalModeGroups,group=G[goal]||G.grammar,info={};
+  Object.values(G).forEach(g=>g.modes.forEach(x=>{if(!info[x[0]])info[x[0]]=x}));
+  const btn=(m,desc)=>{const x=info[m];if(!x)return"";return `<button class="exerciseChoice" data-goal-mode="${m}"><div><div>${escapeHtml(x[1])}</div><small>${escapeHtml(desc||x[2]||"")}</small></div><span class="arrow">›</span></button>`};
+  const head=t=>`<div class="subHead">${escapeHtml(t)}</div>`;
+  $("goalChoicesTitle").textContent=group.title;
+  let html="";
+  const pri=priorityModes(goal);
+  if(pri.length)html+=head("Prioritaire")+pri.map(x=>btn(x[0],x[1])).join("");
+  const sub=SUBGROUPS[goal];
+  if(sub){
+    sub.forEach(([t,ms])=>{const l=ms.filter(m=>!pri.some(x=>x[0]===m));if(l.length)html+=head(t)+l.map(m=>btn(m)).join("")});
+  }else{
+    html+=group.modes.map(x=>x[0].indexOf("view:")===0?`<button class="exerciseChoice" data-goal-mode="${x[0]}"><div><div>${escapeHtml(x[1])}</div><small>${escapeHtml(x[2])}</small></div><span class="arrow">›</span></button>`:btn(x[0])).join("");
+  }
+  $("goalChoicesGrid").innerHTML=html;
+  document.querySelectorAll("[data-goal-mode]").forEach(b=>b.onclick=()=>openExercise(b.dataset.goalMode));
+};
 
 /* ----- séance du jour ----- */
 const PLAN_GRAM=["tenses","prepositions","articles","modals","comparatives","connectors","wordOrder"];
@@ -4693,7 +4745,7 @@ function skDelta(k){const p=planDay();return ((state.skills[k]||{}).t||0)-(p.day
 function sameDay(ts){return ts&&new Date(ts).toISOString().slice(0,10)===today()}
 function planSteps(){
   const wd=new Date().getDay(),vidDay=[2,4,6].includes(wd),trDay=[1,3,5].includes(wd),a=A();
-  const packs=PACKS.filter(p=>!packsOff()[p.id]),pk=packs.length?packs[(Math.floor(Date.now()/864e5))%packs.length]:null;
+  const packs=PACKS,pk=packs.length?packs[(Math.floor(Date.now()/864e5))%packs.length]:null;
   const gm=PLAN_GRAM[wd%PLAN_GRAM.length];
   const recentVid=Object.values(a.vids||{}).some(v=>sameDay(v.d));
   const seenPod=Object.values(a.seen||{}).some(sameDay);
@@ -4722,7 +4774,7 @@ let planSig="";
 function planTick(){
   try{applyPageVisibility()}catch(e){}
   try{
-    const sig=JSON.stringify(planSteps().map(s=>s.ok))+today()+JSON.stringify(packsOff());
+    const sig=JSON.stringify(planSteps().map(s=>s.ok))+today()+(state.packFocus||"");
     if(sig!==planSig||!$("planPanel").firstChild){planSig=sig;renderPlan()}
   }catch(e){}
 }
