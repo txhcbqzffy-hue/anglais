@@ -986,6 +986,14 @@ header{justify-content:space-between!important}
 header{margin-top:0!important}
 .dayMore{margin-top:10px;width:100%}
 details.acc>section>h2:first-child,details.acc>.panel>h2:first-child,details.acc .adaptiveHead h2{display:none}
+
+/* v52 : bannière de la séance du jour */
+.dailyBanner{position:fixed;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:calc(max(9px,env(safe-area-inset-bottom)) + 74px);z-index:40;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px 10px 14px;border-radius:var(--r);background:var(--accent);color:var(--on-accent);box-shadow:0 8px 22px rgba(0,0,0,.18)}
+.dailyBanner.hidden{display:none}
+.dailyBanner div{display:flex;flex-direction:column}.dailyBanner b{font-size:14px}.dailyBanner small{font-size:12px;opacity:.75;font-weight:700}
+.dailyBanner button{background:var(--on-accent)!important;color:var(--accent)!important;border:0!important;padding:8px 16px!important;min-height:0!important}
+body.hasBanner .app{padding-bottom:calc(168px + env(safe-area-inset-bottom))!important}
+#reviewInfo{display:none}
 </style>
 </head>
 <body>
@@ -4511,7 +4519,7 @@ function tagPages(){
   const root=$("view-train"),H=e=>((e.querySelector("h2,h3,b")||{}).textContent||"").trim();
   pageTags=[...root.children].map(el=>{
     let pg="home";
-    if(el.id==="packsPanel"||el.id==="planPanel"||el.id==="revPanel"||el.classList.contains("stats")||/^Banque d’exercices/.test(H(el)))pg="none";
+    if(el.id==="packsPanel"||el.id==="planPanel"||el.id==="revPanel"||/^Parcours adaptatif/.test(H(el))||el.classList.contains("stats")||/^Banque d’exercices/.test(H(el)))pg="none";
     
     else if(el.classList.contains("goalPanel"))pg="all";
     else if(["modeHelp","lessonPanel","exerciseCard"].includes(el.id)||el.classList.contains("toolbar"))pg="zone";
@@ -4534,7 +4542,9 @@ function applyPageVisibility(){
   const g=goals.includes(goal)?goal:goals[0];
   try{renderPageBar()}catch(e){}
   if(g&&lastGoalShown!==p+":"+g){lastGoalShown=p+":"+g;document.querySelectorAll("[data-goal]").forEach(b=>b.classList.toggle("active",b.dataset.goal===g));renderGoalChoices(g)}
+  try{renderDailyBanner()}catch(e){}
 }
+
 function ensureModeForPage(v){
   if(v==="home"||(state.adaptive&&state.adaptive.active))return;
   if(!PAGE_GOALS[v].includes(curGoal()))setMode(PAGE_DEFAULT[v]);
@@ -5780,7 +5790,7 @@ function jDetail(){
     ${gauge}${tiles}
     <button type="button" class="ghost dayMore" id="dayMore">${jMore?"Masquer le détail":"Détail"}</button>
     <div id="dayExtra" class="${jMore?"":"hidden"}">
-    ${rows?`<div class="dRows">${rows}</div>`:""}
+    ${d.session?`<div class="dRow"><span>Séance du jour</span><b>${d.session.c}/${d.session.t}</b></div>`:""}${rows?`<div class="dRows">${rows}</div>`:""}
     ${ws.length?`<div class="dWords"><small>Mots travaillés (${ws.length})</small><div>${ws.slice(0,24).map(w=>`<span class="dChip ${d.words[w].w?"bad":"ok"}">${escapeHtml(w)}</span>`).join("")}</div></div>`:""}</div>`;
   $("dayMore").onclick=()=>{jMore=!jMore;$("dayExtra").classList.toggle("hidden",!jMore);$("dayMore").textContent=jMore?"Masquer le détail":"Détail"};
   wire();
@@ -5854,6 +5864,68 @@ function initNavLong(){
   b.addEventListener("click",e=>{if(fired){e.stopImmediatePropagation();e.preventDefault();fired=false}},true);
   b.addEventListener("contextmenu",e=>e.preventDefault());
 }
+
+/* ----- séance du jour : 10 questions selon le niveau, bannière au-dessus du menu ----- */
+const LVL_POOLS={
+  A1:{v:["quiz","quizMix","phrases","write"],g:["thirdPerson","articles","wordOrder","questionsNeg","edSpell","comparatives"],l:["listening","edPron","edListen"]},
+  A2:{v:["quizMix","quizReverse","phrases","reverse","defMatch"],g:["tenses","prepositions","questionsNeg","irregularPast","comparatives","modals","wordOrder","edSpell"],l:["listening","dictation","edListen"]},
+  B1:{v:["quizReverse","reverse","phrases","phrasal","collocations","defMatch"],g:["tenses","modals","irregularMix","finderror","transform","prepositions","questionsNeg"],l:["dictation","listening","audioDialogues"]},
+  B2:{v:["phrasal","collocations","falseFriends","defMatch","reverse","phrases"],g:["transform","finderror","tenses","connectors","grammar","irregularMix","modals"],l:["dictation","audioDialogues","listening"]},
+  C1:{v:["phrasal","collocations","falseFriends","defMatch","reverse"],g:["transform","finderror","connectors","grammar","tenses","modals"],l:["dictation","audioDialogues"]}
+};
+function pickN(arr,n){const a=shuffle(arr),out=a.slice(0,n);while(out.length<n)out.push(rand(arr));return out}
+buildAdaptiveQueue=function(){
+  const P=LVL_POOLS[estimatedLevel()]||LVL_POOLS.A1;
+  let q=[].concat(pickN(P.v,4),pickN(P.g,4),pickN(P.l,2));
+  q=shuffle(q);
+  for(let i=1;i<q.length;i++){ // pas deux fois le même exercice de suite
+    if(q[i]===q[i-1]){const j=q.findIndex((x,k)=>k>i&&x!==q[i]&&x!==q[i-1]);if(j>0){const t=q[i];q[i]=q[j];q[j]=t}}
+  }
+  return q;
+};
+const __jFinish=finishAdaptiveSession;
+finishAdaptiveSession=function(){
+  const c=state.adaptive.correct,t=state.adaptive.queue.length||10;
+  __jFinish();
+  state.dailyDone=JD(new Date());
+  try{const d=jDay(JD(new Date()),true);d.session={c,t};saveState();jRender(true)}catch(e){}
+  try{renderDailyBanner()}catch(e){}
+};
+function renderDailyBanner(){
+  let b=$("dailyBanner");
+  if(!b){
+    b=document.createElement("div");b.id="dailyBanner";b.className="dailyBanner hidden";document.body.appendChild(b);
+  }
+  const a=state.adaptive||{},active=!!a.active,done=state.dailyDone===JD(new Date());
+  const exOpenNow=($("exerciseCard")&&$("exerciseCard").offsetParent!==null);
+  const show=active||(!done&&!exOpenNow&&currentView!=="audio"&&currentView!=="write");
+  b.classList.toggle("hidden",!show);
+  document.body.classList.toggle("hasBanner",show);
+  if(!show)return;
+  const key=active?"a"+a.index+"/"+a.queue.length:"s"+estimatedLevel();
+  if(b.dataset.k===key)return;b.dataset.k=key;
+  b.innerHTML=active
+    ?`<div><b>Séance du jour</b><small>Question ${Math.min(a.index+1,a.queue.length)}/${a.queue.length}</small></div><button type="button" class="ghost" id="dbStop">Arrêter</button>`
+    :`<div><b>Séance du jour</b><small>10 questions · niveau ${estimatedLevel()}</small></div><button type="button" class="primary" id="dbGo">Commencer</button>`;
+  if($("dbGo"))$("dbGo").onclick=()=>{try{startAdaptiveSession()}catch(e){console.error(e)}};
+  if($("dbStop"))$("dbStop").onclick=()=>{try{toggleAdaptive()}catch(e){console.error(e)}b.dataset.k=""};
+}
+
+/* Progression : même présentation que le profil d'erreurs (classement + bouton) */
+const SKILL_LABELS={vocab:"Vocabulaire",grammar:"Grammaire",listening:"Écoute",reading:"Lecture",tenses:"Temps",writing:"Écriture",speaking:"Oral"};
+const SKILL_MODE={vocab:"quizMix",grammar:"tenses",listening:"dictation",reading:"reading",tenses:"tenses",writing:"writingTask",speaking:"pronunciation"};
+renderSkills=function(){
+  const host=$("skillBars");if(!host)return;
+  const rows=Object.keys(SKILL_LABELS).map(k=>{const s=state.skills[k]||{c:0,t:0};return {k,c:s.c,t:s.t,p:s.t?Math.round(s.c/s.t*100):0}})
+    .sort((a,b)=>(a.t===0)-(b.t===0)||a.p-b.p||b.t-a.t);
+  host.innerHTML=rows.map((r,i)=>`<div class="profileRow">
+    <div><div class="profileName">${i+1}. ${SKILL_LABELS[r.k]}</div><div class="profileMeta">${r.t?r.c+" juste(s) sur "+r.t:"Pas encore de réponse"}</div></div>
+    <div class="profileBar"><i style="width:${r.p}%"></i></div>
+    <div class="profilePct">${r.p}%</div>
+    <button class="ghost reviewConcept" data-skill-mode="${SKILL_MODE[r.k]}">Réviser</button>
+  </div>`).join("");
+  host.querySelectorAll("[data-skill-mode]").forEach(b=>b.onclick=()=>openExercise(b.dataset.skillMode));
+};
 /* =====================================================================
    v42 : ajouter un mot (anglais ou français) -> traduction, explication, exemple
    ===================================================================== */
