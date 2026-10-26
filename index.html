@@ -928,6 +928,21 @@ header{justify-content:space-between!important}
 .accRow .acc{margin:0!important}
 .accRow .acc>summary{padding:12px!important;min-height:44px;font-size:14px}
 .accRow .acc[open]{grid-column:1/-1}
+
+/* v42 : ajout de mot */
+.addCard{margin-bottom:10px}
+.avRow{display:flex;gap:8px;align-items:center}
+.avRow .input{flex:1;min-width:0}
+.avMsg{margin:8px 2px 0}
+.avRes{display:grid;gap:8px;margin-top:10px}
+.avRes label{display:grid;gap:4px;font-size:12px;font-weight:800;color:var(--muted)}
+.avRes textarea{resize:vertical;font-family:inherit}
+.avSub{color:var(--muted);font-size:12px;margin-top:-4px}
+.avList{margin-top:12px;border-top:1px solid var(--line);padding-top:8px}
+.avList summary{cursor:pointer;font-weight:800;font-size:14px;padding:6px 0}
+.avItem{padding:8px 0;border-top:1px solid var(--line);display:grid;gap:2px}
+.avItem small{color:var(--muted);font-size:12px}
+.avHead{display:flex;gap:8px;align-items:center}.avHead span{flex:1;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -4454,7 +4469,8 @@ function tagPages(){
     
     else if(el.classList.contains("goalPanel"))pg="all";
     else if(["modeHelp","lessonPanel","exerciseCard"].includes(el.id)||el.classList.contains("toolbar"))pg="zone";
-    else if(/^(Maîtrise|Ajouter ton vocab)/.test(H(el)))pg="vocab";
+    else if(/^Ajouter ton vocab/.test(H(el)))pg="none";
+    else if(/^Maîtrise/.test(H(el)))pg="vocab";
     else if(/^(Fiches|3e personne|Verbes irréguliers|Verbes en -ED)/.test(H(el)))pg="gram";
     return {el,pg};
   });
@@ -5201,6 +5217,7 @@ function renderPageBar(){
     }
     h+=groups.map(([t,ms])=>`<div class="blkHead">${escapeHtml(t)}</div><div class="blkGrid">${ms.filter(m=>info[m]).map(m=>`<button type="button" class="blk" data-blk="${m}"><b>${escapeHtml(info[m][1])}</b><small>${escapeHtml(info[m][2]||"")}</small></button>`).join("")}</div>`).join("");
     host.innerHTML=h;
+    if(p==="vocab")host.insertBefore(avEl(),host.firstChild);
     host.querySelectorAll("[data-blk]").forEach(b=>b.onclick=()=>openExercise(b.dataset.blk));
     const t=$("pbTheme");
     if(t)t.onchange=()=>{state.packFocus=t.value||null;saveState();barSig=""};
@@ -5739,6 +5756,95 @@ function initLevel(){
   s.addEventListener("click",e=>{if(e.target.closest("[data-cefr-level]"))closeLevel()},true);
   lvlTrack();
 }
+/* =====================================================================
+   v42 : ajouter un mot (anglais ou français) -> traduction, explication, exemple
+   ===================================================================== */
+const AV_FR=/[àâçéèêëîïôùûüœ]|\b(le|la|les|un|une|des|du|de|je|tu|il|elle|nous|vous|est|pour|avec|dans|sur|et|ou|que|qui|pas|mon|ma|mes|ton|ta|se|ce|cette)\b/i;
+let av={q:"",stage:"idle",res:null,msg:""},avNode=null;
+const avClean=s=>String(s||"").replace(/\s+/g," ").trim();
+async function avDict(w){
+  try{const {data}=await netJson("https://api.dictionaryapi.dev/api/v2/entries/en/"+encodeURIComponent(w.toLowerCase()),30*864e5);return Array.isArray(data)&&data.length?data:null}catch(e){return null}
+}
+async function avTatoeba(en){
+  try{
+    const {data}=await netJson("https://tatoeba.org/en/api_v0/search?from=eng&to=fra&orphans=no&unapproved=no&sort=relevance&query="+encodeURIComponent('"'+en+'"'),30*864e5);
+    const stem=en.toLowerCase().slice(0,Math.max(3,en.length-2));
+    const c=((data&&data.results)||[]).map(r=>{
+      const fr=[].concat(...(r.translations||[]).map(t=>Array.isArray(t)?t:[t])).find(t=>t&&t.lang==="fra");
+      return fr&&r.text&&r.text.toLowerCase().includes(stem)?{ex:avClean(r.text),exFr:avClean(fr.text)}:null;
+    }).filter(Boolean);
+    return c.find(x=>x.ex.length>=20&&x.ex.length<=80)||c.sort((a,b)=>a.ex.length-b.ex.length)[0]||null;
+  }catch(e){return null}
+}
+function avFirstUpper(src,t){return src&&src[0]===src[0].toLowerCase()&&t?t[0].toLowerCase()+t.slice(1):t}
+async function avLookup(q){
+  q=avClean(q);let en=q,fr="",entries=null;
+  const frLook=AV_FR.test(q);
+  if(frLook){
+    en=avFirstUpper(q,avClean(await mmTranslate(q,"fr","en")));fr=q;
+    if(en.toLowerCase()===q.toLowerCase())en=q;
+  }else{
+    entries=q.split(" ").length===1?await avDict(q):null;
+    fr=avFirstUpper(q,avClean(await mmTranslate(q,"en","fr")));
+  }
+  if(!entries&&en.split(" ").length===1)entries=await avDict(en);
+  const r={en,fr,pos:"",def:"",defFr:"",ex:"",exFr:""};
+  if(entries){
+    const meanings=entries[0].meanings||[];
+    const m0=meanings[0];
+    if(m0){r.pos=m0.partOfSpeech||"";const d0=(m0.definitions||[])[0];if(d0)r.def=avClean(d0.definition)}
+    for(const m of meanings){const d=(m.definitions||[]).find(x=>x.example);if(d){r.ex=avClean(d.example).replace(/^["“]|["”]$/g,"");break}}
+  }
+  const tat=await avTatoeba(en);
+  if(tat){r.ex=tat.ex;r.exFr=tat.exFr}
+  if(r.def){try{r.defFr=avClean(await mmTranslate(r.def,"en","fr"))}catch(e){}}
+  if(r.ex&&!r.exFr){try{r.exFr=avClean(await mmTranslate(r.ex,"en","fr"))}catch(e){}}
+  return r;
+}
+function avRender(){
+  const n=avNode;if(!n)return;
+  const r=av.res,esc=escapeHtml,$=id=>n.querySelector("#"+id);
+  let body=`<div class="avRow"><input id="avIn" class="input" placeholder="Un mot ou une expression, en anglais ou en français" value="${esc(av.q)}" autocomplete="off" autocapitalize="none"><button type="button" class="primary" id="avGo">${av.stage==="load"?"…":"Chercher"}</button></div>`;
+  if(av.msg)body+=`<div class="small avMsg">${esc(av.msg)}</div>`;
+  if(av.stage==="res"&&r){
+    body+=`<div class="avRes">
+      <label>Anglais<div class="avRow"><input id="avEn" class="input" value="${esc(r.en)}"><button type="button" class="chip2" id="avSay">Écouter</button></div></label>
+      <label>Français<input id="avFr" class="input" value="${esc(r.fr)}"></label>
+      <label>Explication${r.pos?` <small>(${esc(r.pos)})</small>`:""}<textarea id="avDef" class="input" rows="2">${esc(r.defFr||r.def)}</textarea></label>
+      ${r.defFr&&r.def?`<small class="avSub">${esc(r.def)}</small>`:""}
+      <label>Exemple<textarea id="avEx" class="input" rows="2">${esc(r.ex)}</textarea></label>
+      ${r.exFr?`<small class="avSub">${esc(r.exFr)}</small>`:""}
+      <div class="actions"><button type="button" class="primary" id="avAdd">Ajouter à mes mots</button><button type="button" class="ghost" id="avCancel">Annuler</button></div>
+    </div>`;
+  }
+  const list=state.custom.filter(x=>x.en).slice().reverse();
+  if(list.length){
+    body+=`<details class="avList"><summary>Mes mots ajoutés (${list.length})</summary>${list.map(x=>`<div class="avItem"><div class="avHead"><b>${esc(x.en)}</b><span>${esc(x.fr)}</span><button type="button" class="chip2" data-avdel="${esc(x.en)}">Supprimer</button></div>${x.defFr||x.def?`<small>${esc(x.defFr||x.def)}</small>`:""}${x.ex?`<small><i>${esc(x.ex)}</i></small>`:""}</div>`).join("")}</details>`;
+  }
+  n.innerHTML=body;
+  const go=()=>{av.q=$("avIn").value;avSearch()};
+  $("avGo").onclick=go;$("avIn").onkeydown=e=>{if(e.key==="Enter")go()};$("avIn").oninput=()=>{av.q=$("avIn").value};
+  if($("avSay"))$("avSay").onclick=()=>speakAmerican($("avEn").value,.85);
+  if($("avCancel"))$("avCancel").onclick=()=>{av={q:"",stage:"idle",res:null,msg:""};avRender()};
+  if($("avAdd"))$("avAdd").onclick=()=>{
+    const en=avClean($("avEn").value),fr=avClean($("avFr").value);
+    if(!en||!fr){av.msg="Il faut au moins le mot en anglais et sa traduction.";avRender();return}
+    if(vocab().some(v=>v[0].toLowerCase()===en.toLowerCase())){av.msg="Ce mot est déjà dans ta liste.";avRender();return}
+    state.custom.push({en,fr,def:avClean($("avDef").value),ex:avClean($("avEx").value),exFr:r.exFr||"",pos:r.pos||""});
+    state.review[en]={step:0,next:Date.now()+10*60*1000};
+    saveState();try{updateUI()}catch(e){}
+    av={q:"",stage:"idle",res:null,msg:"Ajouté : "+en+" = "+fr};avRender();
+  };
+  n.querySelectorAll("[data-avdel]").forEach(b=>b.onclick=()=>{state.custom=state.custom.filter(x=>x.en!==b.dataset.avdel);delete state.review[b.dataset.avdel];saveState();try{updateUI()}catch(e){}avRender()});
+}
+async function avSearch(){
+  if(!avClean(av.q)){av.msg="Écris un mot.";avRender();return}
+  av.stage="load";av.msg="Recherche…";avRender();
+  try{av.res=await avLookup(av.q);av.stage="res";av.msg=av.res.def||av.res.ex?"":"Pas d’explication ni d’exemple trouvés : tu peux les écrire toi-même."}
+  catch(e){av.stage="idle";av.res=null;av.msg=e&&e.code==="quota"?"La limite du service de traduction est atteinte, réessaie plus tard.":"Impossible de joindre le service. Vérifie ta connexion."}
+  avRender();
+}
+function avEl(){if(!avNode){avNode=document.createElement("section");avNode.id="addCard";avNode.className="panel addCard";avRender()}return avNode}
 
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
