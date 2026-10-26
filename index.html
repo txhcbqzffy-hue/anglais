@@ -1158,6 +1158,14 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .favT .backIc,.blkBar .backIc{min-width:44px}
 #whyBox .whyRow{display:flex;align-items:center;justify-content:space-between;gap:8px}
 #whyBox .whyRow .optFav{margin-right:-8px;margin-left:0}
+.tenseLink{background:none;border:0;padding:0;margin:0;font:inherit;font-weight:inherit;color:inherit;text-decoration:underline dotted var(--accent);text-underline-offset:5px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tenseLink:active{color:var(--accent-text)}
+.tBlk{margin:14px 0}.tBlk h3{margin:0 0 6px;font-size:14px;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-text)}
+.tBlk p,.tBlk li{margin:4px 0;line-height:1.5;font-size:15.5px}.tBlk ul{margin:0;padding-left:20px}
+.tEx{padding:10px 12px;margin:8px 0;border-left:3px solid var(--accent);background:rgba(var(--accent-rgb),.07);border-radius:10px;cursor:pointer}
+.tEx b{display:block}.tEx i{display:block;font-style:normal;color:var(--muted);font-size:14px;margin-top:2px}
+.tTrap{padding:10px 12px;border-radius:12px;background:rgba(var(--accent-rgb),.1)}
+#tenseBody{padding-bottom:40px}
 </style>
 </head>
 <body>
@@ -1166,7 +1174,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v47</span></h1>
+        <h1>English Trainer<span class="ver">v48</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -7975,7 +7983,7 @@ function I18N(t){
   for(const [re,f] of I18N_RULES){const m=k.match(re);if(m){const r=f.apply(null,m);if(r!==k)return t.replace(k,r)}}
   return t;
 }
-function i18nSkip(n){const e=n.nodeType===1?n:n.parentElement;return !e||e.closest("#expWrap,#lessonPanel,#coursSheet,script,style")||(n.nodeType===3&&e.closest("textarea"))}
+function i18nSkip(n){const e=n.nodeType===1?n:n.parentElement;return !e||e.closest("#expWrap,#lessonPanel,#coursSheet,#tenseSheet,script,style")||(n.nodeType===3&&e.closest("textarea"))}
 function i18nNode(n){
   if(n.nodeType===3){if(!i18nSkip(n)){let v=I18N(n.nodeValue);if(v===n.nodeValue&&n.parentElement&&n.parentElement.closest("#question,#info,#modeHelp,#feedback,#translationBox"))v=I18NF(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v}return}
   if(n.nodeType!==1||i18nSkip(n))return;
@@ -8378,6 +8386,75 @@ checkOption=function(){
 };
 const __nqWhy=newQuestion;
 newQuestion=function(){try{whyClear()}catch(e){}return __nqWhy.apply(this,arguments)};
+
+/* ----- « Transformer une phrase » : toucher un temps ouvre sa fiche (règle, pourquoi, exemples) ----- */
+const TENSES={
+"Present simple":{f:"sujet + base verbale (+ s à he / she / it) · négation : don't / doesn't + base · question : Do / Does + sujet + base ?",
+ u:["Habitudes et routines : I work in marketing.","Vérités générales et faits permanents : Water boils at 100 °C.","Horaires et programmes fixes : The train leaves at 8."],
+ y:"On l'emploie quand l'action est un état durable ou répété, pas quelque chose qui se passe « en ce moment » (→ present continuous) ni un événement terminé (→ past simple).",
+ s:"always, usually, often, sometimes, never, every day, on Mondays",
+ ex:[["I work remotely.","Je travaille à distance."],["She works in Lille.","Elle travaille à Lille."],["Does he speak English?","Parle-t-il anglais ?"]],
+ t:"Le -s de la 3e personne n'apparaît qu'une fois : « Does she work ? », pas « Does she works ? »."},
+"Past simple":{f:"verbe + -ed (réguliers) ou forme irrégulière (go → went) · négation : didn't + base · question : Did + sujet + base ?",
+ u:["Action terminée à un moment précis du passé : I worked remotely last year.","Suite d'événements passés : She called, then she left.","Habitude révolue : We played football every Sunday."],
+ y:"On l'emploie quand le moment est fini et souvent précisé (yesterday, last week, in 2020). Si le moment n'est pas donné ou que le lien avec le présent compte, on prend le present perfect.",
+ s:"yesterday, last week, ago, in 2020, when I was young",
+ ex:[["I worked remotely.","J'ai travaillé à distance."],["They went to Paris last month.","Ils sont allés à Paris le mois dernier."],["Did you finish the report?","As-tu terminé le rapport ?"]],
+ t:"Après did / didn't, le verbe reprend sa base : « Did you went » est faux → « Did you go »."},
+"Present perfect":{f:"have / has + participe passé · négation : haven't / hasn't + participe · question : Have / Has + sujet + participe ?",
+ u:["Expérience de vie, sans date : I have worked in marketing.","Action passée qui a un résultat maintenant : I have lost my keys.","Situation commencée dans le passé et qui continue : I have worked here for three years."],
+ y:"On l'emploie quand le passé est relié au présent (résultat, durée jusqu'à maintenant, expérience). Dès qu'on donne une date précise, on repasse au past simple.",
+ s:"ever, never, already, yet, just, for, since, so far, recently",
+ ex:[["I have worked in marketing.","J'ai travaillé dans le marketing."],["She has just left.","Elle vient de partir."],["We have lived here since 2020.","Nous habitons ici depuis 2020."]],
+ t:"« I have seen him yesterday » est faux : avec yesterday on dit « I saw him yesterday »."},
+"Present continuous":{f:"am / is / are + verbe en -ing · négation : am not / isn't / aren't + -ing · question : Am / Is / Are + sujet + -ing ?",
+ u:["Action en cours en ce moment : I am working on a project.","Situation temporaire : She is staying with friends this week.","Projet futur déjà organisé : We are meeting him tomorrow."],
+ y:"On l'emploie quand l'action est en train de se dérouler ou est temporaire. Pour une habitude ou un fait durable, on garde le present simple.",
+ s:"now, at the moment, currently, this week, today, these days",
+ ex:[["I am working on a project.","Je travaille sur un projet (en ce moment)."],["He isn't answering his phone.","Il ne répond pas à son téléphone."],["Are they waiting for us?","Nous attendent-ils ?"]],
+ t:"Certains verbes d'état (know, like, want, believe) ne se mettent presque jamais au continu : « I know » et non « I am knowing »."},
+"Past perfect":{f:"had + participe passé · négation : hadn't + participe · question : Had + sujet + participe ?",
+ u:["Action passée antérieure à une autre action passée : When I arrived, the meeting had started.","Expliquer la cause d'un événement passé : He was tired because he had worked all night."],
+ y:"On l'emploie quand il y a deux événements passés et qu'on veut montrer lequel est arrivé en premier. Le plus ancien prend had + participe, le plus récent reste au past simple.",
+ s:"before, after, by the time, already, just, when",
+ ex:[["The film had already started when we arrived.","Le film avait déjà commencé quand nous sommes arrivés."],["She had never seen snow before.","Elle n'avait jamais vu de neige avant."],["Had you met him before?","L'aviez-vous déjà rencontré ?"]],
+ t:"On ne l'utilise pas s'il n'y a qu'un seul événement passé : le past simple suffit."},
+"Future":{f:"will + base verbale (décision, prévision) · be going to + base (intention, signe visible) · négation : won't / isn't going to",
+ u:["Décision prise sur le moment, promesse, offre : I'll call you later.","Prévision ou opinion : It will rain tomorrow.","Intention déjà prévue : I am going to start a new job."],
+ y:"« Will » exprime une décision spontanée ou une prévision ; « be going to » un plan déjà décidé ou une conséquence visible. Pour un horaire fixe, on peut même utiliser le present simple.",
+ s:"tomorrow, next week, soon, in 2030, probably, I think",
+ ex:[["I will work remotely.","Je travaillerai à distance."],["We are going to launch the campaign in May.","Nous allons lancer la campagne en mai."],["Will you help me?","Veux-tu m'aider ?"]],
+ t:"Après if / when / as soon as, on utilise le présent, pas will : « If it rains, we stay home »."}
+};
+const TENSE_ALIAS={"Present":"Present simple","Past simple":"Past simple","Past perfect":"Past perfect","Present perfect":"Present perfect","Present continuous":"Present continuous","Future":"Future"};
+function tenseOpen(name){
+  const d=TENSES[TENSE_ALIAS[name]||name];if(!d)return;
+  let s=$("tenseSheet");
+  if(!s){
+    s=document.createElement("div");s.id="tenseSheet";s.className="sheet hidden";s.setAttribute("role","dialog");
+    s.innerHTML=`<div class="sheetHead"><h2 id="tenseTitle"></h2><button type="button" id="tenseClose" class="ghost backIc" aria-label="Fermer">✕</button></div><div id="tenseBody"></div>`;
+    document.body.appendChild(s);
+    $("tenseClose").onclick=()=>{s.classList.add("hidden");document.body.classList.remove("sheetOpen")};
+    s.addEventListener("click",e=>{const x=e.target.closest("[data-say]");if(x){try{speak(x.dataset.say)}catch(z){}}});
+  }
+  $("tenseTitle").textContent=TENSE_ALIAS[name]||name;
+  const L=a=>a.map(x=>`<li>${escapeHtml(x)}</li>`).join("");
+  $("tenseBody").innerHTML=`<div class="tBlk"><h3>Comment on le forme</h3><p>${escapeHtml(d.f)}</p></div>
+    <div class="tBlk"><h3>Quand l'utiliser</h3><ul>${L(d.u)}</ul></div>
+    <div class="tBlk"><h3>Pourquoi celui-là ?</h3><p>${escapeHtml(d.y)}</p></div>
+    <div class="tBlk"><h3>Mots repères</h3><p>${escapeHtml(d.s)}</p></div>
+    <div class="tBlk"><h3>Exemples</h3>${d.ex.map(([e,f])=>`<div class="tEx" data-say="${escapeHtml(e)}"><b>${escapeHtml(e)}</b><i>${escapeHtml(f)}</i></div>`).join("")}</div>
+    <div class="tBlk tTrap"><h3>Piège fréquent</h3><p>${escapeHtml(d.t)}</p></div>`;
+  s.classList.remove("hidden");document.body.classList.add("sheetOpen");s.scrollTop=0;
+}
+function tenseDecorate(){
+  if(mode!=="transform"||!current||!current.label)return;
+  const q=$("question");if(!q)return;
+  q.innerHTML=current.label.split(" → ").map(n=>`<button type="button" class="tenseLink" data-tense="${escapeHtml(n)}">${escapeHtml(n)}</button>`).join('<span class="tArrow"> → </span>');
+}
+const __nqTense=newQuestion;
+newQuestion=function(){const r=__nqTense.apply(this,arguments);try{tenseDecorate()}catch(e){console.error(e)}return r};
+document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest(".tenseLink");if(t){e.preventDefault();tenseOpen(t.dataset.tense)}},true);
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
