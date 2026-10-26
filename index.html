@@ -469,7 +469,7 @@ body{background:radial-gradient(circle at 92% -8%,rgba(var(--accent-rgb),var(--g
 .progress i,.cefrProgress i,.bar i{background:var(--accent)!important}
 
 /* Onglets */
-.tabs{border:1px solid #3a4147;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;margin:0 0 14px;background:var(--anthracite);border-radius:14px;position:sticky;top:6px;z-index:40;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.tabs{border:1px solid #3a4147;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px;margin:0 0 14px;background:var(--anthracite);border-radius:14px;position:sticky;top:6px;z-index:40;box-shadow:0 8px 24px rgba(0,0,0,.18)}
 .tab{border:0;background:transparent;color:#b4bbb6;font-weight:800;min-height:42px;border-radius:10px;padding:8px 6px;font-size:14px}
 .tab.active{background:var(--lime);color:#15180b}
 .tab:not(.active):hover{color:#fff;background:rgba(255,255,255,.07)}
@@ -580,6 +580,12 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 :root[data-theme="dark"] .chip2.ghost.on{background:#c3f53c!important;color:#1f2326!important;border-color:#c3f53c!important}
 .chip2.ghost:not(.on){opacity:.6;text-decoration:line-through}
 .coin,.headTools .coin{display:none!important}
+
+/* v29 : 5 pages */
+.pgHide{display:none!important}
+.tab{font-size:13px;padding:8px 2px}
+.bottomNav button{font-size:10.5px!important}
+@media(max-width:720px){.tabs{display:none!important}}
 </style>
 </head>
 <body>
@@ -596,9 +602,11 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
   </header>
   <div id="compatNotice" class="compatNotice"></div>
   <nav class="tabs" role="tablist" aria-label="Sections de l’application">
-    <button class="tab active" role="tab" aria-selected="true" data-view="train">Entraînement</button>
+    <button class="tab active" role="tab" aria-selected="true" data-view="home">Accueil</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="vocab">Vocabulaire</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="gram">Grammaire</button>
     <button class="tab" role="tab" aria-selected="false" data-view="audio">Audio</button>
-    <button class="tab" role="tab" aria-selected="false" data-view="translate">Traduction</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="write">Écriture</button>
   </nav>
 
   <div id="view-train" class="view">
@@ -1165,11 +1173,11 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 </div>
 
 <nav class="bottomNav">
-  <button class="active" data-mobilemode="quiz"><span>⚡</span>Quiz</button>
-  <button data-mobilemode="reading"><span>📖</span>Lire</button>
-  <button data-mobilemode="pronunciation"><span>🎙️</span>Oral</button>
+  <button class="active" data-view="home"><span>🏠</span>Accueil</button>
+  <button data-view="vocab"><span>🧠</span>Vocab.</button>
+  <button data-view="gram"><span>🧩</span>Grammaire</button>
   <button data-view="audio"><span>🎧</span>Audio</button>
-  <button data-mobilemode="review"><span>🧠</span>Réviser</button>
+  <button data-view="write"><span>✍️</span>Écriture</button>
 </nav>
 
 <script>
@@ -3984,8 +3992,8 @@ function syncModeCategory(m){
   const category=
     ["questionsNeg","wordOrder","tenses","grammar","transform","finderror","articles","prepositions","comparatives","modals","thirdPerson","edSpell","irregularPast","irregularPart","irregularMix","edPron","sPron","connectors"].includes(m)?"grammar":
     ["quiz","quizReverse","quizMix","phrases","phrasal","collocations","falseFriends","write","reverse"].includes(m)?"vocab":
-    ["listening","dictation","reading","translationText","audioDialogues"].includes(m)?"understand":
-    ["pronunciation","pronLab","wordStress","sentenceStress","shadowing","writingTask","conversation"].includes(m)?"produce":
+    ["listening","dictation","audioDialogues","pronunciation","pronLab","wordStress","sentenceStress","shadowing","conversation"].includes(m)?"understand":
+    ["reading","translationText","writingTask"].includes(m)?"produce":
     ["review","errors","favorites"].includes(m)?"review":"test";
   document.querySelectorAll("[data-goal]").forEach(b=>b.classList.toggle("active",b.dataset.goal===category));
   $("hintBtn").disabled=["exam","reading","levelTest"].includes(m);
@@ -4000,7 +4008,6 @@ function setMode(m,keepAdaptive=false){
 }
 function openExercise(m,keepAdaptive=false){
   if(String(m).indexOf("view:")===0){showView(m.slice(5));return}
-  if(typeof currentView!=="undefined"&&currentView!=="train")showView("train",true);
   setMode(m,keepAdaptive);
   const card=$("exerciseCard");
   if(!card)return;
@@ -4071,8 +4078,9 @@ const PACKS=[{"id":"p_work","name":"Travail & carrière","words":[["workload","c
    v28 : onglets, thème, Audio (podcasts + vidéos), traduction libre, PWA
    ===================================================================== */
 const APP_VERSION="v29";
-const VIEWS=["train","audio","translate"];
-let currentView="train";
+const VIEWS=["home","vocab","gram","audio","write"];
+let currentView="home";
+let pagesReady=false;
 
 /* ---------- état additionnel (compatible avec les anciennes sauvegardes) ---------- */
 function A(){
@@ -4109,18 +4117,61 @@ function stopAudioMedia(keepPodcast){
   try{if("speechSynthesis" in window)speechSynthesis.cancel()}catch(e){}
   if(!keepPodcast){const au=$("pAudio");if(au)try{au.pause()}catch(e){}}
 }
+/* ---------- 5 pages : Accueil · Vocabulaire · Grammaire · Audio · Écriture ---------- */
+const PAGE_GOALS={home:["test"],vocab:["vocab","review"],gram:["grammar"],audio:["understand"],write:["produce"]};
+const GOAL_PAGE={test:"home",vocab:"vocab",review:"vocab",grammar:"gram",understand:"audio",produce:"write"};
+const PAGE_DEFAULT={vocab:"quizMix",gram:"questionsNeg",audio:"dictation",write:"writingTask"};
+let pageTags=[],lastGoalShown="";
+function activeGoal(){const b=document.querySelector("[data-goal].active");return b?b.dataset.goal:"vocab"}
+function tagPages(){
+  const root=$("view-train"),H=e=>((e.querySelector("h2,h3,b")||{}).textContent||"").trim();
+  pageTags=[...root.children].map(el=>{
+    let pg="home";
+    if(el.id==="packsPanel")pg="vocab";
+    else if(el.classList.contains("goalPanel"))pg="all";
+    else if(["modeHelp","lessonPanel","exerciseCard"].includes(el.id)||el.classList.contains("toolbar"))pg="zone";
+    else if(/^(Maîtrise|Ajouter ton vocab)/.test(H(el)))pg="vocab";
+    else if(/^(Fiches|3e personne|Base de verbes|Cambridge)/.test(H(el)))pg="gram";
+    return {el,pg};
+  });
+}
+function applyPageVisibility(){
+  if(!pagesReady)return;
+  const p=currentView,goal=activeGoal(),goals=PAGE_GOALS[p]||[];
+  const zone=p!=="home"||(state.adaptive&&state.adaptive.active)||goal==="test";
+  $("view-train").dataset.page=p;
+  pageTags.forEach(t=>t.el.classList.toggle("pgHide",!(t.pg==="all"||t.pg===p||(t.pg==="zone"&&zone))));
+  document.querySelectorAll("[data-goal]").forEach(b=>b.classList.toggle("pgHide",!goals.includes(b.dataset.goal)));
+  const grid=document.querySelector(".goalGrid");if(grid)grid.classList.toggle("pgHide",goals.length<2);
+  const g=goals.includes(goal)?goal:goals[0];
+  if(g&&lastGoalShown!==p+":"+g){lastGoalShown=p+":"+g;document.querySelectorAll("[data-goal]").forEach(b=>b.classList.toggle("active",b.dataset.goal===g));renderGoalChoices(g)}
+}
+function ensureModeForPage(v){
+  if(v==="home"||(state.adaptive&&state.adaptive.active))return;
+  if(!PAGE_GOALS[v].includes(activeGoal()))setMode(PAGE_DEFAULT[v]);
+}
+function pageFollowMode(){
+  if(!pagesReady)return;
+  if(state.adaptive&&state.adaptive.active){applyPageVisibility();return}
+  const pg=GOAL_PAGE[activeGoal()]||"home";
+  if(pg!==currentView)showView(pg,true);else applyPageVisibility();
+}
 function showView(v,silent){
-  if(!VIEWS.includes(v))v="train";
-  const leavingAudio=currentView==="audio"&&v!=="audio";
+  v=({train:"home",translate:"write"})[v]||v;
+  if(!VIEWS.includes(v))v="home";
+  const prev=currentView,leavingAudio=prev==="audio"&&v!=="audio";
   currentView=v;
-  VIEWS.forEach(x=>{const el=$("view-"+x);if(el)el.classList.toggle("hidden",x!==v)});
+  const va=$("view-audio"),vt=$("view-translate");
+  if(va)va.classList.toggle("hidden",v!=="audio");
+  if(vt)vt.classList.toggle("hidden",v!=="write");
+  $("view-train").classList.remove("hidden");
   document.querySelectorAll(".tabs [data-view]").forEach(b=>{const on=b.dataset.view===v;b.classList.toggle("active",on);b.setAttribute("aria-selected",on?"true":"false")});
   document.querySelectorAll(".bottomNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===v));
-  if(v==="train"){try{syncModeCategory(mode)}catch(e){}}
-  else document.querySelectorAll(".bottomNav [data-mobilemode]").forEach(b=>b.classList.remove("active"));
+  if(pagesReady&&v!==prev)ensureModeForPage(v);
+  applyPageVisibility();
   if(leavingAudio){vid.open=null;if($("audioSeg")&&A().seg==="vid")renderAudio()}
   if(v==="audio")renderAudio();
-  if(v==="translate")renderTranslate();
+  if(v==="write")renderTranslate();
   if(!silent){try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}}
 }
 
@@ -4585,11 +4636,17 @@ function initPWA(){
 function initV28(){
   applyTheme(document.documentElement.dataset.theme==="dark"?"dark":"light");
   $("themeBtn").onclick=toggleTheme;
-  document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{showView(b.dataset.view);try{history.replaceState(null,"","#"+(b.dataset.view==="train"?"":b.dataset.view))}catch(e){}}));
+  document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{showView(b.dataset.view);try{history.replaceState(null,"","#"+(b.dataset.view==="home"?"":b.dataset.view))}catch(e){}}));
   initTranslate();
-  const h=(location.hash||"").replace("#","");
-  if(VIEWS.includes(h)&&h!=="train")showView(h,true);
-  window.addEventListener("hashchange",()=>{const x=(location.hash||"").replace("#","");showView(VIEWS.includes(x)?x:"train")});
+  const vt=$("view-train");vt.parentNode.insertBefore($("view-audio"),vt);vt.parentNode.insertBefore($("view-translate"),vt);
+  const G=goalModeGroups,all=[].concat(G.understand.modes,G.produce.modes),by=m=>all.find(x=>x[0]===m);
+  G.understand={title:"🎧 Audio & oral",modes:["view:audio","audioDialogues","dictation","listening","pronunciation","pronLab","wordStress","sentenceStress","shadowing","conversation"].map(by).filter(Boolean)};
+  G.produce={title:"✍️ Écriture & lecture",modes:["view:translate","writingTask","reading","translationText"].map(by).filter(Boolean)};
+  tagPages();pagesReady=true;
+  const h0=(location.hash||"").replace("#","");
+  const hp=({translate:"write",train:"home"})[h0]||h0;
+  showView(VIEWS.includes(hp)?hp:"home",true);
+  window.addEventListener("hashchange",()=>{const x=(location.hash||"").replace("#","");showView(({translate:"write",train:"home"})[x]||(VIEWS.includes(x)?x:"home"))});
   initPWA();
 }
 
@@ -4671,11 +4728,16 @@ function renderPlan(){
 }
 let planSig="";
 function planTick(){
+  try{applyPageVisibility()}catch(e){}
   try{
     const sig=JSON.stringify(planSteps().map(s=>s.ok))+today()+JSON.stringify(packsOff());
     if(sig!==planSig||!$("planPanel").firstChild){planSig=sig;renderPlan()}
   }catch(e){}
 }
+
+/* suit le mode choisi : bascule sur la page qui correspond */
+const __setModeOrig=setMode;
+setMode=function(m,k){__setModeOrig(m,k);pageFollowMode()};
 
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
