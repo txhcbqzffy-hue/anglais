@@ -853,6 +853,17 @@ header{margin-bottom:2px!important}
 .edGrid{gap:8px}.edGroup{padding:9px}.edWords,.edTrain{gap:6px}
 #exerciseCard,.card{min-height:0!important}
 #exerciseCard .actions{margin-top:8px}
+
+/* v32 : menu de blocs Vocab./Grammaire */
+.blkHead{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 2px 6px}
+.blkGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.blk{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--text);min-height:68px;box-shadow:var(--shadow)}
+.blk b{font-size:14px;line-height:1.2}
+.blk small{font-size:11.5px;color:var(--muted);line-height:1.3}
+.blk:active{transform:scale(.97)}
+.blkBar{display:flex;align-items:center;gap:10px}
+.blkBar b{font-size:15px}
+.pageBar:has(.blkGrid){display:block}
 </style>
 </head>
 <body>
@@ -4314,6 +4325,7 @@ const APP_VERSION="v30";
 const VIEWS=["home","vocab","gram","audio","write"];
 let currentView="home";
 let pagesReady=false;
+let exOpen=false;
 
 /* ---------- état additionnel (compatible avec les anciennes sauvegardes) ---------- */
 function A(){
@@ -4386,11 +4398,11 @@ function tagPages(){
 function applyPageVisibility(){
   if(!pagesReady)return;
   const p=currentView,goal=curGoal(),goals=PAGE_GOALS[p]||[];
-  const zone=(p==="audio"?(A().seg==="ear"||A().seg==="oral"):p==="write"?W()!=="free":p!=="home")||(state.adaptive&&state.adaptive.active)||goal==="test";
+  const zone=(p==="audio"?(A().seg==="ear"||A().seg==="oral"):p==="write"?W()!=="free":(p==="vocab"||p==="gram")?exOpen:p!=="home")||(state.adaptive&&state.adaptive.active)||goal==="test";
   $("view-train").dataset.page=p;
   const vtr=$("view-translate");if(vtr)vtr.classList.toggle("hidden",!(p==="write"&&W()==="free"));
   const hd=document.querySelector("header");if(hd)hd.classList.toggle("pgHide",p!=="home");
-  pageTags.forEach(t=>t.el.classList.toggle("pgHide",t.el.classList.contains("goalPanel")||!(t.pg==="all"||t.pg.split(" ").includes(p)||(t.pg==="zone"&&zone))));
+  pageTags.forEach(t=>t.el.classList.toggle("pgHide",t.el.classList.contains("goalPanel")||!(t.pg==="all"||(t.pg.split(" ").includes(p)&&!((p==="vocab"||p==="gram")&&exOpen))||(t.pg==="zone"&&zone))));
   document.querySelectorAll("[data-goal]").forEach(b=>b.classList.toggle("pgHide",!goals.includes(b.dataset.goal)));
   const grid=document.querySelector(".goalGrid");if(grid)grid.classList.toggle("pgHide",goals.length<2);
   const g=goals.includes(goal)?goal:goals[0];
@@ -4409,6 +4421,7 @@ function pageFollowMode(){
   if(pg!==currentView)showView(pg,true);else applyPageVisibility();
 }
 function showView(v,silent){
+  if(!silent)exOpen=false;
   if(v==="translate"){state.wseg="free";saveState()}
   v=({train:"home",translate:"write"})[v]||v;
   if(!VIEWS.includes(v))v="home";
@@ -5103,20 +5116,35 @@ function renderPageBar(){
   const host=$("pageBar");if(!host)return;
   const p=currentView;
   if(p!=="vocab"&&p!=="gram"&&p!=="write"){host.innerHTML="";barSig="";return}
-  const sig=p+"|"+mode+"|"+(state.packFocus||"")+"|"+W();
+  const sig=p+"|"+mode+"|"+(state.packFocus||"")+"|"+W()+"|"+exOpen;
   if(sig===barSig&&host.firstChild)return;
   barSig=sig;
   const info=modeInfo();
-  const groups=p==="gram"?SUBGROUPS.grammar:p==="write"?[["Écriture et lecture",["view:translate","writingTask","reading","translationText"]]]:[...SUBGROUPS.vocab,["Réviser",["review","errors","favorites"]]];
-  const cur=p==="write"&&W()==="free"?"view:translate":mode;
+  if(p==="vocab"||p==="gram"){
+    if(exOpen){
+      host.innerHTML=`<div class="blkBar"><button type="button" class="ghost" id="pbBack">‹ Retour</button><b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b></div>`;
+      $("pbBack").onclick=()=>{exOpen=false;applyPageVisibility();try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}};
+      return;
+    }
+    const groups=p==="gram"?SUBGROUPS.grammar:[...SUBGROUPS.vocab,["Réviser",["review","errors","favorites"]]];
+    let h="";
+    if(p==="vocab"){
+      const f=state.packFocus||"",o=id=>{const x=PACKS.find(q=>q.id===id);return x?`<option value="${id}"${f===id?" selected":""}>${escapeHtml(x.name)} (${x.words.length})</option>`:""};
+      const rank=id=>{const i=PACK_ORDER.indexOf(id);return i<0?99:i};
+      const words=PACKS.filter(q=>!PACK_EXPR.includes(q.id)).sort((a,b)=>rank(a.id)-rank(b.id)).map(q=>q.id);
+      h+=`<label class="pbField"><span>Thème</span><select id="pbTheme"><option value=""${f?"":" selected"}>Tous les thèmes</option><optgroup label="Mots par métier et par sujet">${words.map(o).join("")}</optgroup><optgroup label="Expressions">${PACK_EXPR.map(o).join("")}</optgroup></select></label>`;
+    }
+    h+=groups.map(([t,ms])=>`<div class="blkHead">${escapeHtml(t)}</div><div class="blkGrid">${ms.filter(m=>info[m]).map(m=>`<button type="button" class="blk" data-blk="${m}"><b>${escapeHtml(info[m][1])}</b><small>${escapeHtml(info[m][2]||"")}</small></button>`).join("")}</div>`).join("");
+    host.innerHTML=h;
+    host.querySelectorAll("[data-blk]").forEach(b=>b.onclick=()=>openExercise(b.dataset.blk));
+    const t=$("pbTheme");
+    if(t)t.onchange=()=>{state.packFocus=t.value||null;saveState();barSig=""};
+    return;
+  }
+  const groups=[["Écriture et lecture",["view:translate","writingTask","reading","translationText"]]];
+  const cur=W()==="free"?"view:translate":mode;
   const opt=m=>info[m]?`<option value="${m}"${m===cur?" selected":""}>${escapeHtml(info[m][1])}</option>`:"";
   let html=`<label class="pbField"><span>Exercice</span><select id="pbMode">${groups.map(([t,ms])=>`<optgroup label="${escapeHtml(t)}">${ms.map(opt).join("")}</optgroup>`).join("")}</select></label>`;
-  if(p==="vocab"){
-    const f=state.packFocus||"",o=id=>{const x=PACKS.find(q=>q.id===id);return x?`<option value="${id}"${f===id?" selected":""}>${escapeHtml(x.name)} (${x.words.length})</option>`:""};
-    const rank=id=>{const i=PACK_ORDER.indexOf(id);return i<0?99:i};
-    const words=PACKS.filter(q=>!PACK_EXPR.includes(q.id)).sort((a,b)=>rank(a.id)-rank(b.id)).map(q=>q.id);
-    html+=`<label class="pbField"><span>Thème</span><select id="pbTheme"><option value=""${f?"":" selected"}>Tous les thèmes</option><optgroup label="Mots par métier et par sujet">${words.map(o).join("")}</optgroup><optgroup label="Expressions">${PACK_EXPR.map(o).join("")}</optgroup></select></label>`;
-  }
   host.innerHTML=html;
   const m=$("pbMode");if(m)m.onchange=()=>{
     if(m.value==="view:translate"){state.wseg="free";saveState();applyPageVisibility();renderTranslate();return}
@@ -5160,6 +5188,20 @@ renderAdaptivePanel=function(){
   if(adWas&&!on)holdUntil=Date.now()+400;
   adWas=on;
   try{applyPageVisibility()}catch(e){}
+};
+
+/* page Vocab./Grammaire : menu de blocs, l'exercice s'ouvre au clic */
+const __oeOrig=openExercise;
+openExercise=function(m,k){
+  const flat=g=>g.reduce((x,s)=>x.concat(s[1]),[]);
+  if(String(m).indexOf("view:")!==0){
+    if(flat(SUBGROUPS.grammar).includes(m)||flat(SUBGROUPS.vocab).concat(["review","errors","favorites"]).includes(m))exOpen=true;
+  }
+  __oeOrig(m,k);
+  const pg=GOAL_PAGE[curGoal()];
+  if(String(m).indexOf("view:")!==0)exOpen=(pg==="vocab"||pg==="gram");
+  barSig="";applyPageVisibility();
+  try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}
 };
 
 /* =====================================================================
