@@ -1150,7 +1150,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v38</span></h1>
+        <h1>English Trainer<span class="ver">v39</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -6925,6 +6925,28 @@ openExercise=function(m,k){
   return __openExBeforeFav.apply(this,arguments);
 };
 
+
+/* ----- audio iPhone : déverrouillage au 1er toucher + voix chargées avant de parler ----- */
+(function(){
+  if(!("speechSynthesis" in window))return;
+  let unlocked=false;
+  try{speechSynthesis.getVoices();speechSynthesis.addEventListener("voiceschanged",()=>{try{speechSynthesis.getVoices()}catch(e){}})}catch(e){}
+  function unlock(){
+    if(unlocked)return;unlocked=true;
+    try{const u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang="en-US";speechSynthesis.speak(u)}catch(e){}
+  }
+  ["touchstart","pointerdown","click","keydown"].forEach(t=>document.addEventListener(t,unlock,{capture:true,passive:true}));
+  const base=speakWithLocale;
+  speakWithLocale=function(text,locale,rate,onend){
+    const args=arguments;
+    const go=()=>base.apply(null,args);
+    let tries=0;
+    (function wait(){
+      let n=0;try{n=speechSynthesis.getVoices().length}catch(e){}
+      if(n||tries++>=8)setTimeout(go,60);else setTimeout(wait,80);
+    })();
+  };
+})();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
