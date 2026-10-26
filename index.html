@@ -3095,6 +3095,7 @@ function resetZones(){
   $("answerInput").value="";$("grammarInput").value="";$("readingAnswer").value="";$("translationTextAnswer").value="";$("writingInput").value="";$("heard").textContent="";$("pronLabFeedback").textContent="";$("pronWordsScore").textContent="—";$("pronTargetScore").textContent="—";$("pronRhythmScore").textContent="Mode dédié";$("conversationHistory").innerHTML="";$("conversationOptions").innerHTML="";$("audioOptions").innerHTML="";audioQueueToken++;dialoguePlaying=false;
   $("nextBtn").classList.add("hidden");
   $("speakBtn").style.visibility="visible";$("favBtn").style.visibility="visible";
+  $("speakBtn").style.display=VOC_SPEAK.includes(mode)?"none":"";
   $("modeLabel").textContent=modeNames[mode]||mode;$("modeHelp").textContent=modeDescriptions[mode]||"";renderLesson();
   $("qCounter").textContent="Question "+qNumber;
   $("progress").style.width=(((qNumber-1)%20)*5)+"%";
@@ -3374,7 +3375,7 @@ function checkOption(btn,correct){
   }
 
   if(correct){
-    btn.classList.add("good");reward(currentVocabItem(),btn.textContent);$("feedback").textContent="✅ Correct";$("feedback").className="feedback goodText";
+    btn.classList.add("good");reward(currentVocabItem(),btn.textContent);sayVocab();$("feedback").textContent="✅ Correct";$("feedback").className="feedback goodText";
     if(mode==="exam")examScore++;
   }else{
     btn.classList.add("bad");penalize(currentVocabItem(),btn.textContent);$("feedback").textContent="❌ Réponse : "+expected();$("feedback").className="feedback badText";
@@ -3415,7 +3416,7 @@ function checkText(){
   if(locked)return;const user=$("answerInput").value.trim();if(!user)return;
   locked=true;clearTimer();const ok=(current?.accepted||[]).some(a=>acceptable(user,a)) || acceptable(user,expected());
   if(ok){
-    reward(currentVocabItem(),user);$("feedback").textContent="✅ Correct";$("feedback").className="feedback goodText";if(mode==="exam")examScore++;
+    reward(currentVocabItem(),user);sayVocab();$("feedback").textContent="✅ Correct";$("feedback").className="feedback goodText";if(mode==="exam")examScore++;
   }else{
     penalize(currentVocabItem(),user);$("feedback").innerHTML=`❌ Réponse attendue : <b>${escapeHtml(expected())}</b>`;$("feedback").className="feedback badText";
   }
@@ -5616,6 +5617,12 @@ function renderEdPanel(){
     words(b.dataset.edall).slice(0,12).forEach(w=>speakWithLocale(w,"en-US",.8));
   });
   sec.querySelectorAll("[data-ex]").forEach(b=>b.onclick=()=>openExercise(b.dataset.ex));
+}
+
+/* vocabulaire : prononciation automatique du mot anglais après une bonne réponse */
+const VOC_SPEAK=["quiz","quizReverse","quizMix","write","reverse","review","errors","favorites"];
+function sayVocab(){
+  try{const it=currentVocabItem();if(!selfTesting&&VOC_SPEAK.includes(mode)&&it&&it[0])speakAmerican(it[0],.85)}catch(e){}
 }
 /* =====================================================================
    v33 : calendrier de la semaine, journal par jour, progression des mots
