@@ -6042,6 +6042,13 @@ setTimeout(()=>{
     $("qCounter").textContent="Question "+qNumber;$("progress").style.width=(((qNumber-1)%20)*5)+"%";
   }catch(e){rsReady=true;console.error(e)}
 },700);
+
+/* ----- pas de lecture audio automatique en changeant de page ou à l'ouverture de l'app ----- */
+window.__quiet=Date.now()+2500;
+const __swl=speakWithLocale;
+speakWithLocale=function(){if(Date.now()<(window.__quiet||0))return;return __swl.apply(this,arguments)};
+const __svq=showView;
+showView=function(){window.__quiet=Date.now()+1200;return __svq.apply(this,arguments)};
 /* =====================================================================
    v42 : ajouter un mot (anglais ou français) -> traduction, explication, exemple
    ===================================================================== */
