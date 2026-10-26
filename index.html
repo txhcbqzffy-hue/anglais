@@ -5275,8 +5275,8 @@ setMode=function(m,k){__setModeOrig(m,k);pageFollowMode()};
 
 /* ----- barre de choix rapide (menus déroulants) : Vocabulaire et Grammaire ----- */
 let barSig="";
-const GRAM_BLOCKS=[["tenses","Temps","clock"],["irregularMix","Irréguliers","list"],["questionsNeg","Questions et négations","help"],["wordOrder","Ordre des mots","order"],["finderror","Trouver l’erreur","search"],["transform","Transformer","repeat"],["articles","Articles","type"],["prepositions","Prépositions","pin"],["modals","Modaux","key"],["comparatives","Comparatifs","scale"],["thirdPerson","3e personne","user"],["edListen","Verbes en -ED","audio"]];
-const VOC_BLOCKS=[["quizMix","Quiz","quiz"],["defMatch","Définitions","def"],["reverse","Écrire","write"],["game","Jeux","game"],["phrases","Phrases à trous","gap"],["phrasal","Phrasal verbs","swap"],["falseFriends","Faux amis","warn"],["review","Révision","redo"],["favorites","Favoris","star"]];
+const GRAM_BLOCKS=[["articles","Articles","type"],["thirdPerson","3e personne","user"],["wordOrder","Ordre des mots","order"],["questionsNeg","Questions et négations","help"],["prepositions","Prépositions","pin"],["comparatives","Comparatifs","scale"],["tenses","Temps","clock"],["irregularMix","Irréguliers","list"],["edListen","Verbes en -ED","audio"],["modals","Modaux","key"],["transform","Transformer","repeat"],["finderror","Trouver l’erreur","search"]];
+const VOC_BLOCKS=[["quizMix","Quiz","quiz"],["defMatch","Définitions","def"],["phrases","Phrases à trous","gap"],["reverse","Écrire","write"],["review","Révision","redo"],["game","Jeux","game"],["phrasal","Phrasal verbs","swap"],["falseFriends","Faux amis","warn"],["favorites","Favoris","star"]];
 function modeInfo(){const info={};Object.values(goalModeGroups).forEach(g=>g.modes.forEach(x=>{if(!info[x[0]])info[x[0]]=x}));return info}
 function renderPageBar(){
   const host=$("pageBar");if(!host)return;
@@ -5916,14 +5916,31 @@ const LVL_POOLS={ // uniquement des exercices sans clavier
   C1:{v:["phrasal","collocations","falseFriends","defMatch"],g:["connectors","tenses","modals","prepositions"],l:["audioDialogues","edListen"]}
 };
 function pickN(arr,n){const a=shuffle(arr),out=a.slice(0,n);while(out.length<n)out.push(rand(arr));return out}
+/* Architecture pédagogique : échauffement (révision espacée) -> vocabulaire (reconnaître, rappeler, contexte)
+   -> grammaire (points faibles d'abord, du simple au complexe) -> écoute. Sans clavier. */
+const SESS_STAGES={reco:["quiz","quizMix"],recall:["quizReverse","defMatch"],ctx:["phrases","phrasal","collocations","falseFriends"]};
+const SESS_GRAM=["articles","comparatives","prepositions","wordOrder","tenses","modals","connectors"];
+const SESS_PHASE={review:"Révision",quiz:"Vocabulaire",quizMix:"Vocabulaire",quizReverse:"Vocabulaire",defMatch:"Vocabulaire",phrases:"Vocabulaire",phrasal:"Vocabulaire",collocations:"Vocabulaire",falseFriends:"Vocabulaire",edListen:"Écoute",edPron:"Écoute",audioDialogues:"Écoute"};
+function sessPhase(m){return SESS_PHASE[m]||"Grammaire"}
 buildAdaptiveQueue=function(){
   const P=LVL_POOLS[estimatedLevel()]||LVL_POOLS.A1;
-  let q=[].concat(pickN(P.v,4),pickN(P.g,4),pickN(P.l,2));
-  q=shuffle(q);
-  for(let i=1;i<q.length;i++){ // pas deux fois le même exercice de suite
-    if(q[i]===q[i-1]){const j=q.findIndex((x,k)=>k>i&&x!==q[i]&&x!==q[i-1]);if(j>0){const t=q[i];q[i]=q[j];q[j]=t}}
-  }
-  return q;
+  const inPool=(list)=>{const x=list.filter(m=>P.v.includes(m));return x.length?x:list};
+  const q=[];
+  // 1. échauffement : mots à revoir (répétition espacée), sinon reconnaissance
+  q.push(getDueItems().length?"review":rand(inPool(SESS_STAGES.reco)));
+  // 2. vocabulaire : reconnaître -> rappeler -> en contexte
+  {const r2=SESS_STAGES.reco.filter(m=>m!==q[0]);q.push(rand(r2),rand(inPool(SESS_STAGES.recall)),rand(inPool(SESS_STAGES.ctx)))}
+  // 3. grammaire : points faibles d'abord, complétés par le niveau, rangés du simple au complexe
+  const weak=(weakConceptModes()||[]).filter(m=>SESS_GRAM.includes(m));
+  const pool=P.g.filter(m=>SESS_GRAM.includes(m));
+  let g=[...new Set([...weak.slice(0,2),...shuffle(pool)])].slice(0,4);
+  while(g.length<4)g.push(rand(SESS_GRAM.filter(m=>!g.includes(m))));
+  g.sort((x,y)=>SESS_GRAM.indexOf(x)-SESS_GRAM.indexOf(y));
+  q.push(...g);
+  // 4. écoute pour finir
+  q.push(...shuffle(P.l.filter((m,i,a)=>a.indexOf(m)===i)).slice(0,2));
+  while(q.length<10)q.push("edListen");
+  return q.slice(0,10);
 };
 const __jFinish=finishAdaptiveSession;
 finishAdaptiveSession=function(){
@@ -5992,7 +6009,7 @@ function sessHeadEnsure(){
 function sessHeadUpdate(){
   const h=sessHeadEnsure();if(!h)return;
   const a=state.adaptive||{};
-  $("sessCount").textContent=a.active?`Question ${Math.min(a.index+1,a.queue.length)}/${a.queue.length}`:"Terminée";
+  $("sessCount").textContent=a.active?`${Math.min(a.index+1,a.queue.length)}/${a.queue.length} · ${sessPhase(a.queue[Math.min(a.index,a.queue.length-1)])}`:"Terminée";
   $("sessClose").textContent=a.active?"Réduire":"Fermer";
 }
 
