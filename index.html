@@ -890,7 +890,7 @@ header{margin-bottom:2px!important}
 .dWords{margin-top:8px}.dWords small{color:var(--muted)}.dWords>div{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
 .dChip{font-size:12px;padding:3px 9px;border-radius:99px;border:1px solid var(--line)}
 .dChip.ok{border-color:#22c55e;color:#16a34a}.dChip.bad{border-color:#ef4444;color:#dc2626}
-.pgTiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pgTiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .pgTile{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--text);text-align:left}
 .pgTile b{font-size:22px;line-height:1.1}.pgTile b small{font-size:12px;color:var(--muted)}
 .pgTile span{font-size:11.5px;color:var(--muted)}
@@ -906,6 +906,11 @@ header{margin-bottom:2px!important}
 .pbarT{width:100%;height:56px;border-radius:8px;background:var(--line);display:flex;align-items:flex-end;overflow:hidden}
 .pbarF{width:100%;background:var(--accent);border-radius:8px}
 .pbarCol small{font-size:10px;color:var(--muted)}.pbarV{font-size:10px;height:12px;color:var(--muted)}
+.gauge{margin:8px 0 4px}
+.gaugeTop{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:5px}
+.gaugeTop b{font-size:15px;color:var(--text)}.gaugeTop b small{font-size:12px;color:var(--muted);font-weight:700}
+.gaugeBar{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.gaugeBar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#22c55e,var(--accent));transition:width .5s var(--ease)}
 </style>
 </head>
 <body>
@@ -5642,21 +5647,13 @@ function jRender(force){
   jDetail();
 
   /* --- progression --- */
-  const tdMin=td?Math.floor(td.sec/60):0;
-  const bars=[];const dmax=Math.max(600,...[0,1,2,3,4,5,6].map(i=>{const d=new Date();d.setDate(d.getDate()-i);const x=jDay(JD(d));return x?x.sec:0}));
-  for(let i=6;i>=0;i--){
-    const d=new Date();d.setDate(d.getDate()-i);const x=jDay(JD(d)),s=x?x.sec:0;
-    bars.push(`<div class="pbarCol"><span class="pbarV">${s?Math.max(1,Math.round(s/60)):""}</span><div class="pbarT"><div class="pbarF" style="height:${Math.round(s/dmax*100)}%"></div></div><small>${JDAYS[(d.getDay()+6)%7]}</small></div>`);
-  }
   prog.innerHTML=`<h2>Ma progression</h2>
     <div class="pgTiles">
       <button type="button" class="pgTile${jOpenList==="learning"?" sel":""}" data-pl="learning"><b>${wl.learning.length}</b><span>Mots en cours</span></button>
       <button type="button" class="pgTile${jOpenList==="mastered"?" sel":""}" data-pl="mastered"><b>${wl.mastered.length}</b><span>Mots appris</span></button>
-      <div class="pgTile"><b>${tdMin}<small> min</small></b><span>Aujourd’hui</span></div>
     </div>
     <div id="jWords"></div>
-    <div class="pbarHead">Temps par jour (min)</div>
-    <div class="pbars">${bars.join("")}</div>`;
+`;
   prog.querySelectorAll("[data-pl]").forEach(b=>b.onclick=()=>{jOpenList=jOpenList===b.dataset.pl?"":b.dataset.pl;jRender(true)});
   jWords(wl);
 }
@@ -5664,11 +5661,13 @@ function jDetail(){
   const box=$("dayDetail");if(!box)return;
   const d=jDay(jSel),dt=new Date(jSel+"T12:00:00");
   const title=(jSel===JD(new Date())?"Aujourd’hui · ":"")+dt.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
-  if(!d||(!d.n&&d.sec<30)){box.innerHTML=`<b>${title}</b><div class="small">Rien de fait ce jour-là.</div>`;return}
+  const GOAL=20,sec=d?d.sec:0,pct=Math.min(100,Math.round(sec/60/GOAL*100));
+  const gauge=`<div class="gauge"><div class="gaugeTop"><span>Temps passé</span><b>${Math.floor(sec/60)} min <small>/ ${GOAL}</small></b></div><div class="gaugeBar"><i style="width:${pct}%"></i></div></div>`;
+  if(!d||(!d.n&&d.sec<30)){box.innerHTML=`<b>${title}</b>${gauge}<div class="small">Rien de fait ce jour-là.</div>`;return}
   const rows=Object.entries(d.modes).sort((a,b)=>b[1].n-a[1].n).map(([m,v])=>`<div class="dRow"><span>${escapeHtml(modeNames[m]||m)}</span><b>${v.ok}/${v.n}</b></div>`).join("");
   const ws=Object.keys(d.words);
   box.innerHTML=`<b>${title}</b>
-    <div class="dSum"><span>${jMin(d.sec)}</span><span>${d.n} réponse${d.n>1?"s":""}</span><span>${d.n?Math.round(d.ok/d.n*100):0} % justes</span></div>
+    ${gauge}<div class="dSum"><span>${d.n} réponse${d.n>1?"s":""}</span><span>${d.n?Math.round(d.ok/d.n*100):0} % justes</span></div>
     ${rows?`<div class="dRows">${rows}</div>`:""}
     ${ws.length?`<div class="dWords"><small>Mots travaillés (${ws.length})</small><div>${ws.slice(0,24).map(w=>`<span class="dChip ${d.words[w].w?"bad":"ok"}">${escapeHtml(w)}</span>`).join("")}</div></div>`:""}`;
 }
