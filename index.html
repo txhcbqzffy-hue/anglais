@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f2f3ef">
+<meta name="theme-color" content="#f6f1ec">
 <meta name="description" content="English Trainer : vocabulaire, grammaire, écoute, oral et traduction libre pour atteindre le C1.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
@@ -17,31 +17,31 @@
 /* thème appliqué avant le premier affichage (clair par défaut) */
 (function(){var t="light";try{var s=localStorage.getItem("et_theme");if(s==="dark"||s==="light")t=s}catch(e){}
 document.documentElement.setAttribute("data-theme",t);
-if(t==="dark"){document.addEventListener("DOMContentLoaded",function(){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#16181a")})}})();
+if(t==="dark"){document.addEventListener("DOMContentLoaded",function(){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#120d09")})}})();
 </script>
 <title>English Trainer</title>
 <style>
 :root{
-  /* Charte v28 : lime · anthracite · rouge. Thème clair par défaut. */
+  /* Charte orange · anthracite · rouge. Thème clair par défaut. */
   color-scheme:light;
   --anthracite:#1f2326; --anthracite2:#2a2f33;
-  --lime:#3b82f6; --red:#e5383b;
-  --bg:#eef1f6; --panel:#ffffff; --panel2:#f5f7fb; --field:#eef1f6; --deep:#e1e6ee; --panel3:#e7ebf2;
-  --line:#e1e6ee; --accent-line:#8cb11c;
+  --lime:#ea580c; --red:#e5383b;
+  --bg:#f6f1ec; --panel:#ffffff; --panel2:#fbf7f3; --field:#f6f1ec; --deep:#eadfd5; --panel3:#f1e8df;
+  --line:#eadfd5; --accent-line:#f0a56b;
   --text:#14181a; --text-soft:#343b3f; --muted:#6a747a;
-  --accent:#3b82f6; --accent2:#2563eb; --accent-rgb:59,130,246; --accent-text:#1d4ed8; --on-accent:#ffffff;
+  --accent:#ea580c; --accent2:#c2410c; --accent-rgb:234,88,12; --accent-text:#c2410c; --on-accent:#ffffff;
   --good:#1f9d55; --good-rgb:63,138,0; --good-text:#14703b; --good-line:#93d6ae; --good-bg:#e8f8ef;
   --bad:#e5484d; --bad-rgb:217,45,51; --bad-text:#b0252a; --bad-line:#f3aaad; --bad-bg:#fff0f0; --bad-bg2:#fadadb;
   --warn:#d98a00; --warn-rgb:217,138,0; --warn-text:#7d5200; --warn-text2:#5f3f00; --warn-bg:#fff0c9; --warn-line:#e3b862;
   --panel-rgb:255,255,255; --coin:#d98a00;
-  --shadow:0 1px 2px rgba(24,32,52,.05),0 16px 40px -16px rgba(24,32,52,.18);
+  --shadow:0 1px 2px rgba(52,30,12,.05),0 16px 40px -16px rgba(52,30,12,.18);
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --bg:#0c0f14; --panel:#151a21; --panel2:#11151a; --field:#0f1318; --deep:#080a0d; --panel3:#1d232b;
-  --line:#232a33; --accent-line:#6f8a2a;
+  --bg:#120d09; --panel:#1c1510; --panel2:#17110d; --field:#140f0b; --deep:#0b0705; --panel3:#261c15;
+  --line:#33261c; --accent-line:#b4531a;
   --text:#f3f5f1; --text-soft:#d6dbd4; --muted:#8f999f;
-  --accent:#3b82f6; --accent2:#3b82f6; --accent-rgb:96,165,250; --accent-text:#93c5fd; --on-accent:#0b1220;
+  --lime:#fb923c; --accent:#fb923c; --accent2:#f97316; --accent-rgb:251,146,60; --accent-text:#fdba74; --on-accent:#1a0e05;
   --good:#4fd18b; --good-rgb:182,238,58; --good-text:#9be8bf; --good-line:#2c6b4a; --good-bg:#12251b;
   --bad:#ff6b70; --bad-rgb:255,90,95; --bad-text:#ffb3b5; --bad-line:#7a2b2f; --bad-bg:#2a1719; --bad-bg2:#4a1c20;
   --warn:#ffc233; --warn-rgb:255,194,51; --warn-text:#ffd98a; --warn-text2:#fff0b8; --warn-bg:#4a3d0a; --warn-line:#6f5a1c;
@@ -305,7 +305,7 @@ details.referenceDetails>div{padding:0 13px 13px}
 .cefrCard h3{margin:0 0 5px;font-size:17px}
 .cefrCard p{margin:0 0 8px;color:var(--muted);font-size:12px;line-height:1.45;min-height:50px}
 .cefrProgress{height:8px;background:var(--deep);border-radius:10px;overflow:hidden;margin:7px 0}
-.cefrProgress i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--good))}
+.cefrProgress i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 .cefrMeta{display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--muted)}
 .cefrCard button{width:100%;margin-top:9px;padding:8px;min-height:36px}
 .cefrLock{position:absolute;top:10px;right:10px;font-size:14px}
@@ -452,8 +452,8 @@ button.adaptiveStep:hover{border-color:var(--accent-line);background:rgba(var(--
 
 /* ===================== v28 ===================== */
 body{background:radial-gradient(circle at 92% -8%,rgba(var(--accent-rgb),var(--glow)),transparent 34%),radial-gradient(circle at -8% 30%,rgba(var(--bad-rgb),.04),transparent 34%),var(--bg)!important}
-:root{--glow:.09;--sel-bg:#1f2326;--sel-text:#3b82f6}
-:root[data-theme="dark"]{--glow:.15;--sel-bg:#3b82f6;--sel-text:#0b1220}
+:root{--glow:.09;--sel-bg:#1f2326;--sel-text:#fb923c}
+:root[data-theme="dark"]{--glow:.15;--sel-bg:#fb923c;--sel-text:#1a0e05}
 .cefrHead .badge{white-space:nowrap;flex:0 0 auto;align-self:flex-start}
 .logo{border:1px solid #3a4147;background:var(--anthracite)!important;color:var(--lime)!important;position:relative;box-shadow:none!important;border-radius:5px}
 .logo::after{content:"";position:absolute;right:-3px;top:-3px;width:11px;height:11px;border-radius:50%;background:var(--red);border:2px solid var(--bg)}
@@ -576,8 +576,8 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 .planIc{font-size:22px;line-height:1;flex:none}
 .planTx{display:flex;flex-direction:column;gap:2px;min-width:0}
 .planTx small{font-size:12px;opacity:.8}
-.chip2.ghost.on{background:#1f2326!important;color:#3b82f6!important;border-color:#1f2326!important}
-:root[data-theme="dark"] .chip2.ghost.on{background:#3b82f6!important;color:#ffffff!important;border-color:#3b82f6!important}
+.chip2.ghost.on{background:#1f2326!important;color:#fb923c!important;border-color:#1f2326!important}
+:root[data-theme="dark"] .chip2.ghost.on{background:#fb923c!important;color:#1a0e05!important;border-color:#fb923c!important}
 .coin,.headTools .coin{display:none!important}
 
 /* v29 : 5 pages */
@@ -650,8 +650,8 @@ body.sheetOpen{overflow:hidden}
 /* =====================================================================
    v30 : design mobile moderne (arrondis, verre dépoli, animations)
    ===================================================================== */
-:root{--r:10px;--rs:7px;--ease:cubic-bezier(.22,.9,.28,1);--glass:rgba(255,255,255,.74);--glass-line:rgba(255,255,255,.7);--nav-ink:#1f2326;--nav-off:#7b858b}
-:root[data-theme="dark"]{--glass:rgba(24,27,30,.72);--glass-line:rgba(255,255,255,.08);--nav-ink:#0b1220;--nav-off:#8f999f}
+:root{--r:10px;--rs:7px;--ease:cubic-bezier(.22,.9,.28,1);--glass:rgba(255,252,249,.78);--glass-line:rgba(255,255,255,.7);--nav-ink:#ffffff;--nav-off:#8a7b70}
+:root[data-theme="dark"]{--glass:rgba(24,27,30,.72);--glass-line:rgba(255,255,255,.08);--nav-ink:#1a0e05;--nav-off:#a8978a}
 html{scroll-behavior:smooth}
 body{background:radial-gradient(120% 60% at 100% -10%,rgba(var(--accent-rgb),.22),transparent 55%),radial-gradient(90% 50% at -10% 20%,rgba(var(--accent-rgb),.10),transparent 60%),var(--bg)!important;background-attachment:fixed!important;letter-spacing:-.005em}
 .app{padding-bottom:calc(120px + env(safe-area-inset-bottom))!important}
@@ -702,7 +702,7 @@ select{appearance:none;-webkit-appearance:none;padding-right:42px!important;back
 .exerciseChoice{border-radius:8px!important}
 .chip2,.seg2 button{border-radius:10px!important;border:1px solid var(--line)!important;background:var(--panel)!important;transition:all .2s var(--ease)}
 .chip2.on,.seg2 button.on{background:var(--anthracite)!important;color:var(--lime)!important;border-color:var(--anthracite)!important}
-:root[data-theme="dark"] .chip2.on,:root[data-theme="dark"] .seg2 button.on{background:var(--lime)!important;color:#0b1220!important;border-color:var(--lime)!important}
+:root[data-theme="dark"] .chip2.on,:root[data-theme="dark"] .seg2 button.on{background:var(--lime)!important;color:#1a0e05!important;border-color:var(--lime)!important}
 .badge{border-radius:10px!important}
 .pbField select{min-height:52px!important;font-weight:700}
 
@@ -750,8 +750,8 @@ select{appearance:none;-webkit-appearance:none;padding-right:42px!important;back
 h1{white-space:nowrap}.brand{min-width:0}
 
 /* v30b : fond retravaillé + plus d'air */
-body{background:radial-gradient(110% 55% at 100% -8%,rgba(var(--accent-rgb),.20),transparent 58%),radial-gradient(90% 50% at -12% 38%,rgba(99,102,241,.10),transparent 62%),radial-gradient(80% 40% at 50% 112%,rgba(var(--accent-rgb),.10),transparent 60%),var(--bg)!important;background-attachment:fixed!important;line-height:1.55}
-:root[data-theme="dark"] body{background:radial-gradient(110% 55% at 100% -8%,rgba(var(--accent-rgb),.13),transparent 58%),radial-gradient(90% 50% at -12% 40%,rgba(99,102,241,.14),transparent 62%),var(--bg)!important;background-attachment:fixed!important}
+body{background:radial-gradient(110% 55% at 100% -8%,rgba(var(--accent-rgb),.20),transparent 58%),radial-gradient(90% 50% at -12% 38%,rgba(255,170,90,.12),transparent 62%),radial-gradient(80% 40% at 50% 112%,rgba(var(--accent-rgb),.10),transparent 60%),var(--bg)!important;background-attachment:fixed!important;line-height:1.55}
+:root[data-theme="dark"] body{background:radial-gradient(110% 55% at 100% -8%,rgba(var(--accent-rgb),.13),transparent 58%),radial-gradient(90% 50% at -12% 40%,rgba(255,150,70,.14),transparent 62%),var(--bg)!important;background-attachment:fixed!important}
 .app{padding-left:max(18px,env(safe-area-inset-left))!important;padding-right:max(18px,env(safe-area-inset-right))!important;padding-top:max(20px,env(safe-area-inset-top))!important}
 header{margin-bottom:22px!important}
 .panel,.secCard,.acc,.cefrPanel,.adaptivePanel,.lessonPanel,.qaPanel{margin-top:0!important;margin-bottom:18px!important}
@@ -910,7 +910,7 @@ header{margin-bottom:2px!important}
 .gaugeTop{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:5px}
 .gaugeTop b{font-size:15px;color:var(--text)}.gaugeTop b small{font-size:12px;color:var(--muted);font-weight:700}
 .gaugeBar{height:12px;border-radius:10px;background:var(--line);overflow:hidden}
-.gaugeBar i{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,#22c55e,var(--accent));transition:width .5s var(--ease)}
+.gaugeBar i{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,#fdba74,var(--accent));transition:width .5s var(--ease)}
 
 /* v36 : pastille de niveau */
 header{justify-content:space-between!important}
@@ -1023,8 +1023,8 @@ input,textarea,select{font-size:16px!important}
 body,:root[data-theme="dark"] body{background:transparent!important;background-attachment:scroll!important}
 html{background:var(--bg)!important;min-height:100%}
 html::before{content:"";position:fixed;left:0;right:0;top:0;bottom:0;z-index:-1;pointer-events:none;
-background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.30),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(90,150,255,.18),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(170,120,255,.16),transparent 70%)}
-:root[data-theme="dark"] html::before{background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.16),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(70,120,255,.16),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(150,100,255,.14),transparent 70%)}
+background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.30),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(255,170,90,.18),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(255,120,50,.14),transparent 70%)}
+:root[data-theme="dark"] html::before{background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.16),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(251,146,60,.14),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(234,88,12,.14),transparent 70%)}
 
 /* explications (+) */
 .expWrap{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
@@ -1045,6 +1045,73 @@ background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.30),transp
 .roundRes{display:flex;gap:10px;margin-top:12px}
 .roundRes button{flex:1}
 .bottomNav button.active{color:var(--on-accent)!important}
+
+/* l'animation d'entrée ne doit pas laisser de transform sur la carte : sinon « fixed » se calcule par rapport à la carte */
+#view-train>#exerciseCard{animation-fill-mode:backwards!important}
+/* boutons d'action principaux : fixes en bas de l'écran, au-dessus de la barre de navigation */
+:root{--dockBottom:calc(max(12px,env(safe-area-inset-bottom)) + 70px + 10px);--dockH:56px}
+body:not(.sessionOn) #exerciseCard #checkTextBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #checkGrammarBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #checkReadingBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #checkTranslationTextBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #recordBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #pronRecordBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #checkWritingBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #nextBtn:not(.hidden),body:not(.sessionOn) #exerciseCard #gOk:not(.hidden){
+  position:fixed!important;left:0!important;right:0!important;margin:0 auto!important;
+  width:min(calc(100% - 28px),560px)!important;bottom:var(--dockBottom)!important;z-index:70;
+  min-height:var(--dockH)!important;font-size:17px;font-weight:800;border-radius:14px!important;
+  box-shadow:0 14px 34px -10px rgba(var(--accent-rgb),.75),0 2px 8px rgba(0,0,0,.18)!important
+}
+body.sessionOn #exerciseCard #checkTextBtn:not(.hidden),body.sessionOn #exerciseCard #checkGrammarBtn:not(.hidden),body.sessionOn #exerciseCard #checkReadingBtn:not(.hidden),body.sessionOn #exerciseCard #checkTranslationTextBtn:not(.hidden),body.sessionOn #exerciseCard #recordBtn:not(.hidden),body.sessionOn #exerciseCard #pronRecordBtn:not(.hidden),body.sessionOn #exerciseCard #checkWritingBtn:not(.hidden),body.sessionOn #exerciseCard #nextBtn:not(.hidden),body.sessionOn #exerciseCard #gOk:not(.hidden){
+  position:fixed!important;left:0!important;right:0!important;margin:0 auto!important;
+  width:min(calc(100% - 28px),560px)!important;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 6px)!important;z-index:95;
+  min-height:var(--dockH)!important;font-size:17px;font-weight:800;border-radius:14px!important;
+  box-shadow:0 14px 34px -10px rgba(var(--accent-rgb),.75),0 2px 8px rgba(0,0,0,.18)!important
+}
+/* une fois la réponse validée, seul « Question suivante » reste fixe : les autres reprennent leur place dans la page */
+#exerciseCard:has(#nextBtn:not(.hidden)) :is(#checkTextBtn,#checkGrammarBtn,#checkReadingBtn,#checkTranslationTextBtn,#recordBtn,#pronRecordBtn,#checkWritingBtn,#gOk):not(.hidden){
+  position:static!important;width:auto!important;min-height:44px!important;font-size:inherit;box-shadow:none!important;margin:0!important
+}
+/* le contenu peut défiler jusqu'au-dessus du bouton fixe */
+body:not(.sessionOn) #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadingBtn,#checkTranslationTextBtn,#recordBtn,#pronRecordBtn,#checkWritingBtn,#nextBtn,#gOk):not(.hidden)){padding-bottom:calc(var(--dockH) + 28px)!important}
+body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadingBtn,#checkTranslationTextBtn,#recordBtn,#pronRecordBtn,#checkWritingBtn,#nextBtn,#gOk):not(.hidden)){padding-bottom:calc(var(--dockH) + 36px + env(safe-area-inset-bottom))!important}
+
+/* Cours (appui long sur Accueil) */
+#coursSheet{padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+#coursSheet #coursBody{max-width:720px;margin:0 auto}
+#coursSheet .sheetHead{max-width:720px;margin:0 auto 12px}
+.cIntro{color:var(--text-soft);font-size:14px;line-height:1.5;margin:0 0 12px}
+.cProg{font-size:13px;color:var(--muted);margin:0 0 6px}.cProg b{color:var(--accent-text);font-size:15px}
+.cProg i{display:block;height:7px;background:var(--deep);border-radius:10px;overflow:hidden;margin-top:6px}
+.cProg u{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;text-decoration:none}
+.cGrp{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 2px 8px}
+.cItem{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;padding:13px 14px;margin-bottom:8px;min-height:58px;box-shadow:var(--shadow)}
+.cItem b{display:block;font-size:15.5px}
+.cItem small{display:block;color:var(--muted);font-weight:500;font-size:12.5px;margin-top:3px;line-height:1.35}
+.cItem em{font-style:normal;font-size:22px;color:var(--accent-text);flex:none}
+.cItem.done{border-color:var(--accent-line);background:rgba(var(--accent-rgb),.08)}
+.cItem:active{transform:scale(.985)}
+.cBack{margin:0 0 10px;min-height:40px;padding:8px 14px}
+.cTitle{font-size:24px;margin:4px 0 2px;letter-spacing:-.3px}
+.cMeta{font-size:12.5px;color:var(--muted);font-weight:700;margin-bottom:12px}
+.cH{font-size:13px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-text);margin:20px 2px 8px}
+.cH small{text-transform:none;letter-spacing:0;color:var(--muted);font-weight:600;margin-left:6px}
+.cBox{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:12px 14px}
+.cBox p{margin:0 0 8px;font-size:14.5px;line-height:1.55}.cBox p:last-child{margin-bottom:0}
+.cBox b{display:block;margin-bottom:4px;color:var(--accent-text)}
+.cResume{border-color:var(--accent-line);background:rgba(var(--accent-rgb),.10)}
+.cTrap{border-left:4px solid var(--warn);background:var(--warn-bg)}
+.cTrap p{color:var(--warn-text2)}
+.cEx{border:1px solid var(--line);background:var(--panel);border-radius:12px;overflow:hidden}
+.cRow{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:11px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.cRow:last-child{border-bottom:0}
+.cRow .en{font-weight:700;font-size:14.5px;line-height:1.4;color:var(--text)}
+.cRow .fr{font-size:14px;line-height:1.4;color:var(--muted);border-left:2px solid var(--accent-line);padding-left:10px}
+.cRow:active{background:rgba(var(--accent-rgb),.08)}
+.cTabWrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel);-webkit-overflow-scrolling:touch}
+.cTab{width:100%;border-collapse:collapse;font-size:13.5px}
+.cTab th{background:rgba(var(--accent-rgb),.12);color:var(--accent-text);text-align:left;font-weight:800;padding:9px 10px;white-space:nowrap}
+.cTab td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top;line-height:1.35}
+.cTab td.k{font-weight:800;white-space:nowrap}
+.cActions{display:flex;gap:10px;margin:22px 0 12px;flex-wrap:wrap}
+.cActions button{flex:1 1 160px}
+.cNav{display:flex;justify-content:space-between;gap:10px}
+.cNav button{flex:1;font-size:12.5px;min-height:40px;padding:8px 10px}
+@media(max-width:380px){.cRow{grid-template-columns:1fr}.cRow .fr{border-left:0;padding-left:0}}
 </style>
 </head>
 <body>
@@ -1053,7 +1120,7 @@ background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.30),transp
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v30</span></h1>
+        <h1>English Trainer<span class="ver">v31</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -4528,7 +4595,7 @@ function applyTheme(t){
   document.documentElement.dataset.theme=t;
   try{localStorage.setItem("et_theme",t)}catch(e){}
   const m=document.querySelector('meta[name="theme-color"]');
-  if(m)m.setAttribute("content",t==="dark"?"#16181a":"#f2f3ef");
+  if(m)m.setAttribute("content",t==="dark"?"#120d09":"#f6f1ec");
   const b=$("themeBtn");
   if(b){b.textContent=t==="dark"?"Clair":"Sombre";b.setAttribute("aria-label",t==="dark"?"Passer au thème clair":"Passer au thème sombre")}
 }
@@ -6482,7 +6549,7 @@ function I18N(t){
   for(const [re,f] of I18N_RULES){const m=k.match(re);if(m){const r=f.apply(null,m);if(r!==k)return t.replace(k,r)}}
   return t;
 }
-function i18nSkip(n){const e=n.nodeType===1?n:n.parentElement;return !e||e.closest("#expWrap,#lessonPanel,script,style")||(n.nodeType===3&&e.closest("textarea"))}
+function i18nSkip(n){const e=n.nodeType===1?n:n.parentElement;return !e||e.closest("#expWrap,#lessonPanel,#coursSheet,script,style")||(n.nodeType===3&&e.closest("textarea"))}
 function i18nNode(n){
   if(n.nodeType===3){if(!i18nSkip(n)){let v=I18N(n.nodeValue);if(v===n.nodeValue&&n.parentElement&&n.parentElement.closest("#question,#info,#modeHelp,#feedback,#translationBox"))v=I18NF(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v}return}
   if(n.nodeType!==1||i18nSkip(n))return;
@@ -6503,6 +6570,195 @@ function i18nNode(n){
   let tries=0;const wait=()=>{if((typeof pagesReady!=="undefined"&&pagesReady)||++tries>100)go();else setTimeout(wait,50)};wait();
 })();
 
+/* =====================================================================
+   COURS : toutes les leçons de grammaire, à lire et à apprendre (appui long sur Accueil)
+   ===================================================================== */
+const COURS=[
+{id:"thirdPerson",t:"3e personne du présent",m:"thirdPerson",niv:"A1",
+ resume:"Au present simple affirmatif, he / she / it prend -s ou -es. Après do / does, le verbe reste à la base.",
+ sec:[["Orthographe du -s",["• Cas général : + s → work → works.","• -es après s, sh, ch, x, z, o : watch → watches, fix → fixes, go → goes, do → does.","• Consonne + y → -ies : study → studies. Voyelle + y → -ys : play → plays.","• have → has."]]],
+ ex:[["She works in Paris.","Elle travaille à Paris."],["He watches the data every day.","Il surveille les données tous les jours."],["The update fixes the bug.","La mise à jour corrige le bug."],["My manager studies the results.","Mon manager étudie les résultats."],["She has a meeting at 10.","Elle a une réunion à 10 h."],["Does she work here?","Travaille-t-elle ici ?"],["He doesn’t like meetings.","Il n’aime pas les réunions."]],
+ piege:["Le -s n’apparaît qu’une seule fois : Does she work ? (pas « Does she works »), She doesn’t work (pas « doesn’t works »)."]},
+
+{id:"wordOrder",t:"Ordre des mots",m:"wordOrder",niv:"A1–A2",
+ resume:"L’ordre de base est Sujet – Verbe – Objet. Après le verbe viennent le lieu, puis le temps.",
+ sec:[["Phrase affirmative",["• Sujet + verbe + complément : I send the report.","• Ordre habituel : Sujet – Verbe – Objet – Lieu – Temps."]],["Adverbes de fréquence",["• Avant le verbe principal : I usually plan the campaign.","• Après be : She is always on time.","• Entre l’auxiliaire et le verbe : I have never seen it.","• always, usually, often, sometimes, never ne se placent pas en fin de phrase."]],["Question",["• Mot interrogatif + auxiliaire + sujet + verbe : When does the meeting start ?"]]],
+ ex:[["I send the report every Monday.","J’envoie le rapport tous les lundis."],["We met the client in Lille yesterday.","Nous avons rencontré le client à Lille hier."],["She is always on time.","Elle est toujours à l’heure."],["I usually plan the campaign.","Je prépare généralement la campagne."],["I have never seen this dashboard.","Je n’ai jamais vu ce tableau de bord."],["Where does she work?","Où travaille-t-elle ?"],["I really like this tool.","J’aime vraiment cet outil."]],
+ piege:["L’adjectif se place avant le nom et ne prend jamais de -s : a new tool, two new tools (pas « a tool new »).","Pas d’adverbe entre le verbe et son objet : I like coffee very much / I really like coffee (pas « I like very much coffee »)."]},
+
+{id:"questionsNeg",t:"Questions et négations",m:"questionsNeg",niv:"A1–A2",
+ resume:"Avec un verbe ordinaire : do / does / did + sujet + base pour la question, don’t / doesn’t / didn’t + base pour la négation. be et les modaux s’inversent directement.",
+ tab:[{h:"Les formes",cols:["","Affirmatif","Négatif","Question"],rows:[["I / you / we / they","They work.","They don’t work.","Do they work?"],["he / she / it","She works.","She doesn’t work.","Does she work?"],["Passé","He went.","He didn’t go.","Did he go?"],["be","She is ready.","She isn’t ready.","Is she ready?"],["Modal","You can go.","You can’t go.","Can you go?"]]}],
+ sec:[["Mots interrogatifs",["• Mot-question + auxiliaire + sujet + verbe : Where do you work ? What did he say ?","• Si le mot-question est le sujet, pas de do : Who called you ? Who works here ?"]]],
+ ex:[["Do you work from home?","Est-ce que tu télétravailles ?"],["She doesn’t use Excel.","Elle n’utilise pas Excel."],["Did they send the file?","Ont-ils envoyé le fichier ?"],["Where do you work?","Où travailles-tu ?"],["What did he say?","Qu’a-t-il dit ?"],["Who called you?","Qui t’a appelé ?"]],
+ piege:["« Do you can… » est faux (modal) → Can you… ?","« Did you went » est faux → Did you go ? Après did, le verbe revient à la base."]},
+
+{id:"articles",t:"Articles : a / an / the / Ø",m:"articles",niv:"A1–A2",
+ resume:"a / an : un élément non précisé (singulier dénombrable). the : un élément précis, déjà connu ou unique. Pas d’article (Ø) : pluriel ou indénombrable pris en général.",
+ sec:[["a ou an ?",["• a devant un son consonne : a manager, a university, a user.","• an devant un son voyelle : an email, an hour (le h est muet), an MBA."]],["Quand dire the",["• Déjà mentionné : I bought a laptop. The laptop is fast.","• Unique : the sun, the internet, the CEO.","• Superlatif : the best, the most useful.","• Précisé par un complément : the report we discussed."]],["Pas d’article (Ø)",["• Pluriel en général : Customers like quality.","• Indénombrables : Information is power. I need advice.","• Langues, repas, sports : I study English. We have lunch at noon. She plays tennis.","• Villes et la plupart des pays : in France (mais the USA, the UK, the Netherlands)."]]],
+ ex:[["I need a laptop.","J’ai besoin d’un ordinateur portable."],["She sent an email.","Elle a envoyé un e-mail."],["I saw a client. The client was happy.","J’ai vu un client. Le client était content."],["The sun rises in the east.","Le soleil se lève à l’est."],["Customers like fast delivery.","Les clients aiment la livraison rapide."],["Information is power.","L’information, c’est le pouvoir."],["He is the best analyst in the team.","C’est le meilleur analyste de l’équipe."]],
+ piege:["Les indénombrables n’ont ni a / an ni pluriel : advice, information, news, work, money → some advice, a piece of news.","Le son compte, pas la lettre : an hour, a user."]},
+
+{id:"presentTenses",t:"Présent : simple et continu",m:"tenses",niv:"A1–A2",
+ resume:"Present simple pour les habitudes et les faits. Present continuous pour ce qui se passe en ce moment ou un projet arrangé.",
+ tab:[{h:"Les deux présents",cols:["Temps","Forme","Emploi"],rows:[["Present simple","I work · she works","habitudes, faits, horaires"],["Present continuous","I am working","action en cours, situation temporaire"]]}],
+ sec:[["Marqueurs de temps",["• Present simple : always, usually, often, sometimes, never, every day.","• Present continuous : now, right now, at the moment, today, this week."]],["Verbes d’état",["• Pas de V-ing avec know, like, want, need, understand, believe : I know the answer (pas « I am knowing »)."]]],
+ ex:[["I check my emails every morning.","Je consulte mes e-mails chaque matin."],["She doesn’t work on Fridays.","Elle ne travaille pas le vendredi."],["I’m writing a report right now.","J’écris un rapport en ce moment."],["We’re meeting the client tomorrow.","Nous voyons le client demain."],["Are you using this file?","Est-ce que tu utilises ce fichier ?"],["I know the answer.","Je connais la réponse."]],
+ piege:["Le français n’a qu’un présent : « je travaille » peut être I work (habitude) ou I’m working (en ce moment)."]},
+
+{id:"pastTenses",t:"Passé : simple et continu",m:"tenses",niv:"A2",
+ resume:"Past simple pour une action terminée à un moment précis. Past continuous pour une action en cours dans le passé, souvent coupée par une action courte.",
+ tab:[{h:"Les deux passés",cols:["Temps","Forme","Marqueurs"],rows:[["Past simple","verbe + -ed / forme irrégulière","yesterday, last week, in 2020, two days ago"],["Past continuous","was / were + V-ing","while, when, at 5 pm yesterday"]]}],
+ sec:[["Past simple",["• Négation : didn’t + base. Question : Did + sujet + base.","• Après did, le verbe n’est plus au passé : Did you go ? (pas « Did you went »)."]],["Past continuous",["• was / were + V-ing, souvent avec when : I was working when the phone rang."]]],
+ ex:[["She joined the company in 2024.","Elle a rejoint l’entreprise en 2024."],["We didn’t launch the campaign last week.","Nous n’avons pas lancé la campagne la semaine dernière."],["Did you read the report yesterday?","As-tu lu le rapport hier ?"],["I was working when the phone rang.","Je travaillais quand le téléphone a sonné."],["They were waiting for the results.","Ils attendaient les résultats."]],
+ piege:["En français on dit « j’ai fait » à l’oral, mais avec un moment fini (hier, en 2020) l’anglais utilise le past simple : I did, pas « I have done »."]},
+
+{id:"presentPerfect",t:"Present perfect",m:"tenses",niv:"B1",
+ resume:"have / has + participe passé. Il relie le passé au présent : expérience, résultat visible maintenant, durée jusqu’à maintenant.",
+ sec:[["Trois emplois",["• Expérience : I have visited London twice. (ever, never)","• Résultat visible maintenant : He has just left. (just, already, yet)","• Durée jusqu’à maintenant : We have worked here since 2022. (for, since)"]],["for ou since ?",["• for + durée : for three years.","• since + point de départ : since 2023.","• Le français « depuis » donne le present perfect, pas le présent."]],["Present perfect continuous",["• have / has been + V-ing : insiste sur la durée ou l’activité."]]],
+ ex:[["I have visited London twice.","J’ai visité Londres deux fois."],["He has just left.","Il vient de partir."],["Have you ever used GA4?","As-tu déjà utilisé GA4 ?"],["We have worked here since 2022.","Nous travaillons ici depuis 2022."],["I’ve been learning English for six months.","J’apprends l’anglais depuis six mois."],["I saw him yesterday.","Je l’ai vu hier."]],
+ piege:["Interdit avec un moment fini (yesterday, last week, in 2020) : on dit I saw him yesterday, pas « I have seen him yesterday »."]},
+
+{id:"future",t:"Le futur",m:"tenses",niv:"A2–B1",
+ resume:"will pour une décision spontanée ou une prédiction, be going to pour une intention ou une prévision avec indice, présent continu pour un rendez-vous arrangé.",
+ sec:[["will",["• Décision spontanée, promesse, prédiction : I’ll help you."]],["be going to",["• Intention déjà décidée, ou prévision avec un indice : It’s going to rain."]],["Présent continu",["• Rendez-vous arrangé : I’m seeing him at 5."]],["Après if / when / as soon as",["• On garde le présent pour parler du futur : If it rains, we will stay inside."]]],
+ ex:[["I’ll call you back in five minutes.","Je te rappelle dans cinq minutes."],["We’re going to launch the new site in May.","Nous allons lancer le nouveau site en mai."],["Look at those clouds. It’s going to rain.","Regarde ces nuages. Il va pleuvoir."],["I’m seeing the client at 5.","Je vois le client à 17 h."],["If it rains, we will stay inside.","S’il pleut, nous resterons à l’intérieur."],["I’ll send you the file as soon as I finish.","Je t’envoie le fichier dès que j’ai fini."]],
+ piege:["Jamais « if it will rain » : après if, when, as soon as, on utilise le présent."]},
+
+{id:"grammar",t:"Construire une phrase",m:"grammar",niv:"A2–B1",
+ resume:"Repère le temps demandé, place le sujet et l’auxiliaire, puis le verbe à la bonne forme, puis les compléments.",
+ tab:[{h:"Les formules",cols:["Temps","Formule","Exemple"],rows:[["Present simple","sujet + base (+ s)","She works."],["Present continuous","am / is / are + V-ing","I am working."],["Past simple","verbe-ed / irrégulier","We worked."],["Past continuous","was / were + V-ing","They were working."],["Present perfect","have / has + participe passé","I have worked."],["Futur (will)","will + base","I will work."],["Futur (going to)","am / is / are going to + base","I am going to work."]]}],
+ sec:[["Méthode en 4 étapes",["1. Repère le temps demandé.","2. Sujet + auxiliaire (be, have, will, do).","3. Verbe à la bonne forme.","4. Compléments : lieu, puis temps."]]],
+ ex:[["She is writing the report now.","Elle écrit le rapport en ce moment."],["We have finished the audit.","Nous avons terminé l’audit."],["They will launch the site in June.","Ils lanceront le site en juin."],["I was reading the data when you called.","Je lisais les données quand tu as appelé."]],
+ piege:["Vérifie toujours l’auxiliaire avant le verbe principal."]},
+
+{id:"prepositions",t:"Prépositions : in / on / at",m:"prepositions",niv:"A1–B1",
+ resume:"Pour le temps et le lieu : at = point précis, on = jour ou surface, in = période ou espace.",
+ tab:[{h:"Le temps",cols:["","Emploi","Exemples"],rows:[["at","heure, moment précis","at 9 am, at noon, at night"],["on","jour, date","on Monday, on 5 May"],["in","mois, année, saison, partie de la journée","in May, in 2026, in summer, in the morning"]]},{h:"Le lieu",cols:["","Emploi","Exemples"],rows:[["in","à l’intérieur d’un espace","in Paris, in the office"],["at","point précis, activité","at work, at the station"],["on","sur une surface, un support","on the table, on the phone, on a train"]]}],
+ sec:[["Autres prépositions utiles",["• for + durée (for two weeks) · since + point de départ (since Monday) · during + période (during the meeting).","• by + échéance (by Friday = au plus tard vendredi) · until = jusqu’à.","• Après certains verbes : depend on, listen to, wait for, look at, interested in, good at, afraid of."]]],
+ ex:[["The meeting is at 9 am on Monday.","La réunion est à 9 h lundi."],["I was born in May.","Je suis né en mai."],["She works in London.","Elle travaille à Londres."],["I’m at the station.","Je suis à la gare."],["It depends on the budget.","Ça dépend du budget."],["Please wait for me.","Attends-moi, s’il te plaît."],["Send it by Friday.","Envoie-le d’ici vendredi."],["I’ve worked here since 2024.","Je travaille ici depuis 2024."]],
+ piege:["Le français ne guide pas : dépendre DE = depend ON ; écouter = listen TO ; attendre = wait FOR."]},
+
+{id:"comparatives",t:"Comparatifs et superlatifs",m:"comparatives",niv:"A2",
+ resume:"Adjectif court : -er / -est. Adjectif long : more / the most. Quelques adjectifs sont irréguliers.",
+ tab:[{h:"À connaître",cols:["Adjectif","Comparatif","Superlatif","Français"],rows:[["fast","faster","the fastest","rapide"],["big","bigger","the biggest","grand"],["happy","happier","the happiest","heureux"],["expensive","more expensive","the most expensive","cher"],["useful","more useful","the most useful","utile"],["good","better","the best","bon"],["bad","worse","the worst","mauvais"],["far","further","the furthest","loin"]]}],
+ sec:[["Les règles",["• Adjectif court (1 syllabe, ou 2 en -y) : fast → faster. big → bigger (consonne doublée), happy → happier (y → i), nice → nicer.","• Adjectif long : more expensive, the most useful. Jamais les deux : « more faster » est faux."]],["Autres structures",["• as … as = aussi … que · not as … as = moins … que.","• The more …, the more … = plus … plus …"]]],
+ ex:[["This tool is faster than the old one.","Cet outil est plus rapide que l’ancien."],["It is the most useful report.","C’est le rapport le plus utile."],["She is as experienced as him.","Elle est aussi expérimentée que lui."],["The more you practise, the better you get.","Plus tu t’entraînes, mieux tu deviens."],["This month was worse than last month.","Ce mois-ci a été pire que le mois dernier."]],
+ piege:["Après un comparatif on dit than : taller than me (pas « that » ni « as »)."]},
+
+{id:"modals",t:"Verbes modaux",m:"modals",niv:"A2–B1",
+ resume:"can, could, should, must, might, would… sont suivis du verbe à la base, sans to et sans -s. Pas de do / does pour la négation ni la question.",
+ tab:[{h:"Les sens principaux",cols:["Modal","Sens","Exemple"],rows:[["can","capacité, permission","I can help."],["could","demande polie","Could you send the file?"],["should","conseil","You should rest."],["must","obligation forte, déduction","You must sign here."],["mustn’t","interdiction","You mustn’t share it."],["have to","obligation extérieure","I have to attend."],["don’t have to","pas obligé","You don’t have to come."],["may / might","possibilité","It might rain."],["would","politesse, hypothèse","I would like a coffee."]]}],
+ ex:[["Could you send me the file?","Pourrais-tu m’envoyer le fichier ?"],["You should check the data first.","Tu devrais d’abord vérifier les données."],["You mustn’t share your password.","Tu ne dois pas partager ton mot de passe."],["You don’t have to come to the office.","Tu n’es pas obligé de venir au bureau."],["It might rain tomorrow.","Il se pourrait qu’il pleuve demain."],["I would like a coffee, please.","Je voudrais un café, s’il vous plaît."]],
+ piege:["must not (interdit) ≠ don’t have to (pas nécessaire).","Pas de modal au passé : must → had to ; can → could / was able to."]},
+
+{id:"connectors",t:"Connecteurs logiques",m:"connectors",niv:"B1–B2",
+ resume:"Choisis le connecteur selon la relation logique : ajout, contraste, cause, conséquence, exemple, ordre.",
+ tab:[{h:"Par relation logique",cols:["Relation","Connecteurs"],rows:[["Ajout","and, also, in addition, moreover"],["Contraste","but, however, although, whereas, despite"],["Cause","because, since, as, due to"],["Conséquence","so, therefore, as a result"],["Exemple","for example, such as"],["Ordre","first, then, finally"]]}],
+ sec:[["Structures à ne pas mélanger",["• although + sujet + verbe : Although it was late, we continued.","• despite / in spite of + nom ou V-ing : Despite the rain… / Despite being tired…","• because + proposition ; because of + nom : because of the delay."]]],
+ ex:[["Although it was late, we continued.","Bien qu’il soit tard, nous avons continué."],["Despite the rain, the event was a success.","Malgré la pluie, l’événement a été un succès."],["We cancelled because of the delay.","Nous avons annulé à cause du retard."],["Traffic increased. As a result, sales grew.","Le trafic a augmenté. En conséquence, les ventes ont progressé."],["The tool is fast. However, it is expensive.","L’outil est rapide. Cependant, il est cher."],["We use several channels, such as email and social media.","Nous utilisons plusieurs canaux, comme l’e-mail et les réseaux sociaux."]],
+ piege:["although et despite n’ont pas la même structure : although + proposition, despite + nom ou V-ing."]},
+
+{id:"transform",t:"Transformer une phrase",m:"transform",niv:"B1",
+ resume:"Garde le même sens : seule la structure change. Identifie d’abord ce qu’on te demande : passif, question, négation ou discours rapporté.",
+ sec:[["Le passif",["• sujet + be + participe passé (+ by …) : The report was sent by Anna.","• On garde le temps de be : is sent, was sent, has been sent, will be sent."]],["Discours rapporté (bases)",["• On recule d’un temps : « I work here » → She said (that) she worked here.","• La question devient une phrase affirmative : « Where do you live? » → He asked where I lived."]],["Affirmatif, négatif, question",["• Reprends l’auxiliaire : She works → She doesn’t work → Does she work ?"]]],
+ ex:[["Anna sent the report. → The report was sent by Anna.","Anna a envoyé le rapport. → Le rapport a été envoyé par Anna."],["They are updating the site. → The site is being updated.","Ils mettent le site à jour. → Le site est en cours de mise à jour."],["She said, “I work here.” → She said she worked here.","Elle a dit : « Je travaille ici. » → Elle a dit qu’elle travaillait ici."],["He asked, “Where do you live?” → He asked where I lived.","Il a demandé : « Où habites-tu ? » → Il a demandé où j’habitais."]],
+ piege:["Dans une question rapportée, on ne garde pas l’inversion : He asked where I lived (pas « where did I live »)."]},
+
+{id:"irregular",t:"Verbes irréguliers",m:"irregularMix",niv:"A2–B1",
+ resume:"Past simple et participe passé doivent être appris par cœur. Le participe passé s’emploie après have / has / had. Regroupe-les par familles.",
+ tab:[{h:"Les 29 essentiels",cols:["Base","Past simple","Participe passé","Français"],rows:[["be","was / were","been","être"],["become","became","become","devenir"],["begin","began","begun","commencer"],["break","broke","broken","casser"],["bring","brought","brought","apporter"],["buy","bought","bought","acheter"],["choose","chose","chosen","choisir"],["come","came","come","venir"],["do","did","done","faire"],["drink","drank","drunk","boire"],["find","found","found","trouver"],["get","got","got","obtenir"],["give","gave","given","donner"],["go","went","gone","aller"],["have","had","had","avoir"],["know","knew","known","savoir"],["make","made","made","fabriquer"],["meet","met","met","rencontrer"],["pay","paid","paid","payer"],["put","put","put","mettre"],["read","read","read","lire"],["say","said","said","dire"],["see","saw","seen","voir"],["send","sent","sent","envoyer"],["speak","spoke","spoken","parler"],["take","took","taken","prendre"],["tell","told","told","raconter"],["think","thought","thought","penser"],["write","wrote","written","écrire"]]}],
+ sec:[["Apprendre par familles",["• Trois formes identiques : cut – cut – cut, put, set, hit.","• Deux formes identiques : buy – bought – bought, bring, think, send, meet, find.","• Voyelle qui change : begin – began – begun, drink, sing, swim.","• -en au participe : take – took – taken, give, break, speak, write – wrote – written.","• Cas à part : go – went – gone, be – was / were – been, do – did – done."]]],
+ ex:[["I went to Paris last week.","Je suis allé à Paris la semaine dernière."],["She has gone to the bank.","Elle est partie à la banque."],["We bought a new tool.","Nous avons acheté un nouvel outil."],["He has written the report.","Il a rédigé le rapport."],["They sent the file yesterday.","Ils ont envoyé le fichier hier."],["I have seen this chart before.","J’ai déjà vu ce graphique."]],
+ piege:["« have went » et « I seen » sont faux → I have gone, I saw / I have seen."]},
+
+{id:"ed",t:"Verbes réguliers en -ED",m:"edSpell",niv:"A1–A2",
+ resume:"Les verbes réguliers prennent -ed au past simple et au participe passé. L’orthographe suit quelques règles ; la prononciation dépend du dernier son.",
+ tab:[{h:"Prononciation de -ed",cols:["Son","Après…","Exemples"],rows:[["/t/","son non voisé (p, k, f, s, ch, sh)","worked, helped, watched"],["/d/","son voisé (b, g, v, z, l, m, n, r, voyelle)","played, called, opened"],["/ɪd/","/t/ ou /d/","wanted, needed, started"]]}],
+ sec:[["Orthographe",["• Cas général : + ed → work → worked.","• Fini par -e : + d → live → lived.","• Consonne + y : y → ied → study → studied (voyelle + y : play → played).","• Une syllabe consonne-voyelle-consonne : on double → stop → stopped, plan → planned.","• Accent sur la dernière syllabe : prefer → preferred (mais visit → visited)."]],["Astuce pour le son",["• Regarde le dernier SON du verbe, pas la dernière lettre. Pose la main sur la gorge : si ça vibre, c’est voisé → /d/."]]],
+ ex:[["I worked late yesterday.","J’ai travaillé tard hier."],["She studied all night.","Elle a étudié toute la nuit."],["We stopped the campaign.","Nous avons arrêté la campagne."],["They wanted a new design.","Ils voulaient un nouveau design."],["He opened the file.","Il a ouvert le fichier."]],
+ piege:["wanted et worked s’écrivent tous deux -ed mais ne se prononcent pas pareil : l’orthographe ne dit pas le son."]},
+
+{id:"sPron",t:"Terminaison -S / -ES : le son",m:"sPron",niv:"A2",
+ resume:"Le -s de la 3e personne et du pluriel se prononce /s/, /z/ ou /ɪz/ selon le dernier son du mot.",
+ tab:[{h:"Trois prononciations",cols:["Son","Après…","Exemples"],rows:[["/s/","son non voisé (p, t, k, f)","works, stops, helps"],["/z/","son voisé ou voyelle","plays, runs, reads"],["/ɪz/","son sifflant (s, z, sh, ch, x, ge)","washes, watches, fixes, changes"]]}],
+ ex:[["She works hard.","Elle travaille dur."],["He plays tennis.","Il joue au tennis."],["The tool fixes errors.","L’outil corrige les erreurs."],["My boss watches everything.","Mon chef surveille tout."]],
+ piege:["Comme pour -ed, regarde le dernier son du mot et non sa dernière lettre."]},
+
+{id:"finderror",t:"Les erreurs classiques",m:"finderror",niv:"A2–B2",
+ resume:"Relis en cherchant d’abord le verbe, puis l’article, puis la préposition. Voici les fautes les plus fréquentes des francophones.",
+ tab:[{h:"Faux → correct",cols:["Faux","Correct","Français"],rows:[["She work here.","She works here.","Elle travaille ici."],["Does she works here?","Does she work here?","Travaille-t-elle ici ?"],["I have seen him yesterday.","I saw him yesterday.","Je l’ai vu hier."],["I am agree.","I agree.","Je suis d’accord."],["He can to swim.","He can swim.","Il sait nager."],["Informations are useful.","Information is useful.","Les informations sont utiles."],["I depend of you.","I depend on you.","Je dépends de toi."],["more faster","faster","plus rapide"]]}],
+ sec:[["Pourquoi c’est faux",["• Accord : -s à la 3e personne, mais jamais après does.","• Temps : moment fini (yesterday) → past simple.","• Agree n’est pas précédé de be ; pas de to après un modal.","• Indénombrable : pas de pluriel (information, advice, news).","• Préposition recopiée du français : depend ON, listen TO.","• Pas de more + adjectif en -er."]]],
+ piege:["Au moment de relire, cherche une erreur à la fois : verbe, puis article, puis préposition."]}
+];
+const COURS_GROUPS=[
+ ["Les bases de la phrase",["thirdPerson","wordOrder","questionsNeg","articles"]],
+ ["Les temps",["presentTenses","pastTenses","presentPerfect","future","grammar"]],
+ ["Structures et mots de liaison",["prepositions","comparatives","modals","connectors","transform"]],
+ ["Formes et sons",["irregular","ed","sPron"]],
+ ["Pièges",["finderror"]]
+];
+const COURS_KEY="et_cours_done";
+function coursDone(){try{const a=JSON.parse(localStorage.getItem(COURS_KEY)||"[]");return Array.isArray(a)?a:[]}catch(e){return[]}}
+function coursToggle(id){const a=coursDone(),i=a.indexOf(id);if(i<0)a.push(id);else a.splice(i,1);try{localStorage.setItem(COURS_KEY,JSON.stringify(a))}catch(e){}return i<0}
+const coursEsc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+function coursRenderIndex(){
+  const done=coursDone(),byId=Object.fromEntries(COURS.map(c=>[c.id,c]));
+  $("coursHead").textContent="Cours";
+  $("coursBody").innerHTML=`<p class="cIntro">${COURS.length} leçons de grammaire à lire et à apprendre. Les exemples anglais sont accompagnés de leur traduction française. Touche une phrase anglaise pour l’écouter.</p><div class="cProg"><b>${done.filter(id=>byId[id]).length}/${COURS.length}</b> leçons apprises<i><u style="width:${Math.round(done.filter(id=>byId[id]).length/COURS.length*100)}%"></u></i></div>`+
+  COURS_GROUPS.map(([g,ids])=>`<div class="cGrp">${coursEsc(g)}</div>`+ids.map(id=>{const c=byId[id];return `<button type="button" class="cItem${done.includes(id)?" done":""}" data-cours="${id}"><span><b>${coursEsc(c.t)}</b><small>${coursEsc(c.niv)} · ${coursEsc(c.resume.split(".")[0])}.</small></span><em aria-hidden="true">${done.includes(id)?"✓":"›"}</em></button>`}).join("")).join("");
+  $("coursSheet").scrollTop=0;
+}
+function coursRenderLesson(id){
+  const c=COURS.find(x=>x.id===id);if(!c)return coursRenderIndex();
+  const done=coursDone().includes(id),idx=COURS.indexOf(c);
+  const pair=(en,fr)=>`<div class="cRow" data-say="${coursEsc(en.split(" → ")[0])}"><span class="en">${coursEsc(en)}</span><span class="fr">${coursEsc(fr)}</span></div>`;
+  let h=`<button type="button" class="ghost cBack" data-cback>‹ Tous les cours</button><h3 class="cTitle">${coursEsc(c.t)}</h3><div class="cMeta">Niveau ${coursEsc(c.niv)}</div><div class="cBox cResume"><b>À retenir</b><p>${coursEsc(c.resume)}</p></div>`;
+  (c.tab||[]).forEach(t=>{h+=`<div class="cH">${coursEsc(t.h)}</div><div class="cTabWrap"><table class="cTab"><thead><tr>${t.cols.map(x=>`<th>${coursEsc(x)}</th>`).join("")}</tr></thead><tbody>${t.rows.map(r=>`<tr>${r.map((x,i)=>`<td${i===0?' class="k"':""}>${coursEsc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`});
+  (c.sec||[]).forEach(([t,ls])=>{h+=`<div class="cH">${coursEsc(t)}</div><div class="cBox">${ls.map(x=>`<p>${coursEsc(x)}</p>`).join("")}</div>`});
+  if(c.ex&&c.ex.length)h+=`<div class="cH">Exemples <small>anglais · français</small></div><div class="cEx">${c.ex.map(([en,fr])=>pair(en,fr)).join("")}</div>`;
+  if(c.piege&&c.piege.length)h+=`<div class="cH">Pièges fréquents</div><div class="cBox cTrap">${c.piege.map(x=>`<p>${coursEsc(x)}</p>`).join("")}</div>`;
+  h+=`<div class="cActions"><button type="button" class="ghost" data-cdone="${id}">${done?"✓ Leçon apprise":"Marquer comme apprise"}</button><button type="button" class="primary" data-ctrain="${c.m}">S’entraîner</button></div><div class="cNav">${idx>0?`<button type="button" class="ghost" data-cours="${COURS[idx-1].id}">‹ ${coursEsc(COURS[idx-1].t)}</button>`:"<span></span>"}${idx<COURS.length-1?`<button type="button" class="ghost" data-cours="${COURS[idx+1].id}">${coursEsc(COURS[idx+1].t)} ›</button>`:"<span></span>"}</div>`;
+  $("coursHead").textContent="Cours";$("coursBody").innerHTML=h;$("coursSheet").scrollTop=0;
+}
+function openCours(id){
+  const s=$("coursSheet");if(!s)return;
+  if(id)coursRenderLesson(id);else coursRenderIndex();
+  s.classList.remove("hidden");document.body.classList.add("sheetOpen");
+}
+function closeCours(){const s=$("coursSheet");if(s)s.classList.add("hidden");document.body.classList.remove("sheetOpen")}
+function initCours(){
+  if($("coursSheet"))return;
+  const s=document.createElement("div");s.id="coursSheet";s.className="sheet hidden";s.setAttribute("role","dialog");s.setAttribute("aria-label","Cours");
+  s.innerHTML=`<div class="sheetHead"><h2 id="coursHead">Cours</h2><button type="button" id="coursClose" class="ghost">Fermer</button></div><div id="coursBody"></div>`;
+  document.body.appendChild(s);
+  $("coursClose").onclick=closeCours;
+  s.addEventListener("click",e=>{
+    const t=e.target;
+    const it=t.closest("[data-cours]");if(it){coursRenderLesson(it.dataset.cours);return}
+    if(t.closest("[data-cback]")){coursRenderIndex();return}
+    const dn=t.closest("[data-cdone]");if(dn){const on=coursToggle(dn.dataset.cdone);dn.textContent=on?"✓ Leçon apprise":"Marquer comme apprise";return}
+    const tr=t.closest("[data-ctrain]");if(tr){const m=tr.dataset.ctrain;closeCours();try{showView("gram");openExercise(m)}catch(x){console.error(x)}return}
+    const row=t.closest("[data-say]");if(row){try{speak(row.dataset.say)}catch(x){}}
+  });
+  /* appui long sur Accueil : ouvre les cours ; appui court : accueil normal */
+  const arm=(b)=>{
+    if(!b||b.dataset.longCours)return;b.dataset.longCours="1";
+    let tm=null,fired=false,sx=0,sy=0;const cancel=()=>{clearTimeout(tm);tm=null};
+    b.addEventListener("pointerdown",e=>{fired=false;sx=e.clientX;sy=e.clientY;cancel();tm=setTimeout(()=>{fired=true;tm=null;try{navigator.vibrate&&navigator.vibrate(15)}catch(x){}openCours()},500)});
+    b.addEventListener("pointermove",e=>{if(tm&&Math.hypot(e.clientX-sx,e.clientY-sy)>10)cancel()});
+    ["pointerup","pointercancel","pointerleave"].forEach(ev=>b.addEventListener(ev,cancel));
+    b.addEventListener("click",e=>{if(fired){e.stopImmediatePropagation();e.preventDefault();fired=false}},true);
+    b.addEventListener("contextmenu",e=>e.preventDefault());
+  };
+  arm(document.querySelector(".bottomNav [data-view='home']"));
+  arm(document.querySelector(".tabs [data-view='home']"));
+  /* raccourci de l'icône installée : ./#cours */
+  window.addEventListener("hashchange",()=>{if(location.hash==="#cours")openCours()});
+  if(location.hash==="#cours")setTimeout(openCours,150);
+}
+
+try{initCours()}catch(e){console.error(e)}
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
