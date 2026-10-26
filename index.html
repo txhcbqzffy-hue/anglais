@@ -591,6 +591,14 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 .subHead{grid-column:1/-1;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:10px 2px 0}
 .subHead:first-child{margin-top:0}
 .subHead2{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 2px 2px}
+.pageBar{display:grid;grid-template-columns:1fr;gap:10px;margin:0 0 12px}
+.pageBar:empty{display:none}
+.pbField{display:flex;flex-direction:column;gap:4px}
+.pbField span{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pbField select{width:100%;min-height:48px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);font-weight:700}
+#modeSelect{display:none!important}
+.toolbar{justify-content:flex-start}
+@media(min-width:721px){.pageBar{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -4124,7 +4132,8 @@ function tagPages(){
   const root=$("view-train"),H=e=>((e.querySelector("h2,h3,b")||{}).textContent||"").trim();
   pageTags=[...root.children].map(el=>{
     let pg="home";
-    if(el.id==="packsPanel")pg="vocab";
+    if(el.id==="packsPanel")pg="none";
+    else if(el.id==="pageBar")pg="vocab gram";
     else if(el.classList.contains("goalPanel"))pg="all";
     else if(["modeHelp","lessonPanel","exerciseCard"].includes(el.id)||el.classList.contains("toolbar"))pg="zone";
     else if(/^(Maîtrise|Ajouter ton vocab)/.test(H(el)))pg="vocab";
@@ -4137,10 +4146,11 @@ function applyPageVisibility(){
   const p=currentView,goal=activeGoal(),goals=PAGE_GOALS[p]||[];
   const zone=(p==="audio"?(A().seg==="ear"||A().seg==="oral"):p!=="home")||(state.adaptive&&state.adaptive.active)||goal==="test";
   $("view-train").dataset.page=p;
-  pageTags.forEach(t=>t.el.classList.toggle("pgHide",(p==="audio"&&t.el.classList.contains("goalPanel"))||!(t.pg==="all"||t.pg===p||(t.pg==="zone"&&zone))));
+  pageTags.forEach(t=>t.el.classList.toggle("pgHide",((p==="audio"||p==="vocab"||p==="gram")&&t.el.classList.contains("goalPanel"))||!(t.pg==="all"||t.pg.split(" ").includes(p)||(t.pg==="zone"&&zone))));
   document.querySelectorAll("[data-goal]").forEach(b=>b.classList.toggle("pgHide",!goals.includes(b.dataset.goal)));
   const grid=document.querySelector(".goalGrid");if(grid)grid.classList.toggle("pgHide",goals.length<2);
   const g=goals.includes(goal)?goal:goals[0];
+  try{renderPageBar()}catch(e){}
   if(g&&lastGoalShown!==p+":"+g){lastGoalShown=p+":"+g;document.querySelectorAll("[data-goal]").forEach(b=>b.classList.toggle("active",b.dataset.goal===g));renderGoalChoices(g)}
 }
 function ensureModeForPage(v){
@@ -4657,6 +4667,7 @@ function initV28(){
   const G=goalModeGroups,all=[].concat(G.understand.modes,G.produce.modes),by=m=>all.find(x=>x[0]===m);
   G.understand={title:"Audio & oral",modes:["view:audio","audioDialogues","dictation","listening","pronunciation","pronLab","wordStress","sentenceStress","shadowing","conversation"].map(by).filter(Boolean)};
   G.produce={title:"Écriture & lecture",modes:["view:translate","writingTask","reading","translationText"].map(by).filter(Boolean)};
+  const pb=document.createElement("div");pb.id="pageBar";pb.className="pageBar";vt.insertBefore(pb,vt.firstChild);
   tagPages();pagesReady=true;
   const h0=(location.hash||"").replace("#","");
   const hp=({translate:"write",train:"home"})[h0]||h0;
@@ -4811,6 +4822,35 @@ function planTick(){
 /* suit le mode choisi : bascule sur la page qui correspond */
 const __setModeOrig=setMode;
 setMode=function(m,k){__setModeOrig(m,k);pageFollowMode()};
+
+/* ----- barre de choix rapide (menus déroulants) : Vocabulaire et Grammaire ----- */
+let barSig="";
+function modeInfo(){const info={};Object.values(goalModeGroups).forEach(g=>g.modes.forEach(x=>{if(!info[x[0]])info[x[0]]=x}));return info}
+function renderPageBar(){
+  const host=$("pageBar");if(!host)return;
+  const p=currentView;
+  if(p!=="vocab"&&p!=="gram"){host.innerHTML="";barSig="";return}
+  const sig=p+"|"+mode+"|"+(state.packFocus||"");
+  if(sig===barSig&&host.firstChild)return;
+  barSig=sig;
+  const info=modeInfo();
+  const groups=p==="gram"?SUBGROUPS.grammar:[...SUBGROUPS.vocab,["Réviser",["review","errors","favorites"]]];
+  const opt=m=>info[m]?`<option value="${m}"${m===mode?" selected":""}>${escapeHtml(info[m][1])}</option>`:"";
+  let html=`<label class="pbField"><span>Exercice</span><select id="pbMode">${groups.map(([t,ms])=>`<optgroup label="${escapeHtml(t)}">${ms.map(opt).join("")}</optgroup>`).join("")}</select></label>`;
+  if(p==="vocab"){
+    const f=state.packFocus||"",o=id=>{const x=PACKS.find(q=>q.id===id);return x?`<option value="${id}"${f===id?" selected":""}>${escapeHtml(x.name)} (${x.words.length})</option>`:""};
+    const rank=id=>{const i=PACK_ORDER.indexOf(id);return i<0?99:i};
+    const words=PACKS.filter(q=>!PACK_EXPR.includes(q.id)).sort((a,b)=>rank(a.id)-rank(b.id)).map(q=>q.id);
+    html+=`<label class="pbField"><span>Thème</span><select id="pbTheme"><option value=""${f?"":" selected"}>Tous les thèmes</option><optgroup label="Mots par métier et par sujet">${words.map(o).join("")}</optgroup><optgroup label="Expressions">${PACK_EXPR.map(o).join("")}</optgroup></select></label>`;
+  }
+  host.innerHTML=html;
+  const m=$("pbMode");if(m)m.onchange=()=>openExercise(m.value);
+  const t=$("pbTheme");
+  if(t)t.onchange=()=>{
+    state.packFocus=t.value||null;saveState();
+    if(["quiz","quizReverse","quizMix","write","reverse"].includes(mode))newQuestion();else openExercise("quizMix");
+  };
+}
 
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
