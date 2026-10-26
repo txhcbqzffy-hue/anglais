@@ -1041,6 +1041,9 @@ background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.30),transp
 .expSec summary::after{content:"+";color:var(--muted);font-weight:700}
 .expSec[open] summary::after{content:"–"}
 .expSec p{margin:0 0 8px;font-size:13.5px;line-height:1.5;color:var(--text)}
+
+.roundRes{display:flex;gap:10px;margin-top:12px}
+.roundRes button{flex:1}
 </style>
 </head>
 <body>
@@ -4457,7 +4460,7 @@ $("translationBtn").addEventListener("click",revealTranslation);
 $("checkTextBtn").addEventListener("click",checkText);
 $("checkGrammarBtn").addEventListener("click",checkGrammar);
 $("checkWritingBtn").addEventListener("click",analyseWriting);
-$("nextBtn").addEventListener("click",nextQuestion);
+$("nextBtn").addEventListener("click",()=>nextQuestion());
 $("readAloudBtn").addEventListener("click",()=>speakAmerican(current?.text||"",.82));
 $("newReadingBtn").addEventListener("click",()=>{if(mode==="reading")newQuestion()});
 $("checkReadingBtn").addEventListener("click",checkReading);
@@ -6044,7 +6047,7 @@ newQuestion=function(){
   try{
     const c=$("exerciseCard");
     if(rsReady&&!sessOpen&&c&&c.offsetParent!==null&&typeof mode==="string"&&mode.indexOf("view:")!==0){
-      state.resume={mode,q:qNumber};saveState();
+      state.resume={mode,q:qNumber,c:roundC};saveState();
     }
   }catch(e){}
 };
@@ -6054,7 +6057,7 @@ setTimeout(()=>{
     const r=__rsSaved;
     if(!r||!r.mode||sessOpen){rsReady=true;return}
     openExercise(r.mode);
-    qNumber=r.q||1;rsReady=true;
+    qNumber=r.q||1;roundC=r.c||0;rsReady=true;rndBar();
     $("qCounter").textContent="Question "+qNumber;$("progress").style.width=(((qNumber-1)%20)*5)+"%";
   }catch(e){rsReady=true;console.error(e)}
 },700);
@@ -6272,6 +6275,47 @@ newQuestion=function(){
   __expNQ.apply(this,arguments);
   try{const w=expEnsure();if(w){$("expPanel").classList.add("hidden");$("expBtn").classList.remove("open");$("expBtn").setAttribute("aria-expanded","false");w.style.display=(typeof mode==="string"&&mode.indexOf("view:")!==0)?"":"none"}}catch(e){}
 };
+
+/* ----- série de 10 questions : la barre se remplit, puis le résultat ----- */
+const ROUND=10,ROUND_SKIP=["levelTest","exam","conversation","shadowing","pronunciation","review","errors","favorites"];
+let roundC=0;
+function roundOn(){return !sessOpen&&typeof mode==="string"&&mode.indexOf("view:")!==0&&!ROUND_SKIP.includes(mode)}
+function rndBar(){
+  if(!roundOn())return;
+  $("qCounter").textContent="Question "+Math.min(qNumber,ROUND)+"/"+ROUND;
+  $("progress").style.width=(((Math.min(qNumber,ROUND)-1)/ROUND)*100)+"%";
+}
+const __rdRew=reward;
+reward=function(){if(roundOn())roundC++;return __rdRew.apply(this,arguments)};
+const __rdNQ=newQuestion;
+newQuestion=function(){
+  const r=$("roundRes");if(r)r.remove();
+  if(qNumber===1)roundC=0;
+  __rdNQ.apply(this,arguments);
+  try{rndBar()}catch(e){}
+};
+const __rdNext=nextQuestion;
+nextQuestion=function(){
+  if(roundOn()&&qNumber>=ROUND&&!(state.adaptive&&state.adaptive.active&&sessOpen)){roundResult();return}
+  return __rdNext.apply(this,arguments);
+};
+function roundResult(){
+  resetZones();
+  ["options","wordBank","textZone","grammarZone","gameZone"].forEach(id=>{const e=$(id);if(e)e.classList.add("hidden")});
+  const c=roundC,p=Math.round(c/ROUND*100);
+  $("progress").style.width="100%";$("qCounter").textContent="Terminé";
+  $("question").textContent="Série terminée";
+  $("info").textContent=`Résultat : ${c}/${ROUND} (${p} %). ${p>=80?"Très bien, continue comme ça.":p>=50?"Bon travail, les erreurs reviendront en révision.":"Relis les explications (+) puis refais une série."}`;
+  $("info").classList.remove("hidden");
+  $("speakBtn").style.visibility="hidden";$("favBtn").style.visibility="hidden";
+  const d=document.createElement("div");d.id="roundRes";d.className="roundRes";
+  d.innerHTML=`<button type="button" class="primary" id="rrAgain">Rejouer</button><button type="button" class="ghost" id="rrBack">Retour</button>`;
+  $("info").after(d);
+  $("rrAgain").onclick=()=>{openExercise(mode)};
+  $("rrBack").onclick=()=>{const b=$("pbBack");if(b)b.click();else showView("home")};
+  try{state.resume=null;saveState()}catch(e){}
+  try{const dd=jDay(JD(new Date()),true);saveState()}catch(e){}
+}
 
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
