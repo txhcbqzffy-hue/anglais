@@ -1166,6 +1166,13 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .tEx b{display:block}.tEx i{display:block;font-style:normal;color:var(--muted);font-size:14px;margin-top:2px}
 .tTrap{padding:10px 12px;border-radius:12px;background:rgba(var(--accent-rgb),.1)}
 #tenseBody{padding-bottom:40px}
+.xRow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0}
+.xRow .optFav{margin-right:-8px;margin-left:0}
+.xList{margin:6px 0}
+.favTabs{display:flex;gap:8px;margin:6px 0 12px}
+.favTab{flex:1;min-height:44px;border-radius:14px;border:1.5px solid var(--line);background:var(--card,#fff);font-weight:800;font-size:15px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px}
+.favTab span{font-weight:700;font-size:13px;opacity:.8}
+.favTab.on{background:var(--accent);border-color:var(--accent);color:#fff}
 </style>
 </head>
 <body>
@@ -1174,7 +1181,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v48</span></h1>
+        <h1>English Trainer<span class="ver">v50</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -8268,6 +8275,7 @@ document.addEventListener("click",e=>{
   try{
     const ai=state.custom.findIndex(c=>c.en===w&&c.auto);
     if(was&&ai>=0){state.custom.splice(ai,1);__trSig=""}
+    else if(!was&&st.dataset.fr&&!trLookup(w)){state.custom.push({en:w,fr:st.dataset.fr,auto:true});__trSig=""}
     else if(!was&&__extraSet.has(w.toLowerCase())){
       const x=EXTRA_TR.find(q=>q[0].toLowerCase()===w.toLowerCase());
       if(x){state.custom.push({en:w,fr:x[1],auto:true});__trSig=""}
@@ -8284,15 +8292,37 @@ document.addEventListener("click",e=>{
 let favHide=false;try{favHide=localStorage.getItem("et_fav_hide")==="1"}catch(e){}
 function favList(){
   trMaps();
-  return state.favorites.map(w=>{const e=__en2fr.get(String(w).toLowerCase())||trLookup(w);return{en:w,fr:e?e.fr:"—"}});
+  favExprSet();
+  return state.favorites.map(w=>{const e=__en2fr.get(String(w).toLowerCase())||trLookup(w);return{en:w,fr:e?e.fr:"—",kind:favKind(w)}});
 }
+let __favExpr=null,__favExprSig="";
+const FAV_EXPR_PACKS=["p_phrasal","p_phrasal2","p_idioms","p_idioms2","p_linkers","p_phrases","p_colloc","p_bizexpr","p_spoken"];
+function favExprSet(){
+  const sig=PACKS.length+"|"+state.custom.length;
+  if(__favExpr&&sig===__favExprSig)return __favExpr;
+  __favExprSig=sig;__favExpr=new Set();
+  PACKS.forEach(pk=>{if(FAV_EXPR_PACKS.includes(pk.id))pk.words.forEach(w=>__favExpr.add(String(w[0]).toLowerCase()))});
+  baseVocab.forEach(x=>{if(x[2]==="expression")__favExpr.add(String(x[0]).toLowerCase())});
+  EXTRA_TR.forEach(x=>__favExpr.add(String(x[0]).toLowerCase()));
+  return __favExpr;
+}
+function favKind(w){
+  const k=String(w).toLowerCase().trim();
+  if(__favExpr.has(k))return "expr";
+  const n=k.replace(/^(to|a|an|the)\s+/,"").split(/\s+/).length;
+  return n>=3?"expr":"vocab";
+}
+let favTab="vocab";try{favTab=localStorage.getItem("et_fav_tab")==="expr"?"expr":"vocab"}catch(e){}
 function favRender(){
-  const L=favList(),box=$("favBody");
-  $("favCount").textContent=L.length?" ("+L.length+")":"";
+  const ALL=favList(),box=$("favBody");
+  const nV=ALL.filter(x=>x.kind==="vocab").length,nE=ALL.length-nV;
+  $("favCount").textContent=ALL.length?" ("+ALL.length+")":"";
+  const L=ALL.map((x,i)=>({...x,i})).filter(x=>x.kind===favTab);
   const hb=$("favHide");hb.textContent=favHide?"Show EN":"Hide EN";hb.classList.toggle("on",favHide);
   hb.disabled=!L.length;$("favQcm").disabled=!L.length;
-  if(!L.length){box.innerHTML=`<div class="small" style="margin:18px 2px">Aucun favori</div><div class="small" style="margin:0 2px">Touche l’étoile à côté d’un mot dans un exercice pour l’ajouter ici.</div>`;return}
-  box.innerHTML=`<div class="fList">${L.map((x,i)=>`<div class="fRow${favHide?" hide":""}" data-fi="${i}"><button type="button" class="fEn" data-say="${coursEsc(x.en)}"><span>${coursEsc(x.en)}</span></button><span class="fFr">${coursEsc(x.fr)}</span><button type="button" class="fStar" data-frm="${i}" aria-label="Retirer des favoris">★</button></div>`).join("")}</div>`;
+  const tabs=`<div class="favTabs"><button type="button" class="favTab${favTab==="vocab"?" on":""}" data-ftab="vocab">Vocabulaire <span>${nV}</span></button><button type="button" class="favTab${favTab==="expr"?" on":""}" data-ftab="expr">Expressions <span>${nE}</span></button></div>`;
+  if(!L.length){box.innerHTML=tabs+`<div class="small" style="margin:18px 2px">Aucun favori ici</div><div class="small" style="margin:0 2px">Touche l’étoile à côté d’un mot ou d’une expression pour l’ajouter.</div>`;return}
+  box.innerHTML=tabs+`<div class="fList">${L.map(x=>`<div class="fRow${favHide?" hide":""}" data-fi="${x.i}"><button type="button" class="fEn" data-say="${coursEsc(x.en)}"><span>${coursEsc(x.en)}</span></button><span class="fFr">${coursEsc(x.fr)}</span><button type="button" class="fStar" data-frm="${x.i}" aria-label="Retirer des favoris">★</button></div>`).join("")}</div>`;
 }
 function favOpen(){
   let s=$("favSheet");
@@ -8303,13 +8333,15 @@ function favOpen(){
     $("favBack").onclick=favClose;
     $("favHide").onclick=()=>{favHide=!favHide;try{localStorage.setItem("et_fav_hide",favHide?"1":"0")}catch(e){}favRender()};
     $("favQcm").onclick=()=>{
-      const L=favList().filter(x=>x.fr!=="—");
+      const L=favList().filter(x=>x.fr!=="—"&&x.kind===favTab);
       if(L.length<4){const b=$("favQcm");b.textContent="4 words min.";setTimeout(()=>{b.textContent="QCM"},1800);return}
       let items=L.map(x=>[x.en,x.fr,"fav"]);
       if(items.length<8){const have=new Set(items.map(x=>x[0]));items=items.concat(shuffle(vocab().filter(v=>!have.has(v[0]))).slice(0,8-items.length))}
       favClose();window.__focus=items;jFocusNext=true;openExercise("quizMix");
     };
     s.addEventListener("click",e=>{
+      const tb=e.target.closest("[data-ftab]");
+      if(tb){favTab=tb.dataset.ftab==="expr"?"expr":"vocab";try{localStorage.setItem("et_fav_tab",favTab)}catch(z){}favRender();return}
       const rm=e.target.closest("[data-frm]");
       if(rm){const L=favList(),x=L[+rm.dataset.frm];if(x){state.favorites=state.favorites.filter(w=>w!==x.en);
         const ai=state.custom.findIndex(c=>c.en===x.en&&c.auto);if(ai>=0){state.custom.splice(ai,1);__trSig=""}
@@ -8455,6 +8487,31 @@ function tenseDecorate(){
 const __nqTense=newQuestion;
 newQuestion=function(){const r=__nqTense.apply(this,arguments);try{tenseDecorate()}catch(e){console.error(e)}return r};
 document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest(".tenseLink");if(t){e.preventDefault();tenseOpen(t.dataset.tense)}},true);
+
+/* ----- Explications : étoile ★ sur chaque « mot = traduction » ----- */
+const __expHtmlBase=expHtml;
+expHtml=function(e){
+  const html=__expHtmlBase.apply(this,arguments);
+  try{
+    const box=document.createElement("div");box.innerHTML=html;
+    box.querySelectorAll("p").forEach(p=>{
+      const raw=p.textContent.replace(/^\s*•\s*/,"");
+      if(!/ = /.test(raw))return;
+      const parts=raw.split(" · "),out=[];let any=false;
+      parts.forEach(seg=>{
+        const m=seg.trim().match(/^([A-Za-z][A-Za-z' \-]{0,38}?) = (.+?)\.?$/);
+        if(m&&m[1].split(" ").length<=4){
+          any=true;
+          const t=trLookup(m[1]),en=t?t.en:m[1].trim(),fr=m[2].split(/ \(| →/)[0].replace(/[.\s]+$/,"");
+          const on=isFavorite(en);
+          out.push(`<div class="xRow"><span>${escapeHtml(seg.trim())}</span><span class="optFav${on?" on":""}" role="button" aria-label="Ajouter aux favoris : ${escapeHtml(en)}" data-en="${escapeHtml(en)}" data-fr="${escapeHtml(fr)}" data-star="${on?"★":"☆"}"></span></div>`);
+        }else out.push(`<div class="xRow"><span>${escapeHtml(seg.trim())}</span></div>`);
+      });
+      if(any){const d=document.createElement("div");d.className="xList";d.innerHTML=out.join("");p.replaceWith(d)}
+    });
+    return box.innerHTML;
+  }catch(err){console.error(err);return html}
+};
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
