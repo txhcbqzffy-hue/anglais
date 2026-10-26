@@ -1141,6 +1141,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .fStar{width:40px;height:40px;border:0;background:transparent;font-size:22px;color:var(--warn);border-radius:50%}
 .fStar:active{background:rgba(var(--accent-rgb),.14)}
 .fRow.hide:not(.peek) .fEn span{filter:blur(7px);-webkit-user-select:none;user-select:none}
+#modeHelp,.modeHelp{display:none!important}
 </style>
 </head>
 <body>
@@ -1149,7 +1150,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v33</span></h1>
+        <h1>English Trainer<span class="ver">v34</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -3309,10 +3310,10 @@ function newQuestion(){
     const reverse=Math.random()<.5;
     current={vocab:item,answer:reverse?item[0]:item[1],direction:reverse?"fr-en":"en-fr"};
     if(reverse){
-      $("question").innerHTML=`<b>${escapeHtml(item[1])}</b> → choisis l’anglais`;
+      $("question").innerHTML=`<b>${escapeHtml(item[1])}</b>`;
       shuffle([item[0],...shuffle(pool).slice(0,3).map(x=>x[0])]).forEach(x=>makeOption(x,x===item[0]));
     }else{
-      $("question").innerHTML=`<b>${escapeHtml(item[0])}</b> → choisis le français`;
+      $("question").innerHTML=`<b>${escapeHtml(item[0])}</b>`;
       shuffle([item[1],...shuffle(pool).slice(0,3).map(x=>x[1])]).forEach(x=>makeOption(x,x===item[1]));
     }
   }
