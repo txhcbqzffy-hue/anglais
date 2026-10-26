@@ -1025,6 +1025,22 @@ html{background:var(--bg)!important;min-height:100%}
 html::before{content:"";position:fixed;left:0;right:0;top:0;bottom:0;z-index:-1;pointer-events:none;
 background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.30),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(90,150,255,.18),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(170,120,255,.16),transparent 70%)}
 :root[data-theme="dark"] html::before{background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.16),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(70,120,255,.16),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(150,100,255,.14),transparent 70%)}
+
+/* explications (+) */
+.expWrap{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.expBtn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:0;box-shadow:none;padding:2px 0;min-height:0;color:var(--muted);font-size:13px;font-weight:600}
+.expBtn i{width:24px;height:24px;border-radius:50%;background:var(--accent);position:relative;flex:none;transition:transform .2s}
+.expBtn i::before,.expBtn i::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:2px;background:var(--on-accent);transform:translate(-50%,-50%);border-radius:3px}
+.expBtn i::after{transform:translate(-50%,-50%) rotate(90deg)}
+.expBtn.open i{transform:rotate(45deg)}
+.expPanel{margin-top:10px}
+.expPanel h4{margin:0 0 8px;font-size:15px}
+.expSec{border:1px solid var(--line);border-radius:var(--rs);background:var(--panel2);margin-bottom:6px;padding:0 10px}
+.expSec summary{padding:9px 0;font-weight:700;font-size:13.5px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:8px}
+.expSec summary::-webkit-details-marker{display:none}
+.expSec summary::after{content:"+";color:var(--muted);font-weight:700}
+.expSec[open] summary::after{content:"–"}
+.expSec p{margin:0 0 8px;font-size:13.5px;line-height:1.5;color:var(--text)}
 </style>
 </head>
 <body>
@@ -6138,6 +6154,124 @@ async function avSearch(){
   avRender();
 }
 function avEl(){if(!avNode){avNode=document.createElement("section");avNode.id="addCard";avNode.className="panel addCard";avRender()}return avNode}
+/* ----- Explications détaillées sous chaque exercice (bouton +) ----- */
+const EXP={
+tenses:{t:"Choisir le bon temps",s:[
+["La méthode en 3 questions",["1. Quand l’action a-t-elle lieu : toujours / maintenant / passé fini / passé lié à maintenant / futur ?","2. Cherche le marqueur de temps (voir la liste ci-dessous).","3. Construis : auxiliaire + forme du verbe."]],
+["Present simple — habitudes et vérités",["• Forme : I work · she works (he/she/it + -s). Négation : don’t / doesn’t + base. Question : Do / Does + sujet + base.","• Sert à : habitudes, faits, horaires. Marqueurs : always, usually, often, sometimes, never, every day.","• ex : I check my emails every morning. (Je consulte mes mails chaque matin.)"]],
+["Present continuous — en ce moment",["• Forme : am / is / are + V-ing.","• Sert à : action en cours, situation temporaire, projet arrangé. Marqueurs : now, right now, at the moment, today, this week.","• ex : I’m writing a report right now. · We’re meeting the client tomorrow.","• Pas de V-ing avec les verbes d’état : know, like, want, need, understand, believe → I know (pas « I am knowing »)."]],
+["Past simple — passé terminé",["• Forme : verbe + -ed (réguliers) ou forme irrégulière (went, saw, made). Négation : didn’t + base. Question : Did + sujet + base.","• Marqueurs : yesterday, last week, in 2020, two days ago, when I was young.","• ex : She joined the company in 2024."]],
+["Past continuous — action en cours dans le passé",["• Forme : was / were + V-ing. Souvent coupé par une action courte au past simple.","• ex : I was working when the phone rang. (Je travaillais quand le téléphone a sonné.)"]],
+["Present perfect — lien avec le présent",["• Forme : have / has + participe passé.","• Trois emplois : expérience (ever, never) · résultat visible maintenant (just, already, yet) · durée jusqu’à maintenant (for, since).","• ex : I have visited London twice. · He has just left. · We have worked here since 2022.","• Interdit avec un moment fini : « yesterday », « last week », « in 2020 » → past simple."]],
+["Present perfect continuous",["• Forme : have / has been + V-ing. Insiste sur la durée et l’activité.","• ex : I’ve been learning English for six months."]],
+["Futur : will, be going to, présent continu",["• will : décision spontanée, promesse, prédiction → I’ll help you.","• be going to : intention déjà décidée, ou prévision avec indice → It’s going to rain.","• présent continu : rendez-vous arrangé → I’m seeing him at 5."]],
+["Pièges fréquents",["• for = durée (for three years) ; since = point de départ (since 2023). Le français « depuis » donne le present perfect, pas le présent.","• Après if / when / as soon as, on garde le présent pour le futur : If it rains, we will stay."]]]},
+articles:{t:"a / an / the / pas d’article",s:[
+["Les 3 possibilités",["• a / an : un élément parmi d’autres, pas encore identifié, singulier dénombrable. a devant un son consonne (a manager, a university), an devant un son voyelle (an email, an hour).","• the : élément précis, déjà mentionné, unique, ou compris par tous. ex : I saw a client. The client was happy.","• pas d’article (Ø) : pluriel ou indénombrable pris en général. ex : Customers like quality. · Information is power."]],
+["Quand utiliser the",["• Déjà mentionné : I bought a laptop. The laptop is fast.","• Unique : the sun, the internet, the CEO.","• Superlatifs : the best, the most useful.","• Précisé par un complément : the report we discussed."]],
+["Quand ne PAS en mettre",["• Langues et matières en général : I study English.","• Repas, sports, métiers sans déterminant : play tennis, have lunch.","• Le plus souvent devant les noms de villes et pays : in France (mais the USA, the UK, the Netherlands)."]],
+["Pièges",["• Indénombrables (advice, information, news, work, money) : jamais a/an ni de pluriel → some advice, a piece of news.","• Le son compte, pas la lettre : an hour, a user."]]]},
+prepositions:{t:"Prépositions : in / on / at et plus",s:[
+["Le temps",["• at : heure ou moment précis → at 9 am, at noon, at night, at the weekend (UK) / on the weekend (US).","• on : jour ou date → on Monday, on 5 May, on my birthday.","• in : mois, année, saison, période → in May, in 2026, in summer, in the morning."]],
+["Le lieu",["• in : à l’intérieur d’un espace → in Paris, in the office, in a meeting.","• at : un point précis, une activité → at work, at the station, at a conference.","• on : sur une surface ou un support → on the table, on the screen, on the phone, on a train / bus."]],
+["Autres prépositions utiles",["• for + durée (for two weeks) ; since + point de départ (since Monday) ; during + période (during the meeting) ; by + échéance (by Friday = au plus tard vendredi) ; until = jusqu’à.","• Après certains verbes : depend on, listen to, wait for, look at, interested in, good at, afraid of."]],
+["Piège",["• Le français ne guide pas : « dépendre de » = depend on (pas « of ») ; « écouter » = listen to (pas de to oublié) ; « attendre » = wait for."]]]},
+modals:{t:"Verbes modaux",s:[
+["Règle de forme",["• Modal + verbe à la base, sans to, sans -s : She can help. (jamais She cans / can to help)","• Négation : modal + not (can’t, shouldn’t, mustn’t). Question : modal + sujet (Can you…?). Pas de do/does."]],
+["Sens principaux",["• can / could : capacité, permission, demande polie (Could you send the file?).","• should : conseil (You should rest). must : obligation forte ou déduction (He must be tired). mustn’t = interdit.","• have to : obligation extérieure (I have to attend). don’t have to = pas obligé (≠ mustn’t).","• may / might : possibilité (It might rain). will / would : futur, politesse, hypothèse (I would like a coffee)."]],
+["Pièges",["• must not (interdit) ≠ don’t have to (pas nécessaire).","• Pas de modal au passé : pour must on dit had to ; can → could / was able to."]]]},
+comparatives:{t:"Comparatifs et superlatifs",s:[
+["Adjectifs courts (1 syllabe, ou 2 en -y)",["• Comparatif : adjectif + -er (+ than) → fast → faster than. Superlatif : the + adjectif + -est → the fastest.","• Orthographe : big → bigger (consonne doublée) ; happy → happier (y → i) ; nice → nicer."]],
+["Adjectifs longs (2 syllabes ou plus)",["• more + adjectif (+ than) ; the most + adjectif → more expensive, the most useful.","• Jamais les deux à la fois : « more faster » est faux."]],
+["Irréguliers à connaître",["• good → better → the best · bad → worse → the worst · far → further → the furthest · little → less → the least · much/many → more → the most."]],
+["Autres structures",["• as … as : égalité (as fast as). not as … as : infériorité.","• the + comparatif, the + comparatif : The more you practise, the better you get."]]]},
+thirdPerson:{t:"3e personne du présent",s:[
+["Règle",["• Au present simple affirmatif : he / she / it + verbe + -s → She works.","• -es après s, sh, ch, x, z, o : watches, fixes, goes, does. Consonne + y → -ies : study → studies (mais play → plays).","• have → has."]],
+["Négation et question",["• Après does / doesn’t, le verbe reprend sa base : Does she work ? She doesn’t work. (le -s est déjà porté par does)."]],
+["Piège",["• « She work » et « Does she works » sont faux. Le -s apparaît une seule fois dans la phrase."]]]},
+questionsNeg:{t:"Questions et négations",s:[
+["Le principe : do / does / did",["• Verbe ordinaire au présent : Do / Does + sujet + base ? → Does she work here ? Négation : don’t / doesn’t + base.","• Passé : Did + sujet + base ? → Did they go ? Négation : didn’t + base. Le verbe n’est plus au passé après did."]],
+["Avec be, have (UK) et les modaux",["• be : inversion, pas de do → Is she ready ? She isn’t ready.","• Modaux : inversion → Can you help ? You can’t go."]],
+["Mots interrogatifs",["• Mot-question + auxiliaire + sujet + verbe : Where do you work ? What did he say ?","• Exception si le mot-question est le sujet : Who called you ? (pas de do)."]],
+["Pièges",["• « Do you can… » est faux (modal). « Did you went » est faux → Did you go."]]]},
+wordOrder:{t:"Ordre des mots",s:[
+["Phrase affirmative",["• Sujet + verbe + complément(s) : I send the report.","• Ordre habituel : Sujet – Verbe – Objet – Lieu – Temps → We met the client in Lille yesterday."]],
+["Adverbes de fréquence",["• Avant le verbe principal : I usually plan the campaign. Après be : She is always on time. Entre l’auxiliaire et le verbe : I have never seen it.","• always, usually, often, sometimes, never se placent au milieu de la phrase, pas à la fin."]],
+["Question",["• Mot-question + auxiliaire + sujet + verbe : When does the meeting start ?"]],
+["Astuce pour l’exercice",["• Cherche d’abord le sujet, puis le verbe, puis ce qui reste. Les adverbes de fréquence et les mots de temps sont souvent les plus piégeux."]]]},
+irregularMix:{t:"Verbes irréguliers",s:[
+["Pourquoi les apprendre par familles",["• Même forme aux trois colonnes : cut – cut – cut, put, set, hit, read (prononciation change).","• Deux formes identiques : buy – bought – bought, bring, think, teach, catch, have, make, say, tell, find.","• Voyelle qui change : sing – sang – sung, begin – began – begun, drink, swim, ring.","• -en au participe : take – took – taken, give, break, speak, choose, write – wrote – written.","• Cas particuliers : go – went – gone, be – was/were – been, do – did – done."]],
+["Où servent-ils",["• Past simple : I went to Paris. · Present perfect : I have gone.","• Piège classique : « have went » ou « I seen » sont faux → have gone, I saw."]],
+["Méthode",["• Révise 5 verbes à la fois, dis-les à voix haute et mets-les dans une phrase."]]]},
+edSpell:{t:"Orthographe du passé régulier",s:[
+["Règles",["• Cas général : + ed → work → worked.","• Se termine par -e : + d → live → lived.","• Consonne + y : y → ied → study → studied (voyelle + y : play → played).","• Une syllabe consonne-voyelle-consonne : on double → stop → stopped, plan → planned.","• Accent sur la dernière syllabe : double aussi → prefer → preferred (mais visit → visited)."]],
+["Piège",["• Ne confonds pas l’orthographe et la prononciation : wanted et worked s’écrivent -ed mais ne se prononcent pas pareil."]]]},
+edPron:{t:"Prononciation de -ED",s:[
+["Trois prononciations",["• /t/ après un son non voisé (p, k, f, s, ch, sh) : worked, helped, watched.","• /d/ après un son voisé (b, g, v, z, l, m, n, r, voyelles) : played, called, opened.","• /ɪd/ après /t/ ou /d/ : wanted, needed, started."]],
+["Astuce",["• Regarde le DERNIER SON du verbe (pas la dernière lettre). Pose la main sur la gorge : si ça vibre, c’est voisé → /d/."]]]},
+phrasal:{t:"Phrasal verbs",s:[
+["Principe",["• Verbe + particule (up, off, out, on…) : le sens change complètement → look = regarder ; look up = chercher (une info) ; look after = s’occuper de.","• Apprends-les avec une phrase complète, jamais mot à mot."]],
+["Séparables ou non",["• Séparables : le complément peut se mettre au milieu → turn the light off / turn off the light. Avec un pronom, il va au milieu : turn it off (jamais turn off it).","• Inséparables : look after the kids, get over a problem."]],
+["Quelques essentiels du travail",["• carry out = réaliser · set up = mettre en place · follow up = relancer · sort out = régler · put off = reporter · come up with = trouver (une idée) · run out of = ne plus avoir de."]]]},
+collocations:{t:"Collocations",s:[
+["Principe",["• Une collocation est une association naturelle de mots. L’anglais ne choisit pas toujours le même verbe que le français : make a decision, take a break, do a favour, have a meeting, meet a deadline, run a project, gain experience."]],
+["Make vs do",["• make : créer / produire → make a plan, make progress, make a mistake.","• do : activité, tâche → do homework, do research, do business."]],
+["Méthode",["• Apprends le groupe entier, pas le mot isolé. Note le verbe qui accompagne le nom."]]]},
+falseFriends:{t:"Faux amis",s:[
+["Principe",["• Mots qui ressemblent au français mais ont un autre sens. Se méfier dès qu’un mot « semble évident »."]],
+["Les plus fréquents",["• actually = en fait (pas « actuellement » → currently).","• eventually = finalement · library = bibliothèque (librairie = bookshop) · sensible = raisonnable (sensible = sensitive).","• attend = assister à (attendre = wait for) · prevent = empêcher · argument = dispute · college = université / fac."]]]},
+connectors:{t:"Connecteurs logiques",s:[
+["Par relation logique",["• Ajout : and, also, in addition, moreover.","• Contraste : but, however, although, whereas, despite / in spite of.","• Cause : because, since, as, due to. Conséquence : so, therefore, as a result.","• Exemple : for example, such as. Ordre : first, then, finally."]],
+["Structures à ne pas mélanger",["• although + sujet + verbe : Although it was late, we continued.","• despite / in spite of + nom ou V-ing : Despite the rain… / Despite being tired…","• because + proposition ; because of + nom : because of the delay."]]]},
+phrases:{t:"Phrases à trous",s:[
+["Comment réussir",["• 1. Lis toute la phrase pour comprendre le sens.","• 2. Identifie la nature du mot manquant (nom, verbe, adjectif, préposition).","• 3. Regarde les mots autour : article (a/an/the), sujet (accord), préposition qui impose une construction.","• 4. Élimine les réponses impossibles, puis vérifie que la phrase est naturelle."]]]},
+quiz:{t:"QCM de vocabulaire",s:[
+["Pour mémoriser vraiment",["• Dis le mot à voix haute et regarde l’exemple : le contexte aide la mémoire.","• Si tu hésites, ne devine pas au hasard : élimine les sens que tu sais faux.","• Les mots ratés reviennent plus souvent dans la séance (révision espacée) : c’est normal et utile.","• Ajoute en favori (étoile) les mots qui te posent problème."]]]},
+defMatch:{t:"Définitions",s:[
+["Pourquoi c’est puissant",["• Comprendre un mot par sa définition en anglais t’apprend à penser directement en anglais, sans passer par le français.","• Repère les mots-clés de la définition (verbe, domaine) ; élimine les définitions qui parlent d’un autre sens.","• Essaie ensuite d’inventer ta propre phrase avec le mot."]]]},
+reverse:{t:"Écrire en anglais",s:[
+["Rappel actif",["• Produire un mot (le retrouver de mémoire) ancre bien plus fort que le reconnaître.","• Vérifie l’orthographe : lettres doubles (accommodation, committee), lettres muettes (knowledge, debt).","• Si tu ne trouves pas, regarde la réponse, puis refais le mot sans modèle."]]]},
+dictation:{t:"Dictée",s:[
+["Méthode",["• 1ʳᵉ écoute : comprends l’idée générale. 2ᵉ écoute : repère les groupes de mots. 3ᵉ : terminaisons (-s, -ed) et petits mots (the, a, to).","• Les petits mots sont faibles et rapides en anglais : ils sont les plus faciles à manquer."]]]},
+audioDialogues:{t:"Dialogues audio",s:[
+["Méthode d’écoute",["• Lis la question avant d’écouter, pour savoir quoi chercher.","• Première écoute : idée principale. Deuxième : le détail demandé (chiffre, lieu, raison).","• Ne bloque pas sur un mot inconnu : continue d’écouter."]]]},
+edListen:{t:"Verbes en -ED",s:[
+["À retenir",["• Les verbes réguliers prennent -ed au past simple et au participe passé.","• Trois prononciations : /t/ (worked), /d/ (played), /ɪd/ (wanted, needed).","• Écoute chaque verbe, répète-le, puis écris-le : l’oreille et l’écriture se renforcent."]]]},
+finderror:{t:"Trouver l’erreur",s:[
+["Les erreurs les plus fréquentes",["• Accord : she work → she works · Temps : I have seen him yesterday → I saw him yesterday.","• Article oublié ou en trop · Préposition française recopiée · Pluriel d’un indénombrable (informations → information)."]],
+["Méthode",["• Relis en cherchant d’abord le verbe, puis l’article, puis la préposition."]]]},
+transform:{t:"Transformer une phrase",s:[
+["Méthode",["• Identifie ce qu’on te demande (passif, question, négation, discours rapporté…).","• Passif : sujet + be + participe passé → The report was sent by Anna.","• Garde le même sens : seule la structure change."]]]},
+grammar:{t:"Construire une phrase",s:[
+["Étapes",["• 1. Le temps demandé · 2. Sujet + auxiliaire · 3. Verbe à la bonne forme · 4. Compléments (lieu, temps)."]]]}
+};
+EXP.quizReverse=EXP.quizMix=EXP.quiz;
+EXP.irregularPast=EXP.irregularPart=EXP.irregularMix;
+EXP.write=EXP.reverse;EXP.listening=EXP.dictation;EXP.edDict=EXP.edListen;
+function expFor(m){
+  if(EXP[m])return EXP[m];
+  const l=typeof miniLessons==="object"&&miniLessons[m];
+  if(l)return{t:l.title,s:[["Règle",[l.rule]],["Exemples",l.examples.map(x=>"• "+x)],["Piège fréquent",[l.trap]]]};
+  return{t:modeNames[m]||"Exercice",s:[["Conseil",["• Lis bien la consigne, réponds sans te presser et lis toujours l’explication après chaque question : c’est là que tu progresses le plus."]]]};
+}
+function expHtml(e){
+  const f=x=>escapeHtml(x).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+  return `<h4>${escapeHtml(e.t)}</h4>`+e.s.map(([h,ls])=>`<details class="expSec"><summary>${escapeHtml(h)}</summary>${ls.map(x=>`<p>${f(x)}</p>`).join("")}</details>`).join("");
+}
+function expEnsure(){
+  let w=$("expWrap");if(w)return w;
+  const c=$("exerciseCard");if(!c)return null;
+  w=document.createElement("div");w.id="expWrap";w.className="expWrap";
+  w.innerHTML=`<button type="button" class="expBtn" id="expBtn" aria-expanded="false"><i></i><span>Explications</span></button><div class="expPanel hidden" id="expPanel"></div>`;
+  c.appendChild(w);
+  $("expBtn").onclick=()=>{const p=$("expPanel"),open=p.classList.contains("hidden");p.classList.toggle("hidden",!open);$("expBtn").classList.toggle("open",open);$("expBtn").setAttribute("aria-expanded",open);if(open){p.innerHTML=expHtml(expFor(mode));const f=p.querySelector("details");if(f)f.open=true}};
+  return w;
+}
+const __expNQ=newQuestion;
+newQuestion=function(){
+  __expNQ.apply(this,arguments);
+  try{const w=expEnsure();if(w){$("expPanel").classList.add("hidden");$("expBtn").classList.remove("open");$("expBtn").setAttribute("aria-expanded","false");w.style.display=(typeof mode==="string"&&mode.indexOf("view:")!==0)?"":"none"}}catch(e){}
+};
 
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
