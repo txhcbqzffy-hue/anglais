@@ -994,6 +994,19 @@ details.acc>section>h2:first-child,details.acc>.panel>h2:first-child,details.acc
 .dailyBanner button{background:var(--on-accent)!important;color:var(--accent)!important;border:0!important;padding:8px 16px!important;min-height:0!important}
 body.hasBanner .app{padding-bottom:calc(168px + env(safe-area-inset-bottom))!important}
 #reviewInfo{display:none}
+
+/* v53 : séance du jour en fenêtre qui monte du bas */
+.sessHead{display:none}
+body.sessionOn::before{content:"";position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:80;animation:fadeIn .3s ease both}
+body.sessionOn #exerciseCard{position:fixed!important;left:0;right:0;bottom:0;top:auto;width:auto;max-height:88vh;overflow:auto;margin:0!important;border-radius:6px 6px 0 0!important;z-index:85;padding:10px 14px calc(env(safe-area-inset-bottom) + 18px)!important;box-shadow:0 -12px 40px rgba(0,0,0,.28);animation:sheetUp .38s var(--ease) both}
+body.sessionOn .sessHead{display:block;margin-bottom:8px}
+.sessGrip{display:block;width:40px;height:4px;border-radius:3px;background:var(--line);margin:0 auto 10px}
+.sessRow{display:flex;align-items:center;gap:10px}
+.sessRow b{font-size:15px}.sessRow small{flex:1;color:var(--muted);font-weight:700}
+.sessRow .ghost{padding:7px 14px!important;min-height:0!important}
+body.sessionOn .dailyBanner{display:none}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
@@ -4455,7 +4468,7 @@ const APP_VERSION="v30";
 const VIEWS=["home","vocab","gram","audio","write"];
 let currentView="home";
 let pagesReady=false;
-let exOpen=false;
+let exOpen=false,sessOpen=false,sessFrom="home";
 
 /* ---------- état additionnel (compatible avec les anciennes sauvegardes) ---------- */
 function A(){
@@ -4532,7 +4545,7 @@ function tagPages(){
 function applyPageVisibility(){
   if(!pagesReady)return;
   const p=currentView,goal=curGoal(),goals=PAGE_GOALS[p]||[];
-  const zone=(p==="audio"?(A().seg==="ear"||A().seg==="oral"):p==="write"?W()!=="free":(p==="vocab"||p==="gram")?exOpen:p!=="home")||(state.adaptive&&state.adaptive.active)||goal==="test";
+  const zone=(p==="audio"?(A().seg==="ear"||A().seg==="oral"):p==="write"?W()!=="free":(p==="vocab"||p==="gram")?exOpen:p!=="home")||(state.adaptive&&state.adaptive.active)||sessOpen||goal==="test";
   $("view-train").dataset.page=p;
   const vtr=$("view-translate");if(vtr)vtr.classList.toggle("hidden",!(p==="write"&&W()==="free"));
   const hd=document.querySelector("header");if(hd)hd.classList.toggle("pgHide",p!=="home");
@@ -5898,17 +5911,16 @@ function renderDailyBanner(){
   }
   const a=state.adaptive||{},active=!!a.active,done=state.dailyDone===JD(new Date());
   const exOpenNow=($("exerciseCard")&&$("exerciseCard").offsetParent!==null);
-  const show=active||(!done&&!exOpenNow&&currentView!=="audio"&&currentView!=="write");
+  const show=!sessOpen&&!active&&(!done&&!exOpenNow&&currentView!=="audio"&&currentView!=="write");
+  document.body.classList.toggle("sessionOn",sessOpen);
+  sessHeadUpdate();
   b.classList.toggle("hidden",!show);
   document.body.classList.toggle("hasBanner",show);
   if(!show)return;
-  const key=active?"a"+a.index+"/"+a.queue.length:"s"+estimatedLevel();
+  const key="s"+estimatedLevel();
   if(b.dataset.k===key)return;b.dataset.k=key;
-  b.innerHTML=active
-    ?`<div><b>Séance du jour</b><small>Question ${Math.min(a.index+1,a.queue.length)}/${a.queue.length}</small></div><button type="button" class="ghost" id="dbStop">Arrêter</button>`
-    :`<div><b>Séance du jour</b><small>10 questions · niveau ${estimatedLevel()}</small></div><button type="button" class="primary" id="dbGo">Commencer</button>`;
-  if($("dbGo"))$("dbGo").onclick=()=>{try{startAdaptiveSession()}catch(e){console.error(e)}};
-  if($("dbStop"))$("dbStop").onclick=()=>{try{toggleAdaptive()}catch(e){console.error(e)}b.dataset.k=""};
+  b.innerHTML=`<div><b>Séance du jour</b><small>10 questions · niveau ${estimatedLevel()}</small></div><button type="button" class="primary" id="dbGo">Commencer</button>`;
+  $("dbGo").onclick=()=>{sessFrom=currentView;sessOpen=true;try{startAdaptiveSession()}catch(e){console.error(e)}try{applyPageVisibility()}catch(e){}b.dataset.k="";try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}};
 }
 
 /* Progression : même présentation que le profil d'erreurs (classement + bouton) */
@@ -5926,6 +5938,28 @@ renderSkills=function(){
   </div>`).join("");
   host.querySelectorAll("[data-skill-mode]").forEach(b=>b.onclick=()=>openExercise(b.dataset.skillMode));
 };
+
+function sessHeadEnsure(){
+  let h=$("sessHead");if(h)return h;
+  const c=$("exerciseCard");if(!c)return null;
+  h=document.createElement("div");h.id="sessHead";h.className="sessHead";
+  h.innerHTML=`<span class="sessGrip"></span><div class="sessRow"><b>Séance du jour</b><small id="sessCount"></small><button type="button" class="ghost" id="sessClose">Arrêter</button></div>`;
+  c.insertBefore(h,c.firstChild);
+  $("sessClose").onclick=()=>{
+    if(state.adaptive&&state.adaptive.active){try{toggleAdaptive()}catch(e){console.error(e)}}
+    sessOpen=false;document.body.classList.remove("sessionOn");
+    try{showView(sessFrom,true)}catch(e){}
+    try{applyPageVisibility()}catch(e){}
+    const b=$("dailyBanner");if(b)b.dataset.k="";
+  };
+  return h;
+}
+function sessHeadUpdate(){
+  const h=sessHeadEnsure();if(!h)return;
+  const a=state.adaptive||{};
+  $("sessCount").textContent=a.active?`Question ${Math.min(a.index+1,a.queue.length)}/${a.queue.length}`:"Terminée";
+  $("sessClose").textContent=a.active?"Arrêter":"Fermer";
+}
 /* =====================================================================
    v42 : ajouter un mot (anglais ou français) -> traduction, explication, exemple
    ===================================================================== */
