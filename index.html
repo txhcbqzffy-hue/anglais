@@ -943,6 +943,7 @@ header{justify-content:space-between!important}
 .avItem{padding:8px 0;border-top:1px solid var(--line);display:grid;gap:2px}
 .avItem small{color:var(--muted);font-size:12px}
 .avHead{display:flex;gap:8px;align-items:center}.avHead span{flex:1;color:var(--muted)}
+.bottomNav button{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 </style>
 </head>
 <body>
@@ -5723,6 +5724,7 @@ function initJournal(){
   vt.insertBefore(w,first);
   jRender(true);
   try{initLevel()}catch(e){console.error(e)}
+  try{initNavLong()}catch(e){console.error(e)}
 }
 
 /* ----- niveau estimé : pastille en haut, détail dans une fenêtre ----- */
@@ -5755,6 +5757,18 @@ function initLevel(){
   $("lvlClose").onclick=closeLevel;
   s.addEventListener("click",e=>{if(e.target.closest("[data-cefr-level]"))closeLevel()},true);
   lvlTrack();
+}
+
+/* appui long sur « Vocab. » : ouvre les favoris */
+function initNavLong(){
+  const b=document.querySelector(".bottomNav [data-view='vocab']");if(!b||b.dataset.long)return;b.dataset.long="1";
+  let t=null,fired=false,sx=0,sy=0;
+  const cancel=()=>{clearTimeout(t);t=null};
+  b.addEventListener("pointerdown",e=>{fired=false;sx=e.clientX;sy=e.clientY;cancel();t=setTimeout(()=>{fired=true;t=null;try{navigator.vibrate&&navigator.vibrate(15)}catch(x){}showView("vocab");openExercise("favorites")},500)});
+  b.addEventListener("pointermove",e=>{if(t&&Math.hypot(e.clientX-sx,e.clientY-sy)>10)cancel()});
+  ["pointerup","pointercancel","pointerleave"].forEach(ev=>b.addEventListener(ev,cancel));
+  b.addEventListener("click",e=>{if(fired){e.stopImmediatePropagation();e.preventDefault();fired=false}},true);
+  b.addEventListener("contextmenu",e=>e.preventDefault());
 }
 /* =====================================================================
    v42 : ajouter un mot (anglais ou français) -> traduction, explication, exemple
