@@ -2823,7 +2823,7 @@ function reward(item,userResponse=""){
   state.correct++;state.total++;state.streak++;state.daily++;
   const sk=skillForMode();state.skills[sk].c++;state.skills[sk].t++;
   recordConcept(true,userResponse);updateMastery(true,item);
-  if(state.adaptive.active)state.adaptive.correct++;
+  if(state.adaptive.active&&sessOpen)state.adaptive.correct++;
   if(item){scheduleReview(item,true);if(state.wrong[item[0]])state.wrong[item[0]]=Math.max(0,state.wrong[item[0]]-1)}
   saveState();updateUI();
 }
@@ -3408,7 +3408,7 @@ function emptyState(title,text){
   $("speakBtn").style.visibility="hidden";$("favBtn").style.visibility="hidden";
 }
 function nextQuestion(){
-  if(state.adaptive.active){
+  if(state.adaptive.active&&sessOpen){
     state.adaptive.index++;saveState();loadAdaptiveStep();return;
   }
   qNumber++;
@@ -4555,7 +4555,7 @@ function tagPages(){
 function applyPageVisibility(){
   if(!pagesReady)return;
   const p=currentView,goal=curGoal(),goals=PAGE_GOALS[p]||[];
-  const zone=(p==="audio"?(A().seg==="ear"||A().seg==="oral"):p==="write"?W()!=="free":(p==="vocab"||p==="gram")?exOpen:p!=="home")||(state.adaptive&&state.adaptive.active)||sessOpen||goal==="test";
+  const zone=(p==="audio"?(A().seg==="ear"||A().seg==="oral"):p==="write"?W()!=="free":(p==="vocab"||p==="gram")?exOpen:p!=="home")||sessOpen||goal==="test";
   $("view-train").dataset.page=p;
   const vtr=$("view-translate");if(vtr)vtr.classList.toggle("hidden",!(p==="write"&&W()==="free"));
   const hd=document.querySelector("header");if(hd)hd.classList.toggle("pgHide",p!=="home");
@@ -4569,12 +4569,12 @@ function applyPageVisibility(){
 }
 
 function ensureModeForPage(v){
-  if(v==="home"||(state.adaptive&&state.adaptive.active))return;
+  if(v==="home"||sessOpen)return;
   if(!PAGE_GOALS[v].includes(curGoal()))setMode(PAGE_DEFAULT[v]);
 }
 function pageFollowMode(){
   if(!pagesReady)return;
-  if(state.adaptive&&state.adaptive.active){applyPageVisibility();return}
+  if(sessOpen){applyPageVisibility();return}
   if(typeof holdUntil!=="undefined"&&Date.now()<holdUntil){applyPageVisibility();return}
   const pg=GOAL_PAGE[curGoal()]||"home";
   if(pg!==currentView)showView(pg,true);else applyPageVisibility();
@@ -5904,12 +5904,12 @@ function initNavLong(){
 }
 
 /* ----- séance du jour : 10 questions selon le niveau, bannière au-dessus du menu ----- */
-const LVL_POOLS={
-  A1:{v:["quiz","quizMix","phrases","write"],g:["thirdPerson","articles","wordOrder","questionsNeg","edSpell","comparatives"],l:["listening","edPron","edListen"]},
-  A2:{v:["quizMix","quizReverse","phrases","reverse","defMatch"],g:["tenses","prepositions","questionsNeg","irregularPast","comparatives","modals","wordOrder","edSpell"],l:["listening","dictation","edListen"]},
-  B1:{v:["quizReverse","reverse","phrases","phrasal","collocations","defMatch"],g:["tenses","modals","irregularMix","finderror","transform","prepositions","questionsNeg"],l:["dictation","listening","audioDialogues"]},
-  B2:{v:["phrasal","collocations","falseFriends","defMatch","reverse","phrases"],g:["transform","finderror","tenses","connectors","grammar","irregularMix","modals"],l:["dictation","audioDialogues","listening"]},
-  C1:{v:["phrasal","collocations","falseFriends","defMatch","reverse"],g:["transform","finderror","connectors","grammar","tenses","modals"],l:["dictation","audioDialogues"]}
+const LVL_POOLS={ // uniquement des exercices sans clavier
+  A1:{v:["quiz","quizMix","phrases","defMatch"],g:["articles","wordOrder","comparatives","prepositions","tenses"],l:["edListen","edPron"]},
+  A2:{v:["quizMix","quizReverse","phrases","defMatch"],g:["tenses","prepositions","comparatives","modals","wordOrder","articles"],l:["edListen","edPron","audioDialogues"]},
+  B1:{v:["quizReverse","phrases","phrasal","collocations","defMatch"],g:["tenses","modals","prepositions","connectors","wordOrder"],l:["audioDialogues","edListen"]},
+  B2:{v:["phrasal","collocations","falseFriends","defMatch","phrases"],g:["tenses","connectors","modals","prepositions","wordOrder"],l:["audioDialogues","edListen"]},
+  C1:{v:["phrasal","collocations","falseFriends","defMatch"],g:["connectors","tenses","modals","prepositions"],l:["audioDialogues","edListen"]}
 };
 function pickN(arr,n){const a=shuffle(arr),out=a.slice(0,n);while(out.length<n)out.push(rand(arr));return out}
 buildAdaptiveQueue=function(){
@@ -5936,17 +5936,17 @@ function renderDailyBanner(){
   }
   const a=state.adaptive||{},active=!!a.active,done=state.dailyDone===JD(new Date());
   const exOpenNow=($("exerciseCard")&&$("exerciseCard").offsetParent!==null);
-  const show=!sessOpen&&!active&&(!done&&!exOpenNow&&currentView!=="audio"&&currentView!=="write");
+  const show=!sessOpen&&((active&&!exOpenNow)||(!active&&!done&&!exOpenNow&&currentView!=="audio"&&currentView!=="write"));
   document.body.classList.toggle("sessionOn",sessOpen);
   lockScroll(sessOpen);
   sessHeadUpdate();
   b.classList.toggle("hidden",!show);
   document.body.classList.toggle("hasBanner",show);
   if(!show)return;
-  const key="s"+estimatedLevel();
+  const key="s"+estimatedLevel()+(active?"r"+a.index:"");
   if(b.dataset.k===key)return;b.dataset.k=key;
-  b.innerHTML=`<div><b>Séance du jour</b><small>10 questions · niveau ${estimatedLevel()}</small></div><button type="button" class="primary" id="dbGo">Commencer</button>`;
-  $("dbGo").onclick=()=>{sessFrom=currentView;sessOpen=true;try{startAdaptiveSession()}catch(e){console.error(e)}try{applyPageVisibility()}catch(e){}b.dataset.k="";try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}};
+  b.innerHTML=active?`<div><b>Séance du jour</b><small>Question ${Math.min(a.index+1,a.queue.length)}/${a.queue.length} · en pause</small></div><button type="button" class="primary" id="dbGo">Reprendre</button>`:`<div><b>Séance du jour</b><small>10 questions · niveau ${estimatedLevel()}</small></div><button type="button" class="primary" id="dbGo">Commencer</button>`;
+  $("dbGo").onclick=()=>{sessFrom=currentView;sessOpen=true;try{if(state.adaptive&&state.adaptive.active)loadAdaptiveStep();else startAdaptiveSession()}catch(e){console.error(e)}try{applyPageVisibility()}catch(e){}b.dataset.k="";try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}};
 }
 
 /* Progression : même présentation que le profil d'erreurs (classement + bouton) */
@@ -5971,20 +5971,25 @@ function sessHeadEnsure(){
   h=document.createElement("div");h.id="sessHead";h.className="sessHead";
   h.innerHTML=`<span class="sessGrip"></span><div class="sessRow"><b>Séance du jour</b><small id="sessCount"></small><button type="button" class="ghost" id="sessClose">Arrêter</button></div>`;
   c.insertBefore(h,c.firstChild);
-  $("sessClose").onclick=()=>{
-    if(state.adaptive&&state.adaptive.active){try{toggleAdaptive()}catch(e){console.error(e)}}
+  const pause=()=>{
     sessOpen=false;document.body.classList.remove("sessionOn");lockScroll(false);
     try{showView(sessFrom,true)}catch(e){}
     try{applyPageVisibility()}catch(e){}
-    const b=$("dailyBanner");if(b)b.dataset.k="";
+    const b=$("dailyBanner");if(b)b.dataset.k="";try{renderDailyBanner()}catch(e){}
   };
+  $("sessClose").onclick=pause;
+  let y0=null;
+  const ts=e=>{y0=e.touches[0].clientY},tm=e=>{if(y0!==null&&e.touches[0].clientY-y0>90){y0=null;if(sessOpen&&(c.scrollTop||0)<=0)pause()}};
+  h.addEventListener("touchstart",ts,{passive:true});h.addEventListener("touchmove",tm,{passive:true});
+  c.addEventListener("touchstart",ts,{passive:true});c.addEventListener("touchmove",tm,{passive:true});
+  c.addEventListener("touchend",()=>{y0=null},{passive:true});
   return h;
 }
 function sessHeadUpdate(){
   const h=sessHeadEnsure();if(!h)return;
   const a=state.adaptive||{};
   $("sessCount").textContent=a.active?`Question ${Math.min(a.index+1,a.queue.length)}/${a.queue.length}`:"Terminée";
-  $("sessClose").textContent=a.active?"Arrêter":"Fermer";
+  $("sessClose").textContent=a.active?"Réduire":"Fermer";
 }
 
 let lockY=null;
