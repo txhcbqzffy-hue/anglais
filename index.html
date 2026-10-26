@@ -5682,7 +5682,7 @@ function jDetail(){
   const rows=Object.entries(d.modes).sort((a,b)=>b[1].n-a[1].n).map(([m,v])=>`<div class="dRow"><span>${escapeHtml(modeNames[m]||m)}</span><b>${v.ok}/${v.n}</b></div>`).join("");
   const ws=Object.keys(d.words);
   box.innerHTML=`<b>${title}</b>
-    ${gauge}
+    ${gauge}${tiles}
     ${rows?`<div class="dRows">${rows}</div>`:""}
     ${ws.length?`<div class="dWords"><small>Mots travaillés (${ws.length})</small><div>${ws.slice(0,24).map(w=>`<span class="dChip ${d.words[w].w?"bad":"ok"}">${escapeHtml(w)}</span>`).join("")}</div></div>`:""}`;
   wire();
