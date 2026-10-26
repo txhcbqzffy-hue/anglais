@@ -1153,6 +1153,8 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 #whyBox .whyOthers b{color:var(--text)}
 #modeLabel:not(.keep){display:none}
 .topline>span:last-child{margin-left:auto}
+.backIc{width:44px;height:44px;min-height:44px!important;padding:0!important;border-radius:50%!important;display:inline-grid!important;place-items:center;font-size:30px!important;line-height:1;font-weight:700;flex:none;padding-bottom:3px!important}
+.favT .backIc,.blkBar .backIc{min-width:44px}
 </style>
 </head>
 <body>
@@ -1161,7 +1163,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v42</span></h1>
+        <h1>English Trainer<span class="ver">v43</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -6222,7 +6224,7 @@ function drawPodResults(){
 }
 async function renderPodShow(host){
   const s=pod.show,a=A(),fav=a.shows.some(x=>x.id===s.id);
-  host.innerHTML=`<section class="secCard"><div class="row2" style="justify-content:space-between"><button id="pBack" class="ghost" type="button">← Retour</button><button id="pFav" class="starBtn${fav?" on":""}" type="button" aria-label="${fav?"Retirer de mes podcasts":"Ajouter à mes podcasts"}">${fav?"★":"☆"}</button></div>
+  host.innerHTML=`<section class="secCard"><div class="row2" style="justify-content:space-between"><button id="pBack" class="ghost backIc" type="button" aria-label="Retour">‹</button><button id="pFav" class="starBtn${fav?" on":""}" type="button" aria-label="${fav?"Retirer de mes podcasts":"Ajouter à mes podcasts"}">${fav?"★":"☆"}</button></div>
   <h2 style="margin-top:10px">${esc(s.name)}</h2><div class="small">${esc(s.artist)}</div>
   <div id="pList" style="margin-top:12px"><div class="small">Chargement des derniers épisodes…</div></div></section>`;
   $("pBack").onclick=()=>{pod.show=null;pod.eps=null;renderAudio()};
@@ -6241,7 +6243,7 @@ async function renderPodShow(host){
 }
 function renderPodEp(host){
   const e=pod.ep,a=A(),key=epKey(e),url=safeUrl(e.episodeUrl),page=safeUrl(e.trackViewUrl||e.collectionViewUrl);
-  host.innerHTML=`<section class="secCard"><button id="pBack2" class="ghost" type="button">← Épisodes</button>
+  host.innerHTML=`<section class="secCard"><button id="pBack2" class="ghost backIc" type="button" aria-label="Épisodes">‹</button>
   <h2 style="margin-top:10px">${esc(e.trackName||"Épisode")}</h2><div class="small">${esc((pod.show&&pod.show.name)||e.collectionName||"")}${e.releaseDate?" · "+esc(fmtDate(e.releaseDate)):""}</div>
   ${url?`<audio id="pAudio" class="pAudio" controls preload="metadata" src="${esc(url)}"></audio>`:'<div class="noteBox err">Cet épisode n’a pas de fichier audio lisible.</div>'}
   <div class="pTools"><button class="chip2" id="pBk" type="button">−15 s</button><button class="chip2" id="pFw" type="button">+15 s</button>${SPEEDS.map(s=>`<button class="chip2${s===a.speed?" on":""}" type="button" data-sp="${s}">${String(s).replace(".",",")}×</button>`).join("")}</div>
@@ -6365,7 +6367,7 @@ function hasWord(en){const k=String(en).trim().toLowerCase();return vocab().some
 function renderVideo(host,id){
   const v=VIDS.find(x=>x.id===id);if(!v){vid.open=null;return renderVideos(host)}
   const a=A(),prev=a.vids[v.id],online=navigator.onLine!==false;
-  host.innerHTML=`<section class="secCard"><button id="vBack" class="ghost" type="button">← Toutes les vidéos</button>
+  host.innerHTML=`<section class="secCard"><button id="vBack" class="ghost backIc" type="button" aria-label="Toutes les vidéos">‹</button>
   <div style="margin-top:12px"><span class="lvTag">${esc(v.lvl)}</span> <span class="small">${esc(v.cat)} · ${esc(v.ch)}${v.len?" · "+esc(v.len):""}</span></div>
   <h2 style="margin-top:6px">${esc(v.t)}</h2><div class="small">${esc(v.n)}</div>
   ${online?`<div class="vFrame"><iframe src="${esc(vidEmbed(v))}" title="${esc(v.t)}" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`:'<div class="noteBox err"><b>Hors connexion.</b> Les vidéos demandent du réseau.</div>'}
@@ -6794,7 +6796,7 @@ function renderPageBar(){
   const info=modeInfo();
   if(p==="vocab"||p==="gram"){
     if(exOpen){
-      host.innerHTML=`<div class="blkBar"><button type="button" class="ghost" id="pbBack">‹ Retour</button><b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b></div>`;
+      host.innerHTML=`<div class="blkBar"><button type="button" class="ghost backIc" id="pbBack" aria-label="Retour">‹</button><b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b></div>`;
       $("pbBack").onclick=()=>{exOpen=false;applyPageVisibility();try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}};
       return;
     }
@@ -8134,7 +8136,7 @@ function coursRenderLesson(id){
   const c=COURS.find(x=>x.id===id);if(!c)return coursRenderIndex();
   const done=coursDone().includes(id),idx=COURS.indexOf(c);
   const pair=(en,fr)=>`<div class="cRow" data-say="${coursEsc(en.split(" → ")[0])}"><span class="en">${coursEsc(en)}</span><span class="fr">${coursEsc(fr)}</span></div>`;
-  let h=`<button type="button" class="ghost cBack" data-cback>‹ Tous les cours</button><h3 class="cTitle">${coursEsc(c.t)}</h3><div class="cMeta">Niveau ${coursEsc(c.niv)}</div><div class="cBox cResume"><b>À retenir</b><p>${coursEsc(c.resume)}</p></div>`;
+  let h=`<button type="button" class="ghost cBack backIc" data-cback aria-label="Tous les cours">‹</button><h3 class="cTitle">${coursEsc(c.t)}</h3><div class="cMeta">Niveau ${coursEsc(c.niv)}</div><div class="cBox cResume"><b>À retenir</b><p>${coursEsc(c.resume)}</p></div>`;
   (c.tab||[]).forEach(t=>{h+=`<div class="cH">${coursEsc(t.h)}</div><div class="cTabWrap"><table class="cTab"><thead><tr>${t.cols.map(x=>`<th>${coursEsc(x)}</th>`).join("")}</tr></thead><tbody>${t.rows.map(r=>`<tr>${r.map((x,i)=>`<td${i===0?' class="k"':""}>${coursEsc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`});
   (c.sec||[]).forEach(([t,ls])=>{h+=`<div class="cH">${coursEsc(t)}</div><div class="cBox">${ls.map(x=>`<p>${coursEsc(x)}</p>`).join("")}</div>`});
   if(c.ex&&c.ex.length)h+=`<div class="cH">Exemples <small>anglais · français</small></div><div class="cEx">${c.ex.map(([en,fr])=>pair(en,fr)).join("")}</div>`;
@@ -8285,7 +8287,7 @@ function favOpen(){
   let s=$("favSheet");
   if(!s){
     s=document.createElement("div");s.id="favSheet";s.className="sheet hidden";s.setAttribute("role","dialog");s.setAttribute("aria-label","Mes favoris");
-    s.innerHTML=`<div class="sheetHead favHead"><div class="favT"><button type="button" id="favBack" class="ghost">‹ Retour</button><h2>Mes favoris<span id="favCount"></span></h2></div><div class="favBtns"><button type="button" id="favHide" class="ghost">Hide EN</button><button type="button" id="favQcm" class="primary">QCM</button></div></div><div id="favBody"></div>`;
+    s.innerHTML=`<div class="sheetHead favHead"><div class="favT"><button type="button" id="favBack" class="ghost backIc" aria-label="Retour">‹</button><h2>Mes favoris<span id="favCount"></span></h2></div><div class="favBtns"><button type="button" id="favHide" class="ghost">Hide EN</button><button type="button" id="favQcm" class="primary">QCM</button></div></div><div id="favBody"></div>`;
     document.body.appendChild(s);
     $("favBack").onclick=favClose;
     $("favHide").onclick=()=>{favHide=!favHide;try{localStorage.setItem("et_fav_hide",favHide?"1":"0")}catch(e){}favRender()};
