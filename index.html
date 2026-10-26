@@ -6441,6 +6441,7 @@ const I18N_RULES=[
 [/^(\w+(?: \w+)*) — (\d+)% sur tes exercices enregistrés\.$/,(m,k,p)=>`${I18N(k)} — ${p}% on your recorded exercises.`],
 [/^Ta réponse : (.*)$/,(m,x)=>"Your answer: "+x],
 [/^Attendu : (.*)$/,(m,x)=>"Expected: "+x],
+[/^(\S+ )?Réponse attendue : (.*)$/,(m,e,x)=>(e||"")+"Expected answer: "+x],
 [/^(\S+ )?Réponse : (.*)$/,(m,e,x)=>(e||"")+"Answer: "+x],
 [/^(\S+ )?Correct( \(.+?\))?( — .*)?$/,(m,e,w,x)=>(e||"")+"Correct"+(w||"")+(x||"")],
 [/^(\d+) jours? d’affilée$/,(m,a)=>`${a} day${a==="1"?"":"s"} in a row`],
