@@ -1008,6 +1008,14 @@ body.sessionOn .dailyBanner{display:none}
 @keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 body.sessionOn #exerciseCard{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+
+/* ordre des mots */
+.woBar{min-height:56px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px;border:1px dashed var(--line);border-radius:var(--r);background:var(--panel);margin-bottom:10px}
+.woBank{display:flex;flex-wrap:wrap;gap:8px}
+.woHint{color:var(--muted);font-size:13px;padding:0 4px}
+.woW{padding:9px 14px;border:1px solid var(--line);border-radius:var(--rs);background:var(--panel);color:var(--text);font-weight:700;font-size:15px;min-height:0;box-shadow:var(--shadow)}
+.woW.on{background:var(--accent);color:var(--on-accent);border-color:transparent}
+.woW:active{transform:scale(.96)}
 </style>
 </head>
 <body>
@@ -3138,7 +3146,7 @@ function resetZones(){
   $("feedback").textContent="";$("feedback").className="feedback";
   $("options").innerHTML="";
   ["textZone","grammarZone","readingZone","translationTextZone","pronZone","audioZone","pronLabZone","writingZone","conversationZone","levelResult","info","wordBank","grammarMarkup","readingResult","readingModel","wordTranslation","translationTextWord","translationTextResult","translationTextModel","writingResult","writingModel","audioScript","translationWrap","translationBox"].forEach(id=>$(id).classList.add("hidden"));
-  $("answerInput").value="";$("grammarInput").value="";$("readingAnswer").value="";$("translationTextAnswer").value="";$("writingInput").value="";$("heard").textContent="";$("pronLabFeedback").textContent="";$("pronWordsScore").textContent="—";$("pronTargetScore").textContent="—";$("pronRhythmScore").textContent="Mode dédié";$("conversationHistory").innerHTML="";$("conversationOptions").innerHTML="";$("audioOptions").innerHTML="";audioQueueToken++;dialoguePlaying=false;
+  $("answerInput").classList.remove("hidden");$("answerInput").value="";$("grammarInput").value="";$("readingAnswer").value="";$("translationTextAnswer").value="";$("writingInput").value="";$("heard").textContent="";$("pronLabFeedback").textContent="";$("pronWordsScore").textContent="—";$("pronTargetScore").textContent="—";$("pronRhythmScore").textContent="Mode dédié";$("conversationHistory").innerHTML="";$("conversationOptions").innerHTML="";$("audioOptions").innerHTML="";audioQueueToken++;dialoguePlaying=false;
   $("nextBtn").classList.add("hidden");
   $("speakBtn").style.visibility="visible";$("favBtn").style.visibility="visible";
   $("speakBtn").style.display=VOC_SPEAK.includes(mode)?"none":"";
@@ -3221,9 +3229,7 @@ function newQuestion(){
     const words=sentence.replace(/[.?]/g,"").split(" ");
     current={answer:sentence,accepted:[sentence]};
     $("question").textContent="Remets les mots dans le bon ordre.";
-    $("wordBank").classList.remove("hidden");
-    $("wordBank").innerHTML=shuffle(words).map(w=>`<span class="chip">${escapeHtml(w)}</span>`).join("");
-    $("textZone").classList.remove("hidden");$("answerInput").placeholder="Réécris la phrase complète";
+    $("textZone").classList.remove("hidden");startWordOrder(words);
   }
   else if(mode==="phrasal"){
     const x=rand(phrasalQuestions);current={...x,answer:x.a};
@@ -5697,6 +5703,21 @@ function startDef(){
   current={vocab:v,answer:it.d,spoken:it.en};
   $("question").innerHTML=`<b>${escapeHtml(it.en)}</b><br><span class="defAsk">Quelle définition correspond le mieux ?</span>`;
   shuffle([it,...others]).forEach(o=>makeOption(o.d,o.d===it.d));
+}
+
+/* ----- ordre des mots : touche les mots, ils se placent dans la barre ----- */
+function startWordOrder(words){
+  const bank=$("wordBank"),inp=$("answerInput");
+  bank.classList.remove("hidden");inp.classList.add("hidden");
+  const items=shuffle(words.map((w,i)=>({w,i})));let placed=[];
+  const btn=(x,cls)=>`<button type="button" class="woW ${cls}" data-i="${x.i}">${escapeHtml(x.w)}</button>`;
+  const render=()=>{
+    bank.innerHTML=`<div class="woBar">${placed.length?placed.map(x=>btn(x,"on")).join(""):'<span class="woHint">Touche les mots dans l’ordre</span>'}</div><div class="woBank">${items.filter(x=>!placed.includes(x)).map(x=>btn(x,"")).join("")}</div>`;
+    inp.value=placed.map(x=>x.w).join(" ");
+    bank.querySelectorAll(".woBar .woW").forEach(b=>b.onclick=()=>{if(locked)return;placed=placed.filter(x=>String(x.i)!==b.dataset.i);render()});
+    bank.querySelectorAll(".woBank .woW").forEach(b=>b.onclick=()=>{if(locked)return;placed.push(items.find(x=>String(x.i)===b.dataset.i));render()});
+  };
+  render();
 }
 /* =====================================================================
    v33 : calendrier de la semaine, journal par jour, progression des mots
