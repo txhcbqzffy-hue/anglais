@@ -579,6 +579,7 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 .chip2.ghost.on{background:#1f2326!important;color:#c3f53c!important;border-color:#1f2326!important}
 :root[data-theme="dark"] .chip2.ghost.on{background:#c3f53c!important;color:#1f2326!important;border-color:#c3f53c!important}
 .chip2.ghost:not(.on){opacity:.6;text-decoration:line-through}
+.coin,.headTools .coin{display:none!important}
 </style>
 </head>
 <body>
@@ -4660,12 +4661,12 @@ function planSteps(){
 function renderPlan(){
   const host=$("planPanel");if(!host)return;
   const p=planDay(),steps=planSteps(),n=steps.filter(s=>s.ok).length,m=planMonth(),rm=ROADMAP[Math.min(3,Math.floor((m-1)/2))];
-  if(n===steps.length&&!p.day.all){p.day.all=1;state.coins=(state.coins||0)+10;p.days=p.days||{};p.days[p.day.d]=1;saveState();const c=$("coins");if(c)c.textContent=state.coins}
+  if(n===steps.length&&!p.day.all){p.day.all=1;p.days=p.days||{};p.days[p.day.d]=1;saveState()}
   const dn=Object.keys(p.days||{}).length;
   host.innerHTML=`<h2>Séance du jour <span class="badge">${n}/${steps.length}</span></h2>
   <div class="small">${esc(rm[0])} (mois ${m}/8) : ${esc(rm[1])}. ${dn} séance(s) complète(s) au total.</div>
   <div class="planList">${steps.map((s,i)=>`<button type="button" class="planStep${s.ok?" ok":""}" data-ps="${i}"><span class="planIc">${s.ok?"✅":s.ic}</span><span class="planTx"><b>${esc(s.t)}</b><small>${esc(s.s)}</small></span></button>`).join("")}</div>
-  ${n===steps.length?'<div class="noteBox">Séance terminée, +10 🪙. Bravo.</div>':""}`;
+  ${n===steps.length?'<div class="noteBox">Séance terminée. Bravo.</div>':""}`;
   host.querySelectorAll("[data-ps]").forEach(b=>b.onclick=()=>{try{steps[+b.dataset.ps].go()}catch(e){}});
 }
 let planSig="";
