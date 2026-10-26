@@ -4414,16 +4414,14 @@ function openExercise(m,keepAdaptive=false){
   const card=$("exerciseCard");
   if(!card)return;
   requestAnimationFrame(()=>{
-    card.scrollIntoView({behavior:"smooth",block:"start"});
-    card.classList.add("jumpFocus");
-    setTimeout(()=>card.classList.remove("jumpFocus"),900);
+    window.scrollTo({top:0,behavior:"auto"});
     setTimeout(()=>{
       const candidate=
         !$("answerInput").closest(".hidden") ? $("answerInput") :
         !$("grammarInput").closest(".hidden") ? $("grammarInput") :
         !$("readingAnswer").closest(".hidden") ? $("readingAnswer") :
         !$("writingInput").closest(".hidden") ? $("writingInput") : null;
-      if(candidate && !candidate.disabled)candidate.focus({preventScroll:true});
+      /* pas de focus automatique : le clavier ne s'ouvre qu'au toucher */
     },380);
   });
 }
@@ -5354,7 +5352,7 @@ const __syncOrig=syncModeCategory;
 syncModeCategory=function(m){
   __syncOrig(m);modeGoal=activeGoal();
   try{applyPageVisibility()}catch(e){}
-  try{if(state.adaptive&&state.adaptive.active&&state.adaptive.index===0&&currentView==="home")setTimeout(()=>{const c=$("exerciseCard");if(c)c.scrollIntoView({behavior:"smooth",block:"start"})},60)}catch(e){}
+  try{if(state.adaptive&&state.adaptive.active&&state.adaptive.index===0&&currentView==="home")void 0}catch(e){}
 };
 const __rapOrig=renderAdaptivePanel;
 let adWas=false,holdUntil=0;
