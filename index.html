@@ -799,6 +799,14 @@ header .brand{display:none!important}
 .gearBtn .ic{display:block;width:24px;height:24px;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;transition:transform .6s cubic-bezier(.3,1.2,.5,1)}
 .gearBtn:active .ic{transform:rotate(90deg)}
 .ic-gear{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E")}
+
+/* v31 : section -ED */
+.edGrid{display:grid;gap:14px;margin-top:12px}
+.edGroup{border:1px solid var(--line);border-radius:var(--r);padding:12px;background:var(--panel)}
+.edHead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.edHead small{color:var(--muted);flex:1;min-width:120px}
+.edWords,.edTrain{display:flex;flex-wrap:wrap;gap:8px}
+.edTrain{margin-top:14px}
 </style>
 </head>
 <body>
@@ -903,7 +911,7 @@ header .brand{display:none!important}
         <option value="irregularPast">Irréguliers : past simple</option>
         <option value="irregularPart">Irréguliers : participe passé</option>
         <option value="irregularMix">Irréguliers : mix</option>
-        <option value="edPron">-ED : /t/ /d/ /ɪd/</option>
+        <option value="edPron">-ED : /t/ /d/ /ɪd/</option><option value="edListen">-ED : écoute et son</option><option value="edDict">-ED : écoute et écris</option>
         <option value="sPron">-S/-ES : /s/ /z/ /ɪz/</option>
       </optgroup>
       <optgroup label="Vocabulaire naturel">
@@ -1227,9 +1235,6 @@ header .brand{display:none!important}
       <div class="ruleBox"><b>must / have to / should</b><small>must = obligation forte · have to = nécessité · should = conseil.</small></div>
       <div class="ruleBox"><b>might / would</b><small>might = possibilité incertaine · would = hypothèse/conditionnel.</small></div>
     </div>
-    <div class="sourceNote" style="margin-top:10px">
-      L’app évite volontairement les cas où plusieurs réponses seraient également naturelles sans contexte supplémentaire.
-      </div>
       </div>
     </details>
   </section>
@@ -1237,12 +1242,9 @@ header .brand{display:none!important}
 
   <section class="panel">
     <details class="referenceDetails">
-      <summary>Base de 100 verbes irréguliers + règles -ED</summary>
+      <summary>100 verbes irréguliers + règles -ED</summary>
       <div>
-    <h2>Base de verbes vérifiée · 100 verbes irréguliers</h2>
-    <div class="sourceNote" style="margin-bottom:10px">
-      Recherche dans les verbes irréguliers intégrés à l’app. Les variantes britanniques/américaines sont indiquées lorsqu’elles sont utiles.
-    </div>
+    <h2>Verbes irréguliers · 100 verbes</h2>
     <div class="referenceTools">
       <input id="verbSearch" class="input" placeholder="Rechercher : go, went, gone, aller...">
       <select id="verbFilter" class="ghost">
@@ -1267,8 +1269,7 @@ header .brand{display:none!important}
       <div class="ruleBox"><b><span class="phoneme">/ɪd/</span></b><small>Après les sons /t/ ou /d/. C’est le seul cas qui ajoute une syllabe. Ex. wanted, needed.</small></div>
     </div>
     <div class="sourceNote" style="margin-top:10px">
-      Important : la prononciation dépend du <b>dernier son</b>, pas simplement de la dernière lettre.<br>
-      Les exercices utilisent volontairement des formes non ambiguës. Les variantes reconnues restent visibles dans la base de référence.
+      Important : la prononciation dépend du <b>dernier son</b>, pas simplement de la dernière lettre.
     </div>
 
     <hr>
@@ -1281,38 +1282,15 @@ header .brand{display:none!important}
       <div class="ruleBox"><b>Consonne finale doublée</b><small>stop → stopped · plan → planned · admit → admitted</small></div>
       <div class="ruleBox"><b>Anglais américain</b><small>travel → traveled · colour → color · centre → center. L’app utilise l’anglais américain.</small></div>
     </div>
-
-    <div class="sourceNote" style="margin-top:12px">
-      Base de référence : Cambridge Grammar pour les formes irrégulières et le past simple ; BBC Learning English et ressources universitaires pour les trois prononciations de -ed.
-    </div>
       </div>
     </details>
   </section>
 
 
 
-  <section class="panel">
-    <details class="referenceDetails">
-      <summary>Fiabilité du contenu</summary>
-      <div class="sourceNote">
-        Les règles et exemples grammaticaux de l’app sont construits à partir de références pédagogiques reconnues, notamment
-        <b>Cambridge English Grammar Today</b> et <b>British Council LearnEnglish</b>. Les verbes irréguliers, la formation des questions/négations,
-        les auxiliaires et les règles d’articles ont été recoupés avec ces références. Les exercices à réponse unique évitent les cas où plusieurs formulations
-        seraient également correctes sans contexte supplémentaire. Les corrections de rédaction libre et le micro restent des analyses indicatives :
-        une page web locale ne peut pas remplacer une correction linguistique humaine complète ni un alignement phonétique acoustique professionnel. Le module de prononciation suit donc le principe CECR d’intelligibilité, articulation et prosodie sans prétendre supprimer l’accent.
-      </div>
-    </details>
-  </section>
+  
 
-  <section class="qaPanel">
-    <div class="qaStatus">
-      <span id="qaDot" class="qaDot"></span>
-      <b>Contrôle qualité automatique</b>
-      <span id="qaSummary" class="small">Tests en attente…</span>
-      <button id="runTestsBtn" class="ghost" style="margin-left:auto">Relancer les tests</button>
-    </div>
-    <div id="qaResults" class="qaResults hidden"></div>
-  </section>
+  <div hidden><span id="qaDot"></span><span id="qaSummary"></span><button id="runTestsBtn" type="button"></button><div id="qaResults" class="hidden"></div></div>
 
   <section class="panel">
     <h2>Sauvegarde & export</h2>
@@ -2397,7 +2375,7 @@ function ensureDaily(){
 function skillForMode(){
   if(["gPairs","gScramble","gTrueFalse","gMissing","quiz","quizReverse","quizMix","phrases","write","reverse","review","errors","favorites","phrasal","collocations","falseFriends"].includes(mode))return"vocab";
   if(["grammar","transform","finderror","edSpell","thirdPerson","articles","prepositions","comparatives","modals","questionsNeg","wordOrder","connectors"].includes(mode))return"grammar";
-  if(["listening","dictation","edPron","sPron","audioDialogues"].includes(mode))return"listening";
+  if(["listening","dictation","edPron","edListen","edDict","sPron","audioDialogues"].includes(mode))return"listening";
   if(["pronunciation","shadowing","conversation","pronLab","wordStress","sentenceStress"].includes(mode))return"speaking";
   if(["reading","translationText"].includes(mode))return"reading";
   if(mode==="writingTask")return"writing";
@@ -2977,6 +2955,7 @@ function newQuestion(){
   resetZones();
   const all=vocab();
   if(GAME_MODES.includes(mode)){startGame(mode,all);return}
+  if(ED_MODES.includes(mode)){startEd(mode);return}
 
   if(mode==="quiz"){
     const item=rand(all),same=all.filter(x=>x[2]===item[2]&&x[0]!==item[0]);
@@ -3249,7 +3228,8 @@ function checkOption(btn,correct){
     btn.classList.add("bad");penalize(currentVocabItem(),btn.textContent);$("feedback").textContent="❌ Réponse : "+expected();$("feedback").className="feedback badText";
   }
   if(mode==="tenses")$("feedback").textContent+=" — "+current.rule;
-  if(mode==="edPron"){
+  if(mode==="edListen")$("feedback").textContent+=" ("+current.spoken+")";
+  if(mode==="edPron"||mode==="edListen"){
     const rule=current.answer==="/ɪd/"?"La base se termine par le son /t/ ou /d/."
       :current.answer==="/t/"?"La base se termine par un son non voisé (hors /t/)."
       :"La base se termine par une voyelle ou un son voisé (hors /d/).";
@@ -3283,7 +3263,7 @@ function checkText(){
   if(locked)return;const user=$("answerInput").value.trim();if(!user)return;
   locked=true;clearTimer();const ok=(current?.accepted||[]).some(a=>acceptable(user,a)) || acceptable(user,expected());
   if(ok){
-    reward(currentVocabItem(),btn.textContent);$("feedback").textContent="✅ Correct";$("feedback").className="feedback goodText";if(mode==="exam")examScore++;
+    reward(currentVocabItem(),user);$("feedback").textContent="✅ Correct";$("feedback").className="feedback goodText";if(mode==="exam")examScore++;
   }else{
     penalize(currentVocabItem(),user);$("feedback").innerHTML=`❌ Réponse attendue : <b>${escapeHtml(expected())}</b>`;$("feedback").className="feedback badText";
   }
@@ -4112,6 +4092,8 @@ const goalModeGroups={
     ["irregularPart","Irréguliers : participe passé","go → gone"],
     ["irregularMix","Irréguliers : mix","Past simple + participe passé"],
     ["edPron","Prononciation -ED","/t/ /d/ /ɪd/"],
+    ["edListen","-ED : écoute et son","Entends le verbe, choisis /t/ /d/ /ɪd/"],
+    ["edDict","-ED : écoute et écris","Entends le verbe, écris-le"],
     ["sPron","Prononciation -S/-ES","/s/ /z/ /ɪz/"],
     ["connectors","Connecteurs","although, however, therefore..."]
   ]},
@@ -4193,7 +4175,7 @@ function updateFocus(){
 
 function syncModeCategory(m){
   const category=
-    ["questionsNeg","wordOrder","tenses","grammar","transform","finderror","articles","prepositions","comparatives","modals","thirdPerson","edSpell","irregularPast","irregularPart","irregularMix","edPron","sPron","connectors"].includes(m)?"grammar":
+    ["questionsNeg","wordOrder","tenses","grammar","transform","finderror","articles","prepositions","comparatives","modals","thirdPerson","edSpell","irregularPast","irregularPart","irregularMix","edPron","edListen","edDict","sPron","connectors"].includes(m)?"grammar":
     ["gPairs","gScramble","gTrueFalse","gMissing","quiz","quizReverse","quizMix","phrases","phrasal","collocations","falseFriends","write","reverse"].includes(m)?"vocab":
     ["listening","dictation","audioDialogues","pronunciation","pronLab","wordStress","sentenceStress","shadowing","conversation"].includes(m)?"understand":
     ["reading","translationText","writingTask"].includes(m)?"produce":
@@ -4351,7 +4333,7 @@ function tagPages(){
     else if(el.classList.contains("goalPanel"))pg="all";
     else if(["modeHelp","lessonPanel","exerciseCard"].includes(el.id)||el.classList.contains("toolbar"))pg="zone";
     else if(/^(Maîtrise|Ajouter ton vocab)/.test(H(el)))pg="vocab";
-    else if(/^(Fiches|3e personne|Base de verbes|Cambridge)/.test(H(el)))pg="gram";
+    else if(/^(Fiches|3e personne|Verbes irréguliers|Verbes en -ED)/.test(H(el)))pg="gram";
     return {el,pg};
   });
 }
@@ -4908,6 +4890,7 @@ function initV28(){
   G.vocab.modes=G.vocab.modes.concat(GAME_MODES.map(m=>[m,modeNames[m],modeDescriptions[m]]));
   (function(){const og=document.createElement("optgroup");og.label="Jeux";GAME_MODES.forEach(m=>{const o=document.createElement("option");o.value=m;o.textContent=modeNames[m];og.appendChild(o)});$("modeSelect").appendChild(og)})();
   initSettings();
+  try{renderEdPanel()}catch(e){console.error(e)}
   accordionize();
   tagPages();pagesReady=true;
   const h0=(location.hash||"").replace("#","");
@@ -4959,7 +4942,8 @@ const SUBGROUPS={
     ["Temps et verbes",["tenses","grammar","transform","irregularPast","irregularPart","irregularMix"]],
     ["Structure de la phrase",["questionsNeg","wordOrder","finderror"]],
     ["Petits mots",["articles","prepositions","comparatives","modals","thirdPerson","connectors"]],
-    ["Orthographe et prononciation",["edSpell","edPron","sPron"]]
+    ["Verbes en -ED",["edPron","edListen","edSpell","edDict"]],
+    ["Prononciation -S/-ES",["sPron"]]
   ],
   vocab:[
     ["Quiz de mots",["quizMix","quiz","quizReverse","write","reverse"]],
@@ -5376,6 +5360,67 @@ function initSettings(){
   const tb=document.querySelector(".toolbar");
   if(tb){const r=document.createElement("button");r.type="button";r.className="ghost";r.id="reportBtn";r.textContent="Signaler";r.onclick=()=>openSettings("report");tb.appendChild(r)}
   document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSettings()});
+}
+/* =====================================================================
+   v31 : section -ED (fiche audio + exercices d'écoute)
+   ===================================================================== */
+const ED_MODES=["edListen","edDict"];
+Object.assign(modeNames,{edListen:"-ED · Écoute et choisis le son",edDict:"-ED · Écoute et écris",edPron:"-ED · Quel son ? (/t/ /d/ /ɪd/)",edSpell:"-ED · Orthographe du past"});
+Object.assign(modeDescriptions,{
+  edListen:"Tu entends un verbe au past simple : choisis le son final /t/, /d/ ou /ɪd/.",
+  edDict:"Tu entends un verbe au past simple : écris-le."
+});
+try{Object.assign(conceptModeLabels,{edListen:"-ED : écoute du son",edDict:"-ED : écoute et écriture"})}catch(e){}
+try{Object.assign(miniLessons,{
+  edListen:miniLessons.edPron,
+  edDict:{title:"Écrire un verbe en -ED",rule:"Écoute le verbe puis écris-le en entier. Le son final ne change pas l’orthographe : /t/, /d/ et /ɪd/ s’écrivent tous -ed (ou -d après un -e).",examples:["worked","lived","wanted"]}
+})}catch(e){}
+
+function startEd(m){
+  const x=rand(edPronunciation);
+  $("favBtn").style.visibility="hidden";
+  if(m==="edListen"){
+    current={answer:x[1],spoken:x[0]};
+    $("question").textContent="Écoute le verbe : quel est le son final de -ed ?";
+    $("info").textContent="Le mot est caché. Réécoute autant que tu veux avec le bouton audio.";$("info").classList.remove("hidden");
+    shuffle(["/t/","/d/","/ɪd/"]).forEach(o=>makeOption(o,o===x[1]));
+  }else{
+    current={answer:x[0],spoken:x[0],accepted:[x[0]]};
+    $("question").textContent="Écoute le verbe au past simple, puis écris-le.";
+    $("info").textContent="Réécoute avec le bouton audio.";$("info").classList.remove("hidden");
+    $("textZone").classList.remove("hidden");$("answerInput").placeholder="Ex. worked";
+  }
+  if(!selfTesting)setTimeout(()=>speak(x[0]),180);
+}
+
+function renderEdPanel(){
+  const vt=$("view-train");if(!vt||$("edPanel"))return;
+  const groups=[
+    ["/t/","Après un son non voisé","t"],
+    ["/d/","Après une voyelle ou un son voisé","d"],
+    ["/ɪd/","Après /t/ ou /d/ : une syllabe de plus","ɪd"]
+  ];
+  const words=s=>edPronunciation.filter(w=>w[1]==="/"+s+"/").map(w=>w[0]);
+  const sec=document.createElement("section");sec.id="edPanel";sec.className="panel";
+  sec.innerHTML=`<h2>Verbes en -ED · écouter</h2>
+    <div class="edGrid">${groups.map(g=>`<div class="edGroup">
+      <div class="edHead"><span class="phoneme">${g[0]}</span><small>${g[1]}</small><button type="button" class="chip2 ghost" data-edall="${g[2]}">Tout écouter</button></div>
+      <div class="edWords">${words(g[2]).slice(0,12).map(w=>`<button type="button" class="chip2" data-edw="${w}">${w}</button>`).join("")}</div>
+    </div>`).join("")}</div>
+    <div class="edTrain">
+      <button type="button" class="chip2" data-ex="edListen">Écoute et choisis le son</button>
+      <button type="button" class="chip2" data-ex="edDict">Écoute et écris</button>
+      <button type="button" class="chip2" data-ex="edPron">Quel son ?</button>
+      <button type="button" class="chip2" data-ex="edSpell">Orthographe</button>
+    </div>`;
+  const ref=[...vt.children].find(e=>/^Fiches/.test(((e.querySelector("h2,h3,b")||{}).textContent||"").trim()));
+  vt.insertBefore(sec,ref||null);
+  sec.querySelectorAll("[data-edw]").forEach(b=>b.onclick=()=>speakAmerican(b.dataset.edw,.8));
+  sec.querySelectorAll("[data-edall]").forEach(b=>b.onclick=()=>{
+    if("speechSynthesis" in window)speechSynthesis.cancel();
+    words(b.dataset.edall).slice(0,12).forEach(w=>speakWithLocale(w,"en-US",.8));
+  });
+  sec.querySelectorAll("[data-ex]").forEach(b=>b.onclick=()=>openExercise(b.dataset.ex));
 }
 
 sanitizeVisualErrors(document);
