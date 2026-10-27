@@ -1163,6 +1163,24 @@ button.adaptiveStep:hover{border-color:var(--line);background:var(--panel)}
 }
 .gSlot.filled{cursor:pointer}
 #exerciseCard.pairsMode .qrow{display:none!important}
+.gMem{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.memCard{position:relative;min-height:78px;border-radius:14px;border:1.5px solid var(--line);background:var(--accent);color:transparent;font-weight:800;font-size:14px;line-height:1.2;padding:6px;display:grid;place-items:center;transition:background .25s,color .25s,transform .25s}
+.memCard::before{content:"?";position:absolute;inset:0;display:grid;place-items:center;color:var(--on-accent);font-size:24px;font-weight:800}
+.memCard.up,.memCard.done{background:var(--panel);color:var(--text)}
+.memCard.up::before,.memCard.done::before{content:""}
+.memCard.done{border-color:var(--good);background:var(--good-bg);color:var(--good-text)}
+.gBar{height:8px;border-radius:5px;background:var(--line);overflow:hidden;margin-bottom:10px}
+.gBar i{display:block;height:100%;width:100%;background:var(--accent);transition:width .1s linear}
+.gOpts{display:grid;gap:10px;margin-top:10px}
+.gListenBtn{display:grid;place-items:center;width:84px;height:84px;margin:6px auto 8px;border-radius:50%;border:1.5px solid var(--accent-line);background:rgba(var(--accent-rgb),.12);color:var(--accent-text)}
+.gListenBtn i{display:block;width:38px;height:38px;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+.gKeys{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.gKey{width:40px;height:46px;border-radius:10px;border:1.5px solid var(--line);background:var(--panel);color:var(--text);font-weight:800;font-size:17px;text-transform:uppercase;padding:0}
+.gKey.hit{background:var(--good-bg);border-color:var(--good);color:var(--good-text)}
+.gKey.miss{background:var(--bad-bg);border-color:var(--bad);color:var(--bad-text);opacity:.6}
+.gMask.good{color:var(--good-text)}.gMask.bad{color:var(--bad-text)}
+.themeDrop.gamesMode .themeTabs,.themeDrop.gamesMode .dot{display:none}
+.themeItem small{display:block;font-weight:600;font-size:12.5px;color:var(--muted);margin-top:2px}
 html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:none}
 #nextBtn{transition:background .3s,box-shadow .3s}
 #options .option{opacity:1}
@@ -4176,7 +4194,7 @@ function ensureDaily(){
   if(state.lastDay!==t){state.lastDay=t;state.daily=0;saveState()}
 }
 function skillForMode(){
-  if(["defMatch","gPairs","gScramble","gTrueFalse","gMissing","quiz","quizReverse","quizMix","phrases","write","reverse","review","errors","favorites","phrasal","collocations","falseFriends"].includes(mode))return"vocab";
+  if(["defMatch","gPairs","gScramble","gTrueFalse","gMissing","gMemory","gSpeed","gListen","gHangman","quiz","quizReverse","quizMix","phrases","write","reverse","review","errors","favorites","phrasal","collocations","falseFriends"].includes(mode))return"vocab";
   if(["grammar","transform","finderror","edSpell","thirdPerson","articles","prepositions","comparatives","modals","questionsNeg","wordOrder","connectors"].includes(mode))return"grammar";
   if(["listening","dictation","edPron","edListen","edDict","sPron","audioDialogues"].includes(mode))return"listening";
   if(["pronunciation","shadowing","conversation","pronLab","wordStress","sentenceStress"].includes(mode))return"speaking";
@@ -5979,7 +5997,7 @@ function updateFocus(){
 function syncModeCategory(m){
   const category=
     ["questionsNeg","wordOrder","tenses","grammar","transform","finderror","articles","prepositions","comparatives","modals","thirdPerson","edSpell","irregularPast","irregularPart","irregularMix","edPron","edListen","edDict","sPron","connectors"].includes(m)?"grammar":
-    ["defMatch","gPairs","gScramble","gTrueFalse","gMissing","quiz","quizReverse","quizMix","phrases","phrasal","collocations","falseFriends","write","reverse"].includes(m)?"vocab":
+    ["defMatch","gPairs","gScramble","gTrueFalse","gMissing","gMemory","gSpeed","gListen","gHangman","quiz","quizReverse","quizMix","phrases","phrasal","collocations","falseFriends","write","reverse"].includes(m)?"vocab":
     ["listening","dictation","audioDialogues","pronunciation","pronLab","wordStress","sentenceStress","shadowing","conversation"].includes(m)?"understand":
     ["reading","translationText","writingTask"].includes(m)?"produce":
     ["review","errors","favorites"].includes(m)?"review":"test";
@@ -6758,7 +6776,7 @@ const SUBGROUPS={
   ],
   vocab:[
     ["Quiz de mots",["defMatch","quizMix","quiz","quizReverse","write","reverse"]],
-    ["Jeux",["gPairs","gScramble","gTrueFalse","gMissing"]],
+    ["Jeux",["gPairs","gScramble","gTrueFalse","gMissing","gMemory","gSpeed","gListen","gHangman"]],
     ["En contexte",["phrases","phrasal","collocations","falseFriends","connectors"]]
   ]
 };
@@ -6899,7 +6917,7 @@ function renderPageBar(){
     h+=groups.map(([t,ms])=>`<div class="blkHead">${escapeHtml(t)}</div><div class="blkGrid">${ms.filter(m=>info[m]).map(m=>`<button type="button" class="blk" data-blk="${m}"><b>${escapeHtml(info[m][1])}</b><small>${escapeHtml(info[m][2]||"")}</small></button>`).join("")}</div>`).join("");
     host.innerHTML=h;
 //    if(p==="vocab")host.insertBefore(avEl(),host.firstChild);
-    host.querySelectorAll("[data-blk]").forEach(b=>b.onclick=()=>b.dataset.blk==="expressions"?themeOpen("expr",true):openExercise(b.dataset.blk==="game"?GAME_MODES[Math.floor(Math.random()*GAME_MODES.length)]:b.dataset.blk));
+    host.querySelectorAll("[data-blk]").forEach(b=>b.onclick=()=>b.dataset.blk==="expressions"?themeOpen("expr",true):b.dataset.blk==="game"?themeOpen("games",false):openExercise(b.dataset.blk));
     host.querySelectorAll("[data-kind]").forEach(b=>b.onclick=()=>{
       const k=b.dataset.kind;state.vocKind=state.vocKind===k?null:k;
       if(state.packFocus&&state.vocKind&&PACK_EXPR.includes(state.packFocus)!==(state.vocKind==="expr"))state.packFocus=null;
@@ -6977,15 +6995,19 @@ openExercise=function(m,k){
 /* =====================================================================
    v29 : mini-jeux de vocabulaire
    ===================================================================== */
-const GAME_MODES=["gPairs","gScramble","gTrueFalse","gMissing"];
-Object.assign(modeNames,{gPairs:"Jeu · Paires",gScramble:"Jeu · Lettres mélangées",gTrueFalse:"Jeu · Vrai ou faux",gMissing:"Jeu · Lettres manquantes"});
+const GAME_MODES=["gPairs","gScramble","gTrueFalse","gMissing","gMemory","gSpeed","gListen","gHangman"];
+Object.assign(modeNames,{gPairs:"Jeu · Paires",gScramble:"Jeu · Lettres mélangées",gTrueFalse:"Jeu · Vrai ou faux",gMissing:"Jeu · Lettres manquantes",gMemory:"Jeu · Mémoire",gSpeed:"Jeu · Rapidité",gListen:"Jeu · Écoute",gHangman:"Jeu · Pendu"});
 Object.assign(modeDescriptions,{
   gPairs:"Relie chaque mot anglais à sa traduction.",
   gScramble:"Remets les lettres dans l’ordre pour former le mot.",
   gTrueFalse:"10 cartes : la traduction est-elle juste ?",
-  gMissing:"Complète les lettres qui manquent."
+  gMissing:"Complète les lettres qui manquent.",
+  gMemory:"Retourne les cartes et retrouve les paires.",
+  gSpeed:"30 secondes : un maximum de bonnes réponses.",
+  gListen:"Écoute le mot et choisis-le.",
+  gHangman:"Devine le mot lettre par lettre."
 });
-try{Object.assign(conceptModeLabels,{gPairs:"Jeu : paires",gScramble:"Jeu : lettres mélangées",gTrueFalse:"Jeu : vrai ou faux",gMissing:"Jeu : lettres manquantes"})}catch(e){}
+try{Object.assign(conceptModeLabels,{gPairs:"Jeu : paires",gScramble:"Jeu : lettres mélangées",gTrueFalse:"Jeu : vrai ou faux",gMissing:"Jeu : lettres manquantes",gMemory:"Jeu : mémoire",gSpeed:"Jeu : rapidité",gListen:"Jeu : écoute",gHangman:"Jeu : pendu"})}catch(e){}
 
 function gz(){return $("gameZone")}
 function gDone(msg,cls){
@@ -7003,6 +7025,10 @@ function startGame(m,all){
   if(m==="gPairs")gamePairs(z,all);
   else if(m==="gScramble")gameScramble(z,all);
   else if(m==="gTrueFalse")gameTrueFalse(z,all);
+  else if(m==="gMemory")gameMemory(z,all);
+  else if(m==="gSpeed")gameSpeed(z,all);
+  else if(m==="gListen")gameListen(z,all);
+  else if(m==="gHangman")gameHangman(z,all);
   else gameMissing(z,all);
 }
 
@@ -7060,6 +7086,120 @@ function gameScramble(z,all){
     }
   });
   $("gClr").onclick=()=>{if(done)return;typed.forEach(x=>x.b.classList.remove("used"));typed=[];draw()};
+}
+
+
+/* --- Mémoire --- */
+function gameMemory(z,all){
+  const items=gPick(all,6);
+  $("question").textContent="";
+  current={vocab:items[0],answer:items[0][1]};
+  const cards=shuffle(items.flatMap((it,i)=>[{t:it[0],i,l:"en"},{t:it[1],i,l:"fr"}]));
+  z.innerHTML=`<div class="gMem">${cards.map((c,k)=>`<button type="button" class="memCard" data-k="${k}"><span>${escapeHtml(c.t)}</span></button>`).join("")}</div><div class="gProg" id="memMoves">0</div>`;
+  let open=[],found=0,moves=0,busy=false;
+  z.querySelectorAll(".memCard").forEach(b=>b.onclick=()=>{
+    if(busy||b.classList.contains("up")||b.classList.contains("done"))return;
+    const c=cards[+b.dataset.k];
+    b.classList.add("up");if(c.l==="en"){try{speak(c.t)}catch(e){}}
+    open.push({b,c});
+    if(open.length<2)return;
+    moves++;$("memMoves").textContent=String(moves);
+    const [x,y]=open;open=[];
+    if(x.c.i===y.c.i&&x.c.l!==y.c.l){
+      [x.b,y.b].forEach(e=>{e.classList.remove("up");e.classList.add("done")});
+      reward(items[x.c.i],items[x.c.i][1]);found++;
+      if(found===items.length)gDone(`Terminé en ${moves} coups`);
+    }else{
+      busy=true;
+      setTimeout(()=>{[x.b,y.b].forEach(e=>e.classList.remove("up"));busy=false},850);
+    }
+  });
+}
+
+/* --- Rapidité : 30 secondes --- */
+function gameSpeed(z,all){
+  const T=30;let t=T,score=0,tot=0,over=false;
+  current={vocab:rand(all),answer:""};
+  z.innerHTML=`<div class="gBar"><i id="spBar"></i></div><div class="gProg" id="spScore">0</div><div class="gOpts" id="spOpts"></div>`;
+  const q=$("question");
+  const end=()=>{
+    over=true;
+    q.innerHTML=`<b>${score} / ${tot}</b>`;
+    $("spOpts").innerHTML="";
+    window.__out=score>=Math.max(1,tot/2)?"good":"bad";
+    gDone(score>=Math.max(1,tot*.7)?"Bien joué":"Encore un tour ?",score>=Math.max(1,tot/2)?"goodText":"warnText");
+  };
+  const timer=setInterval(()=>{
+    if(!document.body.contains($("spBar"))||mode!=="gSpeed"||over){clearInterval(timer);return}
+    t-=.1;$("spBar").style.width=Math.max(0,t/T*100)+"%";
+    if(t<=0){clearInterval(timer);end()}
+  },100);
+  const next=()=>{
+    if(over)return;
+    const item=rand(all);
+    const same=all.filter(x=>x[2]===item[2]&&x[1]!==item[1]);
+    const pool=(same.length>=3?same:all.filter(x=>x[1]!==item[1]));
+    const opts=shuffle([item,...shuffle(pool).slice(0,3)]);
+    current={vocab:item,answer:item[1]};
+    q.innerHTML=`<b>${escapeHtml(item[0])}</b>`;
+    $("spOpts").innerHTML=opts.map(o=>`<button type="button" class="option" data-ok="${o===item?1:0}">${escapeHtml(o[1])}</button>`).join("");
+    $("spOpts").querySelectorAll(".option").forEach(b=>b.onclick=()=>{
+      if(over||b.disabled)return;
+      $("spOpts").querySelectorAll(".option").forEach(x=>x.disabled=true);
+      tot++;
+      const ok=b.dataset.ok==="1";
+      if(ok){score++;reward(item,item[1]);b.classList.add("good")}
+      else{penalize(item,b.textContent);b.classList.add("bad");const g=[...$("spOpts").children].find(x=>x.dataset.ok==="1");if(g)g.classList.add("good")}
+      $("spScore").textContent=String(score);
+      setTimeout(next,ok?220:650);
+    });
+  };
+  next();
+}
+
+/* --- Écoute : choisis le mot entendu --- */
+function gameListen(z,all){
+  const pool=all.filter(x=>x[0].length<=22);
+  const item=rand(pool.length?pool:all);
+  const others=shuffle(pool.filter(x=>x[0]!==item[0]&&x[2]===item[2])).slice(0,3);
+  while(others.length<3){const o=rand(pool);if(o[0]!==item[0]&&!others.includes(o))others.push(o)}
+  current={vocab:item,answer:item[0],spoken:item[0]};
+  $("question").textContent="";
+  z.innerHTML=`<button type="button" class="gListenBtn" id="gLs" aria-label="Écouter"><i class="bi-audio"></i></button><div class="gOpts" id="gLo">${shuffle([item,...others]).map(o=>`<button type="button" class="option" data-ok="${o===item?1:0}">${escapeHtml(o[0])}</button>`).join("")}</div>`;
+  $("gLs").onclick=()=>{try{speak(item[0])}catch(e){}};
+  setTimeout(()=>{try{speak(item[0])}catch(e){}},350);
+  let done=false;
+  z.querySelectorAll("#gLo .option").forEach(b=>b.onclick=()=>{
+    if(done)return;done=true;
+    z.querySelectorAll("#gLo .option").forEach(x=>x.disabled=true);
+    const ok=b.dataset.ok==="1";
+    if(ok){b.classList.add("good");reward(item,item[0]);gDone(item[0]+" = "+item[1])}
+    else{b.classList.add("bad");const g=z.querySelector('#gLo .option[data-ok="1"]');if(g)g.classList.add("good");penalize(item,b.textContent);gDone(item[0]+" = "+item[1],"badText")}
+  });
+}
+
+/* --- Pendu --- */
+function gameHangman(z,all){
+  const pool=all.filter(x=>/^[A-Za-z]{4,12}$/.test(x[0]));
+  const item=rand(pool.length?pool:all),word=item[0].replace(/[^A-Za-z]/g,"").toLowerCase()||item[0].toLowerCase();
+  current={vocab:item,answer:item[0]};
+  $("question").innerHTML=`<b>${escapeHtml(item[1])}</b>`;
+  const MAX=6;let wrong=0,got=new Set(),done=false;
+  z.innerHTML=`<div class="gMask" id="hgW"></div><div class="gProg" id="hgL"></div><div class="gKeys" id="hgK">${"abcdefghijklmnopqrstuvwxyz".split("").map(c=>`<button type="button" class="gKey" data-c="${c}">${c}</button>`).join("")}</div>`;
+  const draw=()=>{
+    $("hgW").textContent=word.split("").map(c=>got.has(c)||done?c:"_").join(" ");
+    $("hgL").textContent=`${MAX-wrong} / ${MAX}`;
+  };
+  draw();
+  z.querySelectorAll(".gKey").forEach(b=>b.onclick=()=>{
+    if(done||b.disabled)return;
+    const c=b.dataset.c;b.disabled=true;
+    if(word.includes(c)){got.add(c);b.classList.add("hit")}
+    else{wrong++;b.classList.add("miss")}
+    if(word.split("").every(x=>got.has(x))){done=true;draw();$("hgW").classList.add("good");reward(item,word);gDone("Correct : "+item[0])}
+    else if(wrong>=MAX){done=true;draw();$("hgW").classList.add("bad");penalize(item,"");gDone("Réponse : "+item[0],"badText")}
+    else draw();
+  });
 }
 
 /* --- Vrai ou faux --- */
@@ -7925,7 +8065,7 @@ const I18N_DICT={
 "Pas encore de réponse":"No answer yet","Réviser":"Review","Révision":"Review","Révision espacée":"Spaced review","Mes erreurs":"My mistakes","Mes favoris":"My favorites","Favoris":"Favorites",
 "Aucune erreur enregistrée":"No mistakes recorded","Aucun favori":"No favorites","Verbes irréguliers":"Irregular verbs","Test de niveau":"Level test",
 "Tester mon niveau":"Test my level","Vocabulaire":"Vocabulary","Grammaire":"Grammar","Écoute":"Listening","Temps":"Tenses","Prépositions":"Prepositions","Définitions":"Definitions","Phrases à trous":"Fill in the blanks",
-"Quiz":"Quiz","Choisir un thème":"Choose a theme","Jeux":"Games","Phrasal verbs":"Phrasal verbs","Faux amis":"False friends","Retour":"Back","‹ Retour":"‹ Back","Commencer":"Start","Reprendre":"Resume","Réduire":"Minimize","Fermer":"Close",
+"Quiz":"Quiz","Choisir un thème":"Choose a theme","Choisir un jeu":"Choose a game","Un jeu au choix de l’appli":"A game picked by the app","Retourne les cartes et retrouve les paires.":"Flip the cards and find the pairs.","30 secondes : un maximum de bonnes réponses.":"30 seconds: as many right answers as you can.","Écoute le mot et choisis-le.":"Listen to the word and pick it.","Devine le mot lettre par lettre.":"Guess the word letter by letter.","Bien joué":"Well done","Encore un tour ?":"One more round?","Au hasard":"Random","Jeux":"Games","Phrasal verbs":"Phrasal verbs","Faux amis":"False friends","Retour":"Back","‹ Retour":"‹ Back","Commencer":"Start","Reprendre":"Resume","Réduire":"Minimize","Fermer":"Close",
 "Valider":"Submit","Vérifier":"Check","Suivant":"Next","Question suivante →":"Next question →","Voir la réponse / traduction":"Show answer / translation","Rejouer":"Play again","Détail":"Details",
 "Thème":"Theme","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
 "Questions et négations":"Questions & negatives","Questions & négations":"Questions & negatives","Ordre des mots":"Word order","Choisir le bon temps":"Choose the right tense","Construire une phrase":"Build a sentence","Transformer une phrase":"Transform a sentence",
@@ -7937,7 +8077,7 @@ const I18N_DICT={
 "Dialogues audio & compréhension":"Audio dialogues","Dialogues audio":"Audio dialogues","Lecture & compréhension":"Reading comprehension","Traduction de texte EN → FR":"Text translation EN → FR",
 "Prononciation de mots":"Word pronunciation","Prononciation":"Pronunciation","Laboratoire des sons":"Sound lab","Accent tonique des mots":"Word stress","Accent tonique":"Word stress","Rythme & accent de phrase":"Sentence rhythm & stress","Rythme de phrase":"Sentence rhythm",
 "Mini-rédaction":"Short writing","Conversation simulée":"Simulated conversation","Diagnostic de niveau":"Level diagnostic","Mode examen":"Exam mode","Shadowing":"Shadowing",
-"Jeu · Paires":"Game · Pairs","Jeu · Lettres mélangées":"Game · Scrambled letters","Jeu · Vrai ou faux":"Game · True or false","Jeu · Lettres manquantes":"Game · Missing letters",
+"Jeu · Paires":"Game · Pairs","Jeu · Mémoire":"Game · Memory","Jeu · Rapidité":"Game · Speed","Jeu · Écoute":"Game · Listening","Jeu · Pendu":"Game · Hangman","Jeu · Lettres mélangées":"Game · Scrambled letters","Jeu · Vrai ou faux":"Game · True or false","Jeu · Lettres manquantes":"Game · Missing letters",
 "-ED : écoute et son":"-ED: listen and sound","-ED : écoute et écris":"-ED: listen and write","-ED · Écoute et choisis le son":"-ED · Listen and pick the sound","-ED · Écoute et écris":"-ED · Listen and write","-ED · Orthographe du past":"-ED · Past spelling","-ED : prononciation":"-ED: pronunciation","-ED : orthographe":"-ED: spelling","-S/-ES : prononciation":"-S/-ES: pronunciation",
 "Mélange anglais et français":"Mix of English and French","Quiz de mots":"Word quiz","Choisis la définition qui correspond au mot":"Pick the definition that matches the word","Tu vois l’anglais et choisis le français":"You see English, pick French","Tu vois le français et choisis l’anglais":"You see French, pick English",
 "Écrire la traduction française":"Write the French translation","Retrouver le mot anglais":"Recall the English word","Relie chaque mot anglais à sa traduction.":"Match each English word with its translation.","Remets les lettres dans l’ordre pour former le mot.":"Put the letters in order to form the word.",
@@ -8691,6 +8831,10 @@ function themeEnsure(){
   d.querySelectorAll("[data-tt]").forEach(x=>x.addEventListener("click",()=>{themeTab=x.dataset.tt;themeRender(true)}));
   $("themeList").addEventListener("click",e=>{
     const it=e.target.closest(".themeItem");if(!it)return;
+    if(it.dataset.game!=null){
+      const id=it.dataset.game||GAME_MODES[Math.floor(Math.random()*GAME_MODES.length)];
+      themeClose();setTimeout(()=>{try{openExercise(id)}catch(x){}},330);return;
+    }
     const id=it.dataset.id||"";
     state.packFocus=id||null;saveState();barSig="";
     try{renderPageBar()}catch(x){}
@@ -8707,6 +8851,13 @@ function themeEnsure(){
 }
 function themeRender(anim){
   const list=$("themeList");if(!list)return;
+  const dr=$("themeDrop");dr.classList.toggle("gamesMode",themeTab==="games");
+  dr.querySelector("h3").textContent=themeTab==="games"?"Choisir un jeu":"Choisir un thème";
+  if(themeTab==="games"){
+    const row=(id,n,d,i)=>`<button type="button" class="themeItem" data-game="${id}" style="--i:${Math.min(i,12)}"><span>${escapeHtml(n)}${d?`<small>${escapeHtml(d)}</small>`:""}</span></button>`;
+    list.innerHTML=row("","Au hasard","Un jeu au choix de l’appli",0)+GAME_MODES.map((m,i)=>row(m,(modeNames[m]||m).replace(/^(Jeu|Game) · /,""),(modeDescriptions[m]||""),i+1)).join("");
+    list.scrollTop=0;list.classList.toggle("noanim",!anim);return;
+  }
   document.querySelectorAll("#themeDrop [data-tt]").forEach(x=>x.classList.toggle("on",x.dataset.tt===themeTab));
   const rank=id=>{const i=PACK_ORDER.indexOf(id);return i<0?99:i};
   const packs=themeTab==="expr"?PACK_EXPR.map(id=>PACKS.find(p=>p.id===id)).filter(Boolean):PACKS.filter(p=>!PACK_EXPR.includes(p.id)).sort((a,b)=>rank(a.id)-rank(b.id));
@@ -8804,7 +8955,7 @@ const __nqAd=newQuestion;
 newQuestion=function(){
   const v=vocLevel(),f=Math.floor(v),r=Math.random();
   adTarget=Math.max(0,Math.min(3,r<.15?f+1:r<.7?f:f-1));
-  try{const c=$("exerciseCard");if(c)c.classList.toggle("pairsMode",mode==="gPairs")}catch(e){}
+  try{const c=$("exerciseCard");if(c)c.classList.toggle("pairsMode",["gPairs","gMemory","gListen"].includes(mode))}catch(e){}
   try{return __nqAd.apply(this,arguments)}finally{adTarget=null}
 };
 
