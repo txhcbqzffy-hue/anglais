@@ -1535,7 +1535,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     </div>
   </section>
 
-  <section class="panel">
+  <section class="panel" style="display:none">
     <h2>Maîtrise des mots & règles</h2>
     <div class="masterySummary">
       <div class="masteryStat"><b id="masteryNew">0</b><span>Nouveaux</span></div>
@@ -6070,7 +6070,7 @@ function accordionize(){
   [...root.children].forEach(el=>{
     const h=H(el);
     if(!(/^(Progression|Profil d’erreurs|Banque d’exercices|Maîtrise|Ajouter ton vocab|Contrôle qualité|Verbes en -ED|Parcours)/.test(h)))return;
-    const d=document.createElement("details");d.className="acc";
+    const d=document.createElement("details");d.className="acc";if(/^Maîtrise/.test(h))d.style.display="none";
     const sm=document.createElement("summary");sm.textContent=h.replace(/^Maîtrise des mots & règles/,"Maîtrise des mots et règles");
     root.insertBefore(d,el);d.appendChild(sm);d.appendChild(el);
   });
