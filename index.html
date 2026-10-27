@@ -1337,7 +1337,7 @@ html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:n
 /* barre du bas : plus de pastille, seul le pictogramme prend la couleur ; zone floutée derrière la barre */
 .bottomNav::before{display:none!important}
 .bottomNav button.active,:root[data-theme="dark"] .bottomNav button.active{background:transparent!important;box-shadow:none!important;color:var(--accent)!important}
-html::after{content:"";position:fixed;left:0;right:0;bottom:0;height:calc(max(12px,env(safe-area-inset-bottom)) + 70px + 22px);z-index:39;pointer-events:none;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);background:linear-gradient(180deg,transparent,rgba(var(--panel-rgb),.18));-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 26px);mask-image:linear-gradient(180deg,transparent 0,#000 26px)}
+html::after{content:"";position:fixed;left:0;right:0;bottom:0;height:calc(max(12px,env(safe-area-inset-bottom)) + 70px + 22px);z-index:1;pointer-events:none;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);background:linear-gradient(180deg,transparent,rgba(var(--panel-rgb),.18));-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 26px);mask-image:linear-gradient(180deg,transparent 0,#000 26px)}
 html.kb::after,html.noDock::after{display:none}
 .bottomNav button.active .ic,.bottomNav .ic{transform:none!important;transition:none!important}
 .bottomNav button:active{transform:none!important}
@@ -1357,6 +1357,8 @@ button:active:not(:disabled),button:active,.option:active,.blk:active,.cItem:act
 #nextBtn.nextBad{background:linear-gradient(135deg,#a63246,#7a1c2e)!important;border-color:#7a1c2e!important}
 :root[data-theme="dark"] #nextBtn.nextBad{background:linear-gradient(135deg,#8a2a3b,#5c1727)!important;border-color:#5c1727!important}
 :is(body.sessionOn,body:not(.sessionOn)) #exerciseCard #nextBtn.nextBad:not(.hidden):not(.zz){box-shadow:0 8px 20px -8px rgba(122,28,46,.5)!important}
+html:has(body.sessionOn)::after,html:has(body.sheetOpen)::after{display:none!important}
+html:has(body.sessionOn)::after,html:has(.sheet:not(.hidden))::after{display:none}
 </style>
 </head>
 <body>
