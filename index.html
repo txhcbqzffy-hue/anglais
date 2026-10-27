@@ -1146,7 +1146,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 #whyBox{margin-top:14px;margin-bottom:110px;padding:14px 14px 12px;border:1px solid var(--accent-line);border-radius:16px;background:rgba(var(--accent-rgb),.07);font-size:14.5px;line-height:1.45;text-align:left}
 #whyBox h4{margin:0 0 6px;font-size:15px;color:var(--accent-text)}
 #whyBox p{margin:6px 0}
-#whyBox .whyEx{padding:8px 10px;border-left:3px solid var(--accent);background:rgba(255,255,255,.55);border-radius:8px;cursor:pointer}
+#whyBox .whyEx{padding:8px 10px;background:rgba(255,255,255,.55);border-radius:8px;cursor:pointer}
 #whyBox .whyEx i{display:block;color:var(--muted);font-style:normal;font-size:13.5px;margin-top:2px}
 #whyBox .whyOthers{margin:8px 0 0;padding:0;list-style:none}
 #whyBox .whyOthers li{margin:5px 0;color:var(--muted)}
@@ -1173,6 +1173,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .favTab{flex:1;min-height:44px;border-radius:14px;border:1.5px solid var(--line);background:var(--card,#fff);font-weight:800;font-size:15px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px}
 .favTab span{font-weight:700;font-size:13px;opacity:.8}
 .favTab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+#exerciseCard:has(#nextBtn:not(.hidden)) :is(#checkTextBtn,#checkGrammarBtn,#checkReadingBtn,#checkTranslationTextBtn,#checkWritingBtn){display:none!important}
 </style>
 </head>
 <body>
@@ -1181,7 +1182,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v52</span></h1>
+        <h1>English Trainer<span class="ver">v53</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
