@@ -9273,6 +9273,83 @@ checkOption=function(btn,correct){
   $("checkTextBtn").addEventListener("click",arm,true);
   $("answerInput").addEventListener("keydown",e=>{if(e.key==="Enter")arm()},true);
 })();
+
+/* ----- Difficulté adaptative aussi pour la grammaire : chaque question a un niveau A1→B2 ----- */
+const GRL_MODES=["reading","audioDialogues","shadowing","writingTask","conversation","grammar","wordStress","sentenceStress","irregularPast","irregularPart","irregularMix","edPron","sPron","edSpell","thirdPerson","tenses","modals","prepositions","articles","comparatives","connectors","phrasal","collocations","falseFriends","phrases","finderror","transform","questionsNeg","wordOrder","dictation"];
+const GRL_WC=t=>String(t||"").trim().split(/\s+/).filter(Boolean).length;
+const GRL_HARD=/\b(despite|whereas|nevertheless|although|unless|provided|had been|would have|should have|might have|must have|who|which|whose|whom|having|wish|supposed|managed to|used to|if)\b/i;
+function grlSent(t){const n=GRL_WC(t);let l=n<=5?0:n<=8?1:n<=11?2:3;if(GRL_HARD.test(t))l=Math.min(3,l+1);return l}
+function grlFull(x){
+  if(typeof x==="string")return x;
+  const q=x.q||x.source||x.bad||"";
+  return String(q).replace(/_+/g,x.a||"")||String(x.answer||x.target||"");
+}
+const GRL_TENSE={"present simple":0,"present simple (3e pers.)":0,"present continuous":1,"past simple":1,"futur (will)":1,"present perfect":2,"past continuous":2,"present perfect continuous":3,"past perfect":3,"modal / conditionnel":3};
+const GRL_MODAL=[[/needn|ought|have (been|to have)|should have|must have|might have|would have|needn't/i,3],[/might|may\b|would|have to|has to|had better/i,2],[/could|mustn|shouldn|don't have|doesn't have/i,1],[/can\b|can't|must|should|will|won't/i,0]];
+const GRL_CONN=[[/^(and|but|or|because|so|then|first|next|finally|also)$/i,0],[/^(however|for example|for instance|in addition|after that|before|after|when|while|as soon as|if|too|also|as well|that's why)$/i,1],[/^(although|despite|in spite of|therefore|because of|instead|on the other hand|in order to|so that|unless|since|as a result|moreover|besides)$/i,2],[/^(whereas|nevertheless|nonetheless|furthermore|consequently|provided that|whereby|thus|hence|given that|in contrast|albeit)$/i,3]];
+const GRL_PREP=[[/^(in|on|at)$/i,0],[/^(to|for|from|with|by|of|into|about|under|over|between|next to|in front of|behind|near)$/i,1],[/^(during|since|until|through|across|along|against|among|towards?|without|within)$/i,2],[/^(despite|throughout|beneath|amid|via|regarding|according to|owing to|on behalf of)$/i,3]];
+function grlRule(tab,v,d){for(const [re,l] of tab)if(re.test(String(v).trim()))return l;return d}
+const GRL_CACHE=new WeakMap();
+function grLevel(m,x){
+  if(x&&typeof x==="object"&&GRL_CACHE.has(x))return GRL_CACHE.get(x);
+  let lv=1;
+  try{
+    const full=grlFull(x),sl=grlSent(full);
+    const LV={A1:0,A2:1,B1:2,B2:3,C1:3,C2:3};
+    if(x&&typeof x==="object"&&!Array.isArray(x)&&LV[x.level]!=null)lv=LV[x.level];
+    else if(Array.isArray(x)){ /* verbes irréguliers, sons, orthographe : rang / longueur du mot */
+      if(m.indexOf("irregular")===0){const i=irregularVerbs.findIndex(v=>v[0]===x[0]);lv=i<0?2:i<30?0:i<70?1:i<110?2:3}
+      else{const w=String(x[0]);lv=w.length<=4?0:w.length<=6?1:w.length<=8?2:3}
+    }
+    else if(m==="grammar"){const t=GRL_TENSE[String(x.tense||"").toLowerCase()];lv=t==null?1:t}
+    else if(m==="wordStress"){lv=Math.min(3,Math.max(0,(x.syllables?x.syllables.length:2)-1)+(vlv(x.word)>=2?1:0))}
+    else if(m==="writingTask"){const n=(x.requirements||[]).length;lv=n<=3?1:n===4?2:3}
+    else if(m==="conversation"){lv=Math.min(3,Math.max(1,Math.round(((x.steps||[]).length||3)/2)))}
+    else if(m==="tenses"){const t=grTense(x.a);const tl=t&&GRL_TENSE[t.n]!=null?GRL_TENSE[t.n]:1;lv=Math.round(tl*.75+sl*.25)}
+    else if(m==="modals"){lv=Math.round(grlRule(GRL_MODAL,x.a,1)*.7+sl*.3)}
+    else if(m==="connectors"){lv=Math.round(grlRule(GRL_CONN,x.a,2)*.8+sl*.2)}
+    else if(m==="prepositions"){lv=Math.round(grlRule(GRL_PREP,x.a,1)*.8+sl*.2)}
+    else if(m==="articles"){lv=Math.min(2,sl)}
+    else if(m==="comparatives"){const a=String(x.a);lv=/^(more|most|less|least)\b|\bas\b|^(far|further|farther|worse|worst)/i.test(a)?(/^(more|most)\b/.test(a)?1:2):a.length>7?1:0;lv=Math.round(lv*.7+sl*.3)}
+    else if(m==="phrasal"||m==="collocations"||m==="phrases"){const w=String(x.a||"").toLowerCase();let v=vlv(w);if(m==="phrasal"&&/^(get|go|turn|take|put|look|come|give|pick|sit|stand|wake|set|switch|find|make) (up|down|on|off|out|in|back|away|over)$/.test(w))v=Math.min(v,1);lv=Math.round(v*.6+sl*.4)}
+    else if(m==="falseFriends"){lv=Math.max(1,Math.min(2,vlv(String(x.q||"").replace(/\W.*$/,""))))}
+    else if(m==="transform"){const to=String(x.label||"").split("→").pop().trim();lv=({"Present":0,"Past simple":1,"Future":1,"Present continuous":1,"Present perfect":2,"Past perfect":3})[to]??2}
+    else lv=sl;
+  }catch(e){}
+  lv=Math.max(0,Math.min(3,lv));
+  if(x&&typeof x==="object")GRL_CACHE.set(x,lv);
+  return lv;
+}
+const GRL_BANKS=new Map();
+function grlRegister(){
+  [["tenses",allTenseQuestions],["modals",allModalQuestions],["prepositions",allPrepositionQuestions],["articles",allArticleQuestions],["comparatives",allComparativeQuestions],
+   ["connectors",connectorQuestions],["phrasal",phrasalQuestions],["collocations",collocationQuestions],["falseFriends",falseFriendQuestions],["phrases",phraseQuestions],
+   ["finderror",errorQuestions],["transform",transforms],["questionsNeg",allQuestionNegativeTasks],["wordOrder",allWordOrderTasks],["dictation",allDictationSentences]]
+  .concat([["reading",readingTexts],["audioDialogues",audioDialogues],["shadowing",shadowingSentences],["writingTask",writingPrompts],["conversation",conversationScenarios],["grammar",grammarChallenges],
+   ["wordStress",wordStressBank],["sentenceStress",sentenceStressBank],["irregularPast",irregularQuiz],["edPron",edPronunciation],["sPron",sPronunciation],["edSpell",allRegularPastSpelling],["thirdPerson",allThirdPersonQuestions]])
+  .forEach(([m,a])=>{if(Array.isArray(a))GRL_BANKS.set(a,m)});
+}
+grlRegister();
+const __randGr=rand;
+rand=function(a){
+  try{
+    const m=GRL_BANKS.get(a);
+    if(m&&(m===mode||(m==="irregularPast"&&/^irregular/.test(mode||"")))&&adTarget!=null&&!(window.__focus&&window.__focus.length)){
+      const t=adTarget;
+      let pool=[];
+      for(const o of [0,-1,1,-2,2,-3,3]){pool=pool.concat(a.filter(x=>grLevel(m,x)===t+o));if(pool.length>=4)break}
+      if(pool.length<4)pool=a;
+      return __randGr(pool);
+    }
+  }catch(e){}
+  return __randGr.apply(this,arguments);
+};
+/* le niveau évolue aussi avec les réponses de grammaire */
+(function(){
+  const rr=reward,rp=penalize;
+  reward=function(item){const r=rr.apply(this,arguments);try{if(!Array.isArray(item)&&GRL_MODES.includes(mode))vocLevelBump(.12)}catch(e){}return r};
+  penalize=function(item){const r=rp.apply(this,arguments);try{if(!Array.isArray(item)&&GRL_MODES.includes(mode))vocLevelBump(-.3)}catch(e){}return r};
+})();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
