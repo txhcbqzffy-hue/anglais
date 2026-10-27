@@ -9178,18 +9178,33 @@ if(state.vocKind!=="expr"&&state.vocKind!=="words"){state.vocKind="words";try{sa
 
 /* ----- Grammaire (QCM) : quand je me trompe, explication sous les choix ----- */
 const GR_TENSE=[
- [/^(would|could|should|might) /i,"modal / conditionnel","hypothèse, politesse ou conseil — pas un fait ni une habitude"],
- [/^will |^won't /i,"futur (will)","décision ou prévision sur ce qui va arriver"],
- [/^(am|is|are) (not )?\w+ing\b/i,"present continuous","action en cours maintenant ou projet déjà organisé"],
- [/^(was|were) (not )?\w+ing\b/i,"past continuous","action en cours à un moment du passé"],
- [/^(has|have) (already |just |never |not )?been \w+ing\b/i,"present perfect continuous","action commencée dans le passé qui continue (for / since)"],
- [/^(has|have)\b/i,"present perfect","passé relié au présent (résultat, expérience, durée jusqu'à maintenant)"],
- [/^had\b/i,"past perfect","action passée antérieure à une autre action passée"],
- [/^\w+ed( \w+)?$|^(went|saw|did|made|took|came|got|ate|wrote|bought|gave|had|met|ran|sent|told|said|found|left|began|knew|thought|brought|paid|read|built|lost|sold|spoke|won)\b/i,"past simple","action terminée à un moment précis du passé"],
- [/^\w+s$/i,"present simple (3e pers.)","habitude, routine ou fait général : he / she / it + -s"],
- [/^\w+( \w+)?$/i,"present simple","habitude, routine ou fait général"]
+ [/^(would|could|should|might) /i,"modal / conditionnel","hypothèse, politesse ou conseil — pas un fait ni une habitude","I would help you if I could."],
+ [/^will |^won't /i,"futur (will)","décision ou prévision sur ce qui va arriver","I will call you tomorrow."],
+ [/^(am|is|are) (not )?\w+ing\b/i,"present continuous","action en cours maintenant ou projet déjà organisé","She is working right now."],
+ [/^(was|were) (not )?\w+ing\b/i,"past continuous","action en cours à un moment du passé","I was working when he called."],
+ [/^(has|have) (already |just |never |not )?been \w+ing\b/i,"present perfect continuous","action commencée dans le passé qui continue (for / since)","I have been working here for 3 years."],
+ [/^(has|have)\b/i,"present perfect","passé relié au présent (résultat, expérience, durée jusqu'à maintenant)","I have already finished."],
+ [/^had\b/i,"past perfect","action passée antérieure à une autre action passée","She had left before I arrived."],
+ [/^\w+ed( \w+)?$|^(went|saw|did|made|took|came|got|ate|wrote|bought|gave|had|met|ran|sent|told|said|found|left|began|knew|thought|brought|paid|read|built|lost|sold|spoke|won)\b/i,"past simple","action terminée à un moment précis du passé","I worked there last year."],
+ [/^\w+s$/i,"present simple (3e pers.)","habitude, routine ou fait général : he / she / it + -s","She works every day."],
+ [/^\w+( \w+)?$/i,"present simple","habitude, routine ou fait général","I work every day."]
 ];
-function grTense(o){const t=String(o).trim();for(const [re,n,u] of GR_TENSE)if(re.test(t))return {n,u};return null}
+const GR_MODAL=[
+ [/(don'?t|doesn'?t|do not|does not) (have|need) to|needn'?t/i,"absence d’obligation","tu peux le faire, mais ce n’est pas obligatoire","You don’t have to come, it’s optional."],
+ [/mustn'?t|must not|can'?t|cannot/i,"interdiction / impossibilité","c’est interdit (mustn’t) ou jugé impossible (can’t)","You mustn’t park here. · That can’t be true."],
+ [/\bmust\b/i,"obligation forte / déduction","règle forte ou conclusion presque certaine","You must wear a helmet. · He must be tired."],
+ [/have to|has to|\bneed to\b/i,"obligation (règle extérieure)","imposée par la situation, un règlement ou un tiers","I have to work on Saturday."],
+ [/shouldn'?t|should not|ought not/i,"conseil négatif","ce n’est pas une bonne idée","You shouldn’t eat so much sugar."],
+ [/\bshould\b|ought to/i,"conseil / recommandation","ce qui serait une bonne idée","You should see a doctor."],
+ [/\bmight\b|\bmay\b/i,"possibilité faible","peut-être, pas sûr du tout ; may sert aussi à demander poliment","It might rain later."],
+ [/\bcould\b/i,"possibilité / demande polie / capacité passée","demande polie (Could you…?) ou ce qui était possible","Could you open the window?"],
+ [/\bwould\b/i,"conditionnel / politesse","hypothèse, souhait ou demande très polie (Would you like…?)","Would you like some tea?"],
+ [/\bcan\b/i,"capacité / permission","savoir ou pouvoir faire, ou avoir le droit","I can swim. · Can I sit here?"],
+ [/\bshall\b/i,"proposition","offre ou suggestion (Shall we…?)","Shall we start?"],
+ [/\bwill\b|won'?t/i,"futur / décision","décision prise sur le moment ou prévision","I’ll take the red one."]
+];
+function grModal(o){const t=String(o).trim();for(const [re,n,u,x] of GR_MODAL)if(re.test(t))return {n,u,x};return null}
+function grTense(o){const t=String(o).trim();for(const [re,n,u,x] of GR_TENSE)if(re.test(t))return {n,u,x};return null}
 const __checkOptionGr=checkOption;
 checkOption=function(btn,correct){
   const first=!$("options").classList.contains("answered");
@@ -9199,9 +9214,11 @@ checkOption=function(btn,correct){
       const mine=(btn.textContent||"").trim(),good=String(current.answer||current.a||"").trim();
       let h=`<h4 class="whyHead"><span>Pourquoi « ${escapeHtml(correct?good:mine)} » ${correct?"est juste":"est faux"} ?</span></h4>`;
       h+=`<p><b>Indice :</b> ${escapeHtml(current.rule||current.why)}</p><ul class="whyOthers">`;
-      const tm=mode==="tenses"?grTense(mine):null,tg=mode==="tenses"?grTense(good):null;
-      if(!correct)h+=`<li class="whyRow"><span>Ta réponse : <b>${escapeHtml(mine)}</b>${tm?" = "+tm.n+" — "+tm.u+". Ça ne colle pas avec cette phrase.":""}</span></li>`;
-      if(!(correct&&!tg))h+=`<li class="whyRow"><span>${correct?"":"Bonne réponse : "}<b>${escapeHtml(good)}</b>${tg?" = "+tg.n+" — "+tg.u+".":""}</span></li></ul>`;
+      const gi=mode==="tenses"?grTense:mode==="modals"?grModal:null,tm=gi?gi(mine):null,tg=gi?gi(good):null;
+      const line=(w,t)=>`<li class="whyRow"><span><b>${escapeHtml(w)}</b>${t?" = "+t.n+" — "+t.u+(t.x?`<br><i>Ex : ${escapeHtml(t.x)}</i>`:""):""}</span></li>`;
+      if(!correct&&(tm||tg)){h+=line(mine,tm)+line(good,tg)}
+      else if(correct&&tg){h+=line(good,tg)}
+      h+=`</ul>`;
       const b=document.createElement("div");b.id="whyBox";b.innerHTML=h;
       const old=$("whyBox");if(old)old.remove();
       $("options").insertAdjacentElement("afterend",b);
