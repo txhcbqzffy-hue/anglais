@@ -9505,6 +9505,28 @@ const RESUME={};
   new MutationObserver(later).observe(card,{childList:true,subtree:true});
   document.addEventListener("click",()=>{later();setTimeout(sync,250)},true);
 })();
+
+/* balayage horizontal sur la page Vocab : Words ⇄ Expressions */
+(function(){
+  let x0=0,y0=0,t0=0,ok=false;
+  const okTarget=t=>!t.closest(".bottomNav,.themeDrop,.sheet,input,textarea,select,.dock,#exerciseCard");
+  document.addEventListener("touchstart",e=>{
+    ok=false;if(e.touches.length!==1)return;
+    try{if(currentView!=="vocab"||exOpen||sessOpen)return}catch(x){return}
+    if(!okTarget(e.target))return;
+    const t=e.touches[0];x0=t.clientX;y0=t.clientY;t0=Date.now();ok=true;
+  },{passive:true});
+  document.addEventListener("touchend",e=>{
+    if(!ok)return;ok=false;
+    const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;
+    if(Date.now()-t0>800||Math.abs(dx)<60||Math.abs(dx)<Math.abs(dy)*1.5)return;
+    const want=dx<0?"expr":"words";
+    const b=document.querySelector('.kindSeg [data-kind="'+want+'"]');
+    if(!b||b.classList.contains("on"))return;
+    b.click();
+    try{const h=b.closest(".kindSeg");const host=h&&h.parentElement;if(host&&host.animate)host.animate([{opacity:.4,transform:"translateX("+(dx<0?"24px":"-24px")+")"},{opacity:1,transform:"none"}],{duration:220,easing:"ease-out"})}catch(x){}
+  },{passive:true});
+})();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
