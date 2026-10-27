@@ -131,6 +131,7 @@ textarea{min-height:105px;resize:vertical;line-height:1.5}
 .feedback{min-height:30px;margin-top:12px;font-weight:750;line-height:1.45}
 .feedback.fbQuiet{display:none!important}
 #translationBtn{display:none!important}
+body:has(#exerciseCard.pairsMode) #info{cursor:pointer;-webkit-user-select:none;user-select:none}
 #qCounter{display:none!important}
 .topline:not(:has(#timer:not(:empty))){display:none!important}
 html.kb,html.kb body{overflow:hidden!important;overscroll-behavior:none}
@@ -9354,6 +9355,17 @@ rand=function(a){
   const rr=reward,rp=penalize;
   reward=function(item){const r=rr.apply(this,arguments);try{if(!Array.isArray(item)&&GRL_MODES.includes(mode))vocLevelBump(.12)}catch(e){}return r};
   penalize=function(item){const r=rp.apply(this,arguments);try{if(!Array.isArray(item)&&GRL_MODES.includes(mode))vocLevelBump(-.3)}catch(e){}return r};
+})();
+
+/* toucher la phrase de départ (Trouver l'erreur / Transformer) lit la bonne réponse à voix haute */
+(function(){
+  const info=$("info");if(!info)return;
+  info.addEventListener("click",()=>{
+    try{
+      if(!current||!["finderror","transform"].includes(mode)||info.classList.contains("hidden"))return;
+      const t=current.good||current.target;if(t)speak(t);
+    }catch(e){}
+  });
 })();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
