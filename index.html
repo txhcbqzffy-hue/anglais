@@ -8967,7 +8967,8 @@ let fitT=0;
 function fitLock(){
   try{
     const ae=document.activeElement;
-    const typing=ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName);
+    let typing=ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName);
+    try{if(typing&&locked&&ae.id==="answerInput"){ae.blur();typing=false}}catch(x){}
     const root=document.documentElement;
     if(typing||document.body.classList.contains("sheetOpen")&&false){root.classList.remove("noScroll");return}
     // limite : haut de la barre fixe visible la plus haute (Submit / Next / daily / nav)
