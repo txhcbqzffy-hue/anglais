@@ -6934,7 +6934,7 @@ function renderPageBar(){
 //    if(p==="vocab")host.insertBefore(avEl(),host.firstChild);
     host.querySelectorAll("[data-blk]").forEach(b=>b.onclick=()=>b.dataset.blk==="expressions"?themeOpen("expr",true):b.dataset.blk==="game"?themeOpen("games",false):openExercise(b.dataset.blk));
     host.querySelectorAll("[data-kind]").forEach(b=>b.onclick=()=>{
-      const k=b.dataset.kind;state.vocKind=state.vocKind===k?null:k;
+      const k=b.dataset.kind;state.vocKind=k;
       if(state.packFocus&&state.vocKind&&PACK_EXPR.includes(state.packFocus)!==(state.vocKind==="expr"))state.packFocus=null;
       saveState();barSig="";renderPageBar();
     });
@@ -9154,6 +9154,8 @@ document.addEventListener("click",e=>{
   reward=function(item){const r=rr.apply(this,arguments);try{if(mode==="review"&&item&&item[0])REV.retry=REV.retry.filter(k=>k!==item[0])}catch(e){}return r};
   openExercise=function(m){if(m==="review"){REV.seen=new Set();REV.retry=[]}return oe.apply(this,arguments)};
 })();
+
+if(state.vocKind!=="expr"&&state.vocKind!=="words"){state.vocKind="words";try{saveState()}catch(e){}}
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
