@@ -131,6 +131,8 @@ textarea{min-height:105px;resize:vertical;line-height:1.5}
 .feedback{min-height:30px;margin-top:12px;font-weight:750;line-height:1.45}
 .feedback.fbQuiet{display:none!important}
 #translationBtn{display:none!important}
+#qCounter{display:none!important}
+.topline:not(:has(#timer:not(:empty))){display:none!important}
 html.kb,html.kb body{overflow:hidden!important;overscroll-behavior:none}
 html.kb,html.kb body{height:100%!important;max-height:100%!important}
 html.kb body{position:fixed!important;left:0;right:0;width:100%}
@@ -9159,6 +9161,20 @@ document.addEventListener("click",e=>{
 })();
 
 if(state.vocKind!=="expr"&&state.vocKind!=="words"){state.vocKind="words";try{saveState()}catch(e){}}
+
+/* barre de progression : elle n'avance qu'après la réponse */
+(function(){
+  const rr=reward,rp=penalize;
+  function bump(){
+    try{
+      const pr=$("progress");if(!pr||typeof mode!=="string"||mode.indexOf("view:")===0)return;
+      if(roundOn())pr.style.width=(Math.min(qNumber,ROUND)/ROUND*100)+"%";
+      else pr.style.width=((((qNumber-1)%20)+1)*5)+"%";
+    }catch(e){}
+  }
+  reward=function(){const r=rr.apply(this,arguments);bump();return r};
+  penalize=function(){const r=rp.apply(this,arguments);bump();return r};
+})();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
