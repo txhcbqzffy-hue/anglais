@@ -623,7 +623,7 @@ body.sheetOpen{overflow:hidden}
 .gTile.bad{background:var(--bad-bg);border-color:var(--bad-line);color:var(--bad-text)}
 .gLetters{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
 .gLetter{min-width:46px;text-transform:lowercase;font-size:20px}
-.gLetter:disabled{opacity:.3}
+.gLetter:disabled,.gLetter.used{opacity:.3}
 .gSlots{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
 .gSlot{display:inline-flex;align-items:center;justify-content:center;width:34px;height:42px;border-bottom:3px solid var(--line);font-size:22px;font-weight:800}
 .gSlots.good .gSlot{border-color:var(--good);color:var(--good-text)}
@@ -7046,18 +7046,19 @@ function gameScramble(z,all){
   slots.onclick=e=>{
     const sl=e.target.closest(".gSlot");if(!sl||done)return;
     const i=+sl.dataset.i;if(!typed[i])return;
-    typed[i].b.disabled=false;typed.splice(i,1);draw();
+    typed[i].b.classList.remove("used");typed.splice(i,1);draw();
   };
   btns.forEach(b=>b.onclick=()=>{
-    if(done||b.disabled)return;
-    typed.push({c:b.textContent,b});b.disabled=true;draw();
+    if(done)return;
+    if(b.classList.contains("used")){const k=typed.findIndex(x=>x.b===b);if(k>=0){typed.splice(k,1);b.classList.remove("used");draw()}return}
+    typed.push({c:b.textContent,b});b.classList.add("used");draw();
     if(typed.length===word.length){
       done=true;
       if(typed.map(x=>x.c).join("")===word){slots.classList.add("good");reward(item,word);gDone("Correct : "+item[0])}
       else{slots.classList.add("bad");penalize(item,typed.map(x=>x.c).join(""));gDone("Réponse : "+item[0],"badText")}
     }
   });
-  $("gClr").onclick=()=>{if(done)return;typed.forEach(x=>x.b.disabled=false);typed=[];draw()};
+  $("gClr").onclick=()=>{if(done)return;typed.forEach(x=>x.b.classList.remove("used"));typed=[];draw()};
 }
 
 /* --- Vrai ou faux --- */
