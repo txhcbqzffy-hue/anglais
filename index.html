@@ -1342,6 +1342,11 @@ html.kb::after,html.noDock::after{display:none}
 .bottomNav button.active .ic,.bottomNav .ic{transform:none!important;transition:none!important}
 .bottomNav button:active{transform:none!important}
 .bottomNav button,.bottomNav button.active{font-size:10.5px!important;font-weight:700!important}
+
+/* appui long : pas de surbrillance iOS, le bouton Start reste lisible */
+*{-webkit-tap-highlight-color:transparent}
+.dailyBanner,.dailyBanner *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.dailyBanner button,.dailyBanner button:active,.dailyBanner button:focus,.dailyBanner button:hover{background:var(--on-accent)!important;color:var(--accent)!important;opacity:1!important;filter:none!important;outline:none}
 </style>
 </head>
 <body>
