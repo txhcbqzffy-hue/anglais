@@ -7768,9 +7768,12 @@ function lvlRender(){
   const hist=(state.lvlHist||[]).slice(-6).reverse().map(h=>`<div class="dRow"><span>${new Date(h.d+"T12:00:00").toLocaleDateString("en-US",{day:"numeric",month:"long"})}</span><b>${h.l}</b></div>`).join("");
   $("lvlTop").innerHTML=`<div class="lvlScale">${LVLS.map(l=>`<div class="lvlStep${l===lv?" cur":""}${LVLS.indexOf(l)<LVLS.indexOf(lv)?" past":""}"><b>${l}</b>${l==="C1"?"<small>objectif</small>":""}</div>`).join("")}</div>
     <div class="small" style="margin:8px 2px">Niveau estimé d’après ta précision : <b>${lv}</b>. Parcours validé : <b>${cur}</b>${p.complete?" (complet)":""}.</div>
-    ${missing.length?`<h3 class="lvlH">Il te manque pour valider ${cur}</h3><div class="mgList">${missing.map(x=>{const need=cefrPath[cur].attempts,req=cefrPath[cur].required,pct=Math.round(x.pct),triesOk=x.t>=need,accOk=pct>=req;
-      const todo=[];if(!triesOk)todo.push("do "+(need-x.t)+" more attempt"+((need-x.t)>1?"s":""));if(!accOk)todo.push("raise accuracy by "+(req-pct)+" pts");
-      return `<div class="mgRow"><div class="mgTop"><b>${escapeHtml(x.label)}</b><span class="mgTag">${todo.length?"to do":"done"}</span></div><div class="mgBar" style="--p:${Math.min(100,pct)};--g:${req}"><i></i></div><div class="mgMeta"><span class="${triesOk?"ok":""}">Attempts ${x.t}/${need}${triesOk?" ✓":""}</span><span class="${accOk?"ok":""}">Accuracy ${pct} % · goal ${req} %${accOk?" ✓":""}</span></div>${todo.length?`<div class="mgTodo">To do: ${todo.join(" · ")}</div>`:""}</div>`}).join("")}</div>`:""}
+    ${missing.length?`<h3 class="lvlH">Il te manque pour valider ${cur}</h3><div class="mgList">${missing.map(x=>{const need=cefrPath[cur].attempts,req=cefrPath[cur].required,c=x.c||0,t=x.t||0,pct=Math.round(x.pct),triesOk=t>=need,accOk=pct>=req;
+      const n1=Math.max(0,need-t),n2=Math.max(0,Math.ceil((req*t-100*c)/(100-req))),n=Math.max(n1,n2),pl=(k,a,b)=>k+" "+(k>1?b:a);
+      let todo="";
+      if(!accOk)todo=`Encore au moins ${pl(n,"bonne réponse","bonnes réponses")} d’affilée, sans erreur : tu serais à ${Math.round((c+n)/(t+n)*100)} % sur ${t+n} essais.`;
+      else if(!triesOk)todo=`Encore ${pl(n1,"essai","essais")} à faire en gardant au moins ${req} % de réussite.`;
+      return `<div class="mgRow"><div class="mgTop"><b>${escapeHtml(x.label)}</b><span class="mgTag">${todo?"À faire":"Validé"}</span></div><div class="mgBar" style="--p:${Math.min(100,pct)};--g:${req}"><i></i></div><div class="mgMeta"><span class="${triesOk?"ok":""}">Essais : ${t}/${need}${triesOk?" ✓":""}</span><span class="${accOk?"ok":""}">Réussite : ${pct} % (objectif ${req} %)${accOk?" ✓":""}</span></div><div class="mgMeta"><span>Bonnes réponses : ${c} sur ${t}</span></div>${todo?`<div class="mgTodo">${todo}</div>`:""}</div>`}).join("")}</div>`:""}
     `;
 }
 function openLevel(){const s=$("lvlSheet");lvlTrack();lvlRender();try{renderCEFR()}catch(e){}s.classList.remove("hidden");document.body.classList.add("sheetOpen");s.scrollTop=0}
@@ -8364,7 +8367,7 @@ function I18N(t){
   for(const [re,f] of I18N_RULES){const m=k.match(re);if(m){const r=f.apply(null,m);if(r!==k)return t.replace(k,r)}}
   return t;
 }
-function i18nSkip(n){const e=n.nodeType===1?n:n.parentElement;return !e||e.closest("#expWrap,#lessonPanel,#coursSheet,#tenseSheet,#themeList small,script,style")||(n.nodeType===3&&e.closest("textarea"))}
+function i18nSkip(n){const e=n.nodeType===1?n:n.parentElement;return !e||e.closest("#expWrap,#lessonPanel,#coursSheet,#tenseSheet,#lvlTop,#themeList small,script,style")||(n.nodeType===3&&e.closest("textarea"))}
 function i18nNode(n){
   if(n.nodeType===3){if(!i18nSkip(n)){let v=I18N(n.nodeValue);if(v===n.nodeValue&&n.parentElement&&n.parentElement.closest("#question,#info,#modeHelp,#feedback,#translationBox"))v=I18NF(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v}return}
   if(n.nodeType!==1||i18nSkip(n))return;
