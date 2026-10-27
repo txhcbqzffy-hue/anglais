@@ -15,7 +15,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script>
 /* thème appliqué avant le premier affichage (clair par défaut) */
-(function(){var t="light";try{var s=localStorage.getItem("et_theme");if(s==="dark"||s==="light")t=s}catch(e){}
+(function(){var t="auto";try{var s=localStorage.getItem("et_theme");if(s==="dark"||s==="light"||s==="auto")t=s}catch(e){}
+if(t==="auto"){try{t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}catch(e){t="light"}}
 document.documentElement.setAttribute("data-theme",t);
 if(t==="dark"){document.addEventListener("DOMContentLoaded",function(){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#120d09")})}})();
 </script>
@@ -1268,6 +1269,11 @@ html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:n
 .favTab span{font-weight:700;font-size:13px;opacity:.8}
 .favTab.on{background:var(--accent);border-color:var(--accent);color:#fff}
 #exerciseCard:has(#nextBtn:not(.hidden)) :is(#checkTextBtn,#checkGrammarBtn,#checkReadingBtn,#checkTranslationTextBtn,#checkWritingBtn){display:none!important}
+
+/* ----- mode sombre : éléments restés blancs ----- */
+:root[data-theme="dark"] .favTab:not(.on){background:var(--panel)!important}
+:root[data-theme="dark"] #speakBtn,:root[data-theme="dark"] .whySpeak{background:var(--panel3)!important;border-color:var(--line)!important}
+:root[data-theme="dark"] .whyEx{background:rgba(255,255,255,.06)!important;color:var(--text)!important}
 </style>
 </head>
 <body>
@@ -6129,15 +6135,20 @@ function fmtDate(d){try{return new Date(d).toLocaleDateString("en-US",{day:"nume
 function fmtClock(s){s=Math.max(0,Math.floor(s||0));const m=Math.floor(s/60),r=s%60;return m+":"+String(r).padStart(2,"0")}
 
 /* ---------- thème ---------- */
-function applyTheme(t){
+const themeMQ=window.matchMedia?matchMedia("(prefers-color-scheme: dark)"):null;
+function themePref(){try{const s=localStorage.getItem("et_theme");if(s==="dark"||s==="light"||s==="auto")return s}catch(e){}return"auto"}
+function applyTheme(pref){
+  if(pref!=="dark"&&pref!=="light"&&pref!=="auto")pref="auto";
+  try{localStorage.setItem("et_theme",pref)}catch(e){}
+  const t=pref==="auto"?(themeMQ&&themeMQ.matches?"dark":"light"):pref;
   document.documentElement.dataset.theme=t;
-  try{localStorage.setItem("et_theme",t)}catch(e){}
   const m=document.querySelector('meta[name="theme-color"]');
   if(m)m.setAttribute("content",t==="dark"?"#120d09":"#f6f1ec");
   const b=$("themeBtn");
   if(b){b.textContent=t==="dark"?"Clair":"Sombre";b.setAttribute("aria-label",t==="dark"?"Passer au thème clair":"Passer au thème sombre")}
 }
-function toggleTheme(){applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark")}
+function toggleTheme(){applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark");try{markTheme()}catch(e){}}
+if(themeMQ){const f=()=>{if(themePref()==="auto"){applyTheme("auto");try{markTheme()}catch(e){}}};themeMQ.addEventListener?themeMQ.addEventListener("change",f):themeMQ.addListener&&themeMQ.addListener(f)}
 
 /* ---------- vues ---------- */
 function stopAudioMedia(keepPodcast){
@@ -6724,7 +6735,7 @@ function initPWA(){
    INIT v28
    ===================================================================== */
 function initV28(){
-  applyTheme(document.documentElement.dataset.theme==="dark"?"dark":"light");
+  applyTheme(themePref());
   if($("themeBtn"))$("themeBtn").onclick=toggleTheme;
   document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{showView(b.dataset.view);try{history.replaceState(null,"","#"+(b.dataset.view==="home"?"":b.dataset.view))}catch(e){}}));
   initTranslate();
@@ -7296,7 +7307,7 @@ function buildSheet(){
   if(sheetBuilt)return;sheetBuilt=true;
   const sh=document.createElement("div");sh.id="settingsSheet";sh.className="sheet hidden";sh.setAttribute("role","dialog");sh.setAttribute("aria-label","Paramètres");
   sh.innerHTML=`<div class="sheetHead"><h2>Paramètres</h2><button type="button" id="sheetClose" class="ghost">Fermer</button></div>
-  <section class="secCard"><h2>Apparence</h2><div class="seg2" id="setTheme"><button type="button" data-t="light">Clair</button><button type="button" data-t="dark">Sombre</button></div></section>
+  <section class="secCard"><h2>Apparence</h2><div class="seg2" id="setTheme"><button type="button" data-t="auto">Auto</button><button type="button" data-t="light">Clair</button><button type="button" data-t="dark">Sombre</button></div><p class="small" style="margin:8px 2px 0">Auto : suit le mode clair / sombre de ton téléphone.</p></section>
   <section class="secCard"><h2>Voix et micro</h2>
     <div class="actions"><button type="button" class="ghost" id="tVoice">Tester la voix</button><button type="button" class="ghost" id="tMic">Tester le micro</button><button type="button" class="ghost" id="tSR">Reconnaissance vocale</button><button type="button" class="ghost" id="tNet">Connexion</button></div>
     <div id="tOut" class="diagOut"></div></section>
@@ -7328,7 +7339,7 @@ function buildSheet(){
     window.open(url,"_blank","noopener");
   };
 }
-function markTheme(){document.querySelectorAll("#setTheme [data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t===document.documentElement.dataset.theme))}
+function markTheme(){document.querySelectorAll("#setTheme [data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t===themePref()))}
 function renderReports(){
   const l=R(),host=$("rpList");if(!host)return;
   host.innerHTML=l.length?`<h3>Gardés ici (${l.length})</h3>`+l.slice(0,8).map(r=>`<div class="rpItem"><b>${esc(r.type)}</b> · ${esc(r.date)}<div class="small">${esc(r.txt.slice(0,160))}</div></div>`).join("")+`<div class="actions"><button type="button" class="ghost" id="rpAll">Copier tout</button><button type="button" class="ghost" id="rpClear">Vider</button></div>`:"";
@@ -9367,6 +9378,15 @@ rand=function(a){
     }catch(e){}
   });
 })();
+
+/* toucher sa propre réponse (verrouillée) la lit à voix haute, pour comparer avec la bonne */
+document.addEventListener("click",e=>{
+  try{
+    const a=e.target.closest&&e.target.closest("#answerInput");
+    if(!a||!locked||!["finderror","transform","write","dictation","review","errors","favorites","shadowing"].includes(mode))return;
+    const t=(a.value||"").trim();if(t)speak(t);
+  }catch(x){}
+},true);
 
 /* ----- Reprise : quitter un exercice (autre onglet du bas) puis revenir remet l'exercice en cours ----- */
 const RESUME={};
