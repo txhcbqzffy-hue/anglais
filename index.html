@@ -9106,7 +9106,7 @@ document.addEventListener("click",e=>{
       const t=(f.textContent||"").trim();
       const o=$("options");
       const optMode=o&&o.querySelector(".option.good")&&o.offsetParent!==null;
-      const quiet=t==="✅ Correct"||t==="Correct"||(optMode&&(/^❌ Réponse :/.test(t)||/^Faux :/.test(t)));
+      const quiet=t==="✅ Correct"||t==="Correct"||(optMode&&(/^❌\s*(Réponse|Answer)\s*:/i.test(t)||/^(Faux|Wrong|False)\s*:/i.test(t)));
       f.classList.toggle("fbQuiet",!!quiet);
     }catch(e){}
     busy=false;
