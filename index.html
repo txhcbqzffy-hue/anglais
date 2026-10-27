@@ -1312,6 +1312,17 @@ html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:n
 #whyBox.whyOk h4{color:var(--good-text)!important}
 #whyBox.whyOk .whyEx{background:rgba(var(--panel-rgb),.6)!important}
 [data-blk="expressions"]{display:none!important}
+
+/* ----- étoiles : pictogramme seul, sans fond ----- */
+:root{--star-off:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2'/%3E%3C/svg%3E");--star-on:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2'/%3E%3C/svg%3E")}
+#favBtn,.starBtn,.fStar{font-size:0!important;line-height:0;display:inline-grid;place-items:center;background:transparent!important;border:0!important;box-shadow:none!important;color:var(--muted)!important;min-width:44px;min-height:44px;padding:0}
+#favBtn.on,.starBtn.on,.fStar{color:var(--warn)!important}
+#favBtn::before,.starBtn::before,.fStar::before{content:"";display:block;width:26px;height:26px;background:currentColor;-webkit-mask:var(--star-off) center/contain no-repeat;mask:var(--star-off) center/contain no-repeat}
+#favBtn.on::before,.starBtn.on::before,.fStar::before{-webkit-mask-image:var(--star-on);mask-image:var(--star-on)}
+.fStar::before{-webkit-mask-image:var(--star-on);mask-image:var(--star-on)}
+.optFav::before{content:""!important;display:block;width:24px;height:24px;font-size:0!important;background:currentColor;color:var(--muted);-webkit-mask:var(--star-off) center/contain no-repeat;mask:var(--star-off) center/contain no-repeat}
+.optFav.on::before{color:var(--warn)!important;-webkit-mask-image:var(--star-on);mask-image:var(--star-on)}
+.optFav,.optFav:active,.fStar:active{background:transparent!important}
 </style>
 </head>
 <body>
