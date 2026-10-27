@@ -1148,8 +1148,6 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 #nextBtn.nextBad{background:linear-gradient(135deg,#f87171,#dc2626)!important;border-color:#dc2626!important;color:#fff!important;box-shadow:0 10px 26px rgba(220,38,38,.35)!important}
 html body #exerciseCard.noDock#exerciseCard.noDock#exerciseCard.noDock{padding-bottom:20px!important}
 #exerciseCard.noDock #feedback:empty{display:none}
-#edgeBack{position:fixed;left:0;top:50%;z-index:200;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:30px;line-height:1;font-weight:800;color:var(--accent-text);background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.18);opacity:0;pointer-events:none;transform:translate(-44px,-50%);transition:background .15s,color .15s,opacity .2s,transform .2s}
-#edgeBack.ready{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:none}
 #nextBtn{transition:background .3s,box-shadow .3s}
 #options .option{opacity:1}
@@ -8860,8 +8858,7 @@ document.addEventListener("click",e=>{
     }catch(e){}
     return false;
   }
-  const ind=document.createElement("div");ind.id="edgeBack";ind.setAttribute("aria-hidden","true");ind.textContent="‹";
-  document.body.appendChild(ind);
+  const ind={style:{},classList:{toggle(){},remove(){}}};
   let x0=null,y0=null,dx=0,on=false,lock=false;
   addEventListener("touchstart",e=>{
     const t=e.touches[0];
