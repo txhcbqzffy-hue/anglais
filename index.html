@@ -1146,6 +1146,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .eyeIc.off{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3Cpath d=%22M3 3l18 18%22/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3Cpath d=%22M3 3l18 18%22/%3E%3C/svg%3E")}
 #nextBtn.nextGood{background:linear-gradient(135deg,#22c55e,#15803d)!important;border-color:#15803d!important;color:#fff!important;box-shadow:0 10px 26px rgba(22,163,74,.35)!important}
 #nextBtn.nextBad{background:linear-gradient(135deg,#f87171,#dc2626)!important;border-color:#dc2626!important;color:#fff!important;box-shadow:0 10px 26px rgba(220,38,38,.35)!important}
+html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:none}
 #nextBtn{transition:background .3s,box-shadow .3s}
 #options .option{opacity:1}
 .kindSeg{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:var(--panel);border:1px solid var(--line);margin:0 0 12px;align-self:flex-start}
@@ -8780,6 +8781,46 @@ newQuestion=function(){
   adTarget=Math.max(0,Math.min(3,r<.15?f+1:r<.7?f:f-1));
   try{return __nqAd.apply(this,arguments)}finally{adTarget=null}
 };
+
+/* ----- Page fixe : on ne bloque le scroll que si tout tient à l'écran (pas de scroll inutile) ----- */
+let fitT=0;
+function fitLock(){
+  try{
+    const ae=document.activeElement;
+    const typing=ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName);
+    const root=document.documentElement;
+    if(typing||document.body.classList.contains("sheetOpen")&&false){root.classList.remove("noScroll");return}
+    // limite : haut de la barre fixe visible la plus haute (Submit / Next / daily / nav)
+    let limit=innerHeight;
+    document.querySelectorAll("#nextBtn,#checkTextBtn,#checkGrammarBtn,#checkReadingBtn,#checkTranslationTextBtn,#checkWritingBtn,.bottomNav,#dailyBanner").forEach(e=>{
+      if(!e.getClientRects().length)return;
+      if(getComputedStyle(e).position!=="fixed")return;
+      limit=Math.min(limit,e.getBoundingClientRect().top);
+    });
+    let maxB=0;
+    document.querySelectorAll("#pageBar, .view:not(.hidden)").forEach(r=>{
+      if(!r.getClientRects().length)return;
+      r.querySelectorAll("*").forEach(e=>{
+        if(!e.getClientRects().length)return;
+        if(e.closest("#nextBtn,#checkTextBtn,#checkGrammarBtn,#checkReadingBtn,#checkTranslationTextBtn,#checkWritingBtn,.sheet,#dailyBanner"))return;
+        const cs=getComputedStyle(e);
+        if(cs.position==="fixed"||cs.visibility==="hidden")return;
+        const b=e.getBoundingClientRect();
+        if(b.height<1)return;
+        // ignorer les marges réservées (éléments vides sans contenu)
+        maxB=Math.max(maxB,b.bottom+scrollY);
+      });
+    });
+    const fits=maxB>0&&maxB<=limit-2;
+    if(fits&&scrollY>0)window.scrollTo(0,0);
+    root.classList.toggle("noScroll",fits);
+  }catch(e){}
+}
+function fitSoon(){if(fitT)return;fitT=setTimeout(()=>{fitT=0;fitLock()},120)}
+new MutationObserver(fitSoon).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["class","style","hidden"]});
+addEventListener("resize",fitSoon);addEventListener("orientationchange",fitSoon);
+document.addEventListener("focusin",fitSoon);document.addEventListener("focusout",fitSoon);
+setTimeout(fitLock,300);
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
