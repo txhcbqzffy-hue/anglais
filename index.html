@@ -7008,7 +7008,7 @@ function startGame(m,all){
 /* --- Paires --- */
 function gamePairs(z,all){
   const items=gPick(all,6);
-  $("question").textContent="Relie chaque mot à sa traduction";
+  $("question").textContent="";
   current={vocab:items[0],answer:items[0][1]};
   const left=items.map((it,i)=>({t:it[0],i})),right=shuffle(items.map((it,i)=>({t:it[1],i})));
   z.innerHTML=`<div class="gPairs"><div class="gCol" id="gL">${left.map(x=>`<button type="button" class="gTile" data-i="${x.i}">${escapeHtml(x.t)}</button>`).join("")}</div><div class="gCol" id="gR">${right.map(x=>`<button type="button" class="gTile" data-i="${x.i}">${escapeHtml(x.t)}</button>`).join("")}</div></div>`;
@@ -7035,7 +7035,7 @@ function gameScramble(z,all){
   const pool=all.filter(x=>/^[A-Za-z]{4,12}$/.test(x[0]));
   const item=rand(pool.length?pool:all),word=item[0].replace(/[^A-Za-z]/g,"").toLowerCase()||item[0].toLowerCase();
   current={vocab:item,answer:item[0]};
-  $("question").innerHTML=`Remets les lettres dans l’ordre<br><b>${escapeHtml(item[1])}</b>`;
+  $("question").innerHTML=`<b>${escapeHtml(item[1])}</b>`;
   let letters=word.split("");let tries=0;
   do{letters=shuffle(word.split(""));tries++}while(letters.join("")===word&&tries<6);
   z.innerHTML=`<div class="gSlots" id="gS"></div><div class="gLetters" id="gLt">${letters.map((c,i)=>`<button type="button" class="gTile gLetter" data-k="${i}">${escapeHtml(c)}</button>`).join("")}</div><div class="actions"><button type="button" class="ghost" id="gClr">Effacer</button></div>`;
@@ -7092,7 +7092,7 @@ function gameMissing(z,all){
   const idx=[...Array(w.length).keys()].slice(1);
   const hide=new Set(shuffle(idx).slice(0,Math.max(2,Math.round(w.length*.4))));
   const shown=w.split("").map((c,i)=>hide.has(i)?"_":c).join(" ");
-  $("question").innerHTML=`Complète le mot<br><b>${escapeHtml(item[1])}</b>`;
+  $("question").innerHTML=`<b>${escapeHtml(item[1])}</b>`;
   z.innerHTML=`<div class="gMask">${escapeHtml(shown)}</div><input id="gIn" class="input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Le mot en entier"><div class="actions"><button type="button" class="primary" id="gOk">Valider</button></div>`;
   let done=false;
   const check=()=>{
@@ -7308,7 +7308,7 @@ function startDef(){
   if(others.length<3)others=others.concat(shuffle(pool.filter(x=>x.en!==it.en&&!others.includes(x))).slice(0,3-others.length));
   const v=vocab().find(x=>x[0]===it.en)||[it.en,"","custom"];
   current={vocab:v,answer:it.d,spoken:it.en};
-  $("question").innerHTML=`<b>${escapeHtml(it.en)}</b><button type="button" class="defSpeak" aria-label="Écouter"><i class="bi-audio"></i></button><br><span class="defAsk">Quelle définition correspond le mieux ?</span>`;
+  $("question").innerHTML=`<b>${escapeHtml(it.en)}</b><button type="button" class="defSpeak" aria-label="Écouter"><i class="bi-audio"></i></button>`;
   shuffle([it,...others]).forEach(o=>makeOption(o.d,o.d===it.d));
 }
 
