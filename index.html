@@ -1181,7 +1181,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v50</span></h1>
+        <h1>English Trainer<span class="ver">v51</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -4561,11 +4561,11 @@ function translationForCurrent(){
 function updateTranslationButton(){
   try{
     const text=translationForCurrent();
-    const allowed=!!text && !["reading","translationText","writingTask","conversation","levelTest","exam","pronLab","quiz","quizReverse","quizMix","phrases","favorites"].includes(mode);
+    const allowed=!!text && !["reading","translationText","writingTask","conversation","levelTest","exam","pronLab","quiz","quizReverse","quizMix","phrases","favorites","write","reverse","listening","review","errors"].includes(mode);
     $("translationWrap").classList.toggle("hidden",!allowed);
     $("translationBox").classList.add("hidden");
     $("translationBox").innerHTML="";
-    $("translationBtn").textContent="Voir la réponse / traduction";
+    $("translationBtn").textContent="Voir la réponse / traduction";$("translationBtn").classList.remove("hidden");
   }catch(err){
     console.error("Translation button error:",err);
     $("translationWrap").classList.add("hidden");
@@ -8384,6 +8384,7 @@ openExercise=function(m,k){
 
 /* ----- « Pourquoi ce mot ? » après chaque réponse du vocabulaire ----- */
 let WHY=null;
+const WHY_TEXT_MODES=["write","reverse","listening","review","errors"];
 function whyLoad(){
   if(WHY)return WHY;WHY=new Map();
   try{($("whyData").textContent||"").split("\n").forEach(l=>{const a=l.split("§");if(a.length>=4)WHY.set(a[0].toLowerCase().trim(),{note:a[1],ex:a[2],fr:a[3]})})}catch(e){}
@@ -8394,10 +8395,12 @@ function whyStar(w){const on=isFavorite(w);return `<span class="optFav${on?" on"
 function whyClear(){const b=$("whyBox");if(b)b.remove()}
 function whyShow(){
   whyClear();
-  if(!["quiz","quizReverse","quizMix"].includes(mode)||!current||!current.vocab)return;
-  const en=current.vocab[0],fr=current.vocab[1],n=whyGet(en);
+  const TXT=WHY_TEXT_MODES.includes(mode);
+  if(!(TXT||["quiz","quizReverse","quizMix"].includes(mode))||!current)return;
+  const item=current.vocab||(TXT&&typeof currentVocabItem==="function"?currentVocabItem():null);if(!item)return;
+  const en=item[0],fr=item[1],n=whyGet(en);
   const box=document.createElement("div");box.id="whyBox";
-  const others=[...$("options").children].map(x=>x.textContent).filter(t=>norm(t)!==norm(current.answer));
+  const others=TXT?[]:[...$("options").children].map(x=>x.textContent).filter(t=>norm(t)!==norm(current.answer));
   const lis=others.map(t=>{
     const e=trLookup(t);if(!e)return "";
     const w=whyGet(e.en),first=w?w.note.split(/(?<=[.!?])\s/)[0]:"";
@@ -8407,7 +8410,7 @@ function whyShow(){
     +(n?`<p>${escapeHtml(n.note)}</p><div class="whyEx" data-say="${escapeHtml(n.ex)}">${escapeHtml(n.ex)}<i>${escapeHtml(n.fr)}</i></div>`:"")
     +(lis?`<p style="margin-top:10px"><b>À ne pas confondre avec :</b></p><ul class="whyOthers">${lis}</ul>`:"");
   box.addEventListener("click",e=>{const x=e.target.closest("[data-say]");if(x){try{speak(x.dataset.say)}catch(z){}}});
-  $("options").insertAdjacentElement("afterend",box);
+  (TXT?$("feedback"):$("options")).insertAdjacentElement("afterend",box);
 }
 const __checkOptionWhy=checkOption;
 checkOption=function(){
@@ -8512,6 +8515,29 @@ expHtml=function(e){
     return box.innerHTML;
   }catch(err){console.error(err);return html}
 };
+
+/* ----- exercices à saisie : « Valider » sans réponse = révéler la réponse + pourquoi ce mot ----- */
+(function(){
+  const reveal=()=>{
+    if(locked)return;
+    locked=true;try{clearTimer()}catch(e){}
+    try{penalize(currentVocabItem())}catch(e){}
+    try{revealTranslation()}catch(e){}
+    try{$("translationWrap").classList.remove("hidden");$("translationBtn").classList.add("hidden")}catch(e){}
+    try{finishExamStep()}catch(e){}
+    try{whyShow()}catch(e){}
+  };
+  const empty=()=>WHY_TEXT_MODES.includes(mode)&&!locked&&!$("answerInput").value.trim();
+  $("checkTextBtn").addEventListener("click",e=>{
+    if(empty()){e.stopImmediatePropagation();e.preventDefault();reveal();return}
+    setTimeout(()=>{if(locked&&WHY_TEXT_MODES.includes(mode))try{whyShow()}catch(x){}},0);
+  },true);
+  $("answerInput").addEventListener("keydown",e=>{
+    if(e.key!=="Enter")return;
+    if(empty()){e.stopImmediatePropagation();e.preventDefault();reveal();return}
+    setTimeout(()=>{if(locked&&WHY_TEXT_MODES.includes(mode)&&!$("whyBox"))try{whyShow()}catch(x){}},0);
+  },true);
+})();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
