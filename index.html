@@ -19,6 +19,32 @@
 if(t==="auto"){try{t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}catch(e){t="light"}}
 document.documentElement.setAttribute("data-theme",t);
 if(t==="dark"){document.addEventListener("DOMContentLoaded",function(){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#120d09")})}})();
+/* palettes de couleur : générées à partir d'une teinte (orange = réglage d'origine, sans surcharge) */
+window.ACCENTS=[["orange","Orange",null],["rouge","Red",356],["rose","Pink",330],["violet","Purple",268],["bleu","Blue",216],["turquoise","Teal",178],["vert","Green",146]];
+window.__accent=function(name){
+  try{
+    if(!name){try{name=localStorage.getItem("et_accent")}catch(e){}}
+    var a=ACCENTS.filter(function(x){return x[0]===name})[0]||ACCENTS[0];
+    try{if(name!==undefined&&a[0]===name)localStorage.setItem("et_accent",a[0])}catch(e){}
+    var st=document.getElementById("accentStyle");
+    var dk=document.documentElement.getAttribute("data-theme")==="dark";
+    var m=document.querySelector('meta[name="theme-color"]');
+    if(a[2]==null){if(st)st.remove();if(m)m.setAttribute("content",dk?"#120d09":"#f6f1ec");return a}
+    var h=a[2];
+    function rgb(h,s,l){s/=100;l/=100;var k=function(n){return(n+h/30)%12},f=function(n){return l-s*Math.min(l,1-l)*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)))};return[Math.round(f(0)*255),Math.round(f(8)*255),Math.round(f(4)*255)]}
+    var L=(h>70&&h<200)?33:45,L2=L-9;
+    var c=function(s,l,x){return"hsl("+h+","+s+"%,"+l+"%)"};
+    var ar=rgb(h,85,L),dr=rgb(h,90,62);
+    var css=':root:root{--lime:'+c(85,L)+';--accent:'+c(85,L)+';--accent2:'+c(85,L2)+';--accent-rgb:'+ar.join(",")+';--accent-text:'+c(85,L2)+';--accent-hi:'+c(90,70)+';--accent-line:'+c(80,70)+';--on-accent:#ffffff;--bg:'+c(32,95)+';--panel2:'+c(35,97.5)+';--field:'+c(32,95)+';--deep:'+c(28,89)+';--panel3:'+c(30,92)+';--line:'+c(28,89)+'}'
+    +':root:root[data-theme="dark"]{--lime:'+c(90,62)+';--accent:'+c(90,62)+';--accent2:'+c(90,55)+';--accent-rgb:'+dr.join(",")+';--accent-text:'+c(95,76)+';--accent-hi:'+c(95,76)+';--accent-line:'+c(70,40)+';--on-accent:'+c(70,8)+';--bg:'+c(30,6.5)+';--panel:'+c(25,9.5)+';--panel2:'+c(25,8)+';--field:'+c(28,7)+';--deep:'+c(35,4)+';--panel3:'+c(22,12.5)+';--line:'+c(22,15)+'}';
+    if(!st){st=document.createElement("style");st.id="accentStyle";document.head.appendChild(st)}
+    st.textContent=css;
+    if(m)m.setAttribute("content",dk?"hsl("+h+",30%,6.5%)":"hsl("+h+",32%,95%)");
+    return a;
+  }catch(e){}
+};
+document.addEventListener("DOMContentLoaded",function(){window.__accent()});
+
 </script>
 <title>English Trainer</title>
 <style>
@@ -461,8 +487,8 @@ button.adaptiveStep:hover{border-color:var(--accent-line);background:rgba(var(--
 
 /* ===================== v28 ===================== */
 body{background:radial-gradient(circle at 92% -8%,rgba(var(--accent-rgb),var(--glow)),transparent 34%),radial-gradient(circle at -8% 30%,rgba(var(--bad-rgb),.04),transparent 34%),var(--bg)!important}
-:root{--glow:.09;--sel-bg:#1f2326;--sel-text:#fb923c}
-:root[data-theme="dark"]{--glow:.15;--sel-bg:#fb923c;--sel-text:#1a0e05}
+:root{--glow:.09;--sel-bg:#1f2326;--sel-text:var(--accent-hi,#fb923c)}
+:root[data-theme="dark"]{--glow:.15;--sel-bg:var(--accent);--sel-text:var(--on-accent)}
 .cefrHead .badge{white-space:nowrap;flex:0 0 auto;align-self:flex-start}
 .logo{border:1px solid #3a4147;background:var(--anthracite)!important;color:var(--lime)!important;position:relative;box-shadow:none!important;border-radius:5px}
 .logo::after{content:"";position:absolute;right:-3px;top:-3px;width:11px;height:11px;border-radius:50%;background:var(--red);border:2px solid var(--bg)}
@@ -585,8 +611,8 @@ button,.tab,.chip2,.vCard,.showCard{touch-action:manipulation;-webkit-tap-highli
 .planIc{font-size:22px;line-height:1;flex:none}
 .planTx{display:flex;flex-direction:column;gap:2px;min-width:0}
 .planTx small{font-size:12px;opacity:.8}
-.chip2.ghost.on{background:#1f2326!important;color:#fb923c!important;border-color:#1f2326!important}
-:root[data-theme="dark"] .chip2.ghost.on{background:#fb923c!important;color:#1a0e05!important;border-color:#fb923c!important}
+.chip2.ghost.on{background:#1f2326!important;color:var(--accent-hi,#fb923c)!important;border-color:#1f2326!important}
+:root[data-theme="dark"] .chip2.ghost.on{background:var(--accent)!important;color:var(--on-accent)!important;border-color:var(--accent)!important}
 .coin,.headTools .coin{display:none!important}
 
 /* v29 : 5 pages */
@@ -918,7 +944,7 @@ header{margin-bottom:2px!important}
 .gaugeTop{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:5px}
 .gaugeTop b{font-size:15px;color:var(--text)}.gaugeTop b small{font-size:12px;color:var(--muted);font-weight:700}
 .gaugeBar{height:12px;border-radius:10px;background:var(--line);overflow:hidden}
-.gaugeBar i{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,#fdba74,var(--accent));transition:width .5s var(--ease)}
+.gaugeBar i{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,var(--accent-hi,#fdba74),var(--accent));transition:width .5s var(--ease)}
 
 /* v36 : pastille de niveau */
 header{justify-content:space-between!important}
@@ -1031,8 +1057,8 @@ input,textarea,select{font-size:16px!important}
 body,:root[data-theme="dark"] body{background:transparent!important;background-attachment:scroll!important}
 html{background:var(--bg)!important;min-height:100%}
 html::before{content:"";position:fixed;left:0;right:0;top:0;bottom:0;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 110px);mask-image:linear-gradient(to bottom,transparent 0,#000 110px);z-index:-1;pointer-events:none;
-background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.30),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(255,170,90,.18),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(255,120,50,.14),transparent 70%)}
-:root[data-theme="dark"] html::before{background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.16),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(251,146,60,.14),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(234,88,12,.14),transparent 70%)}
+background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.30),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(var(--accent-rgb),.14),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(var(--accent-rgb),.12),transparent 70%)}
+:root[data-theme="dark"] html::before{background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.16),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(var(--accent-rgb),.14),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(var(--accent-rgb),.14),transparent 70%)}
 
 /* explications (+) */
 .expWrap{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
@@ -1275,6 +1301,13 @@ html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:n
 :root[data-theme="dark"] #speakBtn,:root[data-theme="dark"] .whySpeak{background:var(--panel3)!important;border-color:var(--line)!important}
 :root[data-theme="dark"] .whyEx{background:rgba(255,255,255,.06)!important;color:var(--text)!important}
 #setReport{display:none!important}
+.swH{margin:14px 2px 8px;font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.swatches{display:flex;flex-wrap:wrap;gap:10px}
+.swatches button{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:56px;padding:6px 4px;background:transparent!important;border:0!important;box-shadow:none!important;font-size:12px;font-weight:700;color:var(--muted)!important}
+.swatches button i{display:block;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--c2),var(--c1));box-shadow:0 0 0 2px var(--panel),0 0 0 3.5px var(--line)}
+:root[data-theme="dark"] .swatches button i{background:var(--c2)}
+.swatches button.on i{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--c1)}
+.swatches button.on{color:var(--text)!important}
 </style>
 </head>
 <body>
@@ -6145,6 +6178,7 @@ function applyTheme(pref){
   document.documentElement.dataset.theme=t;
   const m=document.querySelector('meta[name="theme-color"]');
   if(m)m.setAttribute("content",t==="dark"?"#120d09":"#f6f1ec");
+  try{window.__accent&&window.__accent(undefined)}catch(e){}
   const b=$("themeBtn");
   if(b){b.textContent=t==="dark"?"Clair":"Sombre";b.setAttribute("aria-label",t==="dark"?"Passer au thème clair":"Passer au thème sombre")}
 }
@@ -7308,7 +7342,7 @@ function buildSheet(){
   if(sheetBuilt)return;sheetBuilt=true;
   const sh=document.createElement("div");sh.id="settingsSheet";sh.className="sheet hidden";sh.setAttribute("role","dialog");sh.setAttribute("aria-label","Paramètres");
   sh.innerHTML=`<div class="sheetHead"><h2>Paramètres</h2><button type="button" id="sheetClose" class="ghost">Fermer</button></div>
-  <section class="secCard"><h2>Apparence</h2><div class="seg2" id="setTheme"><button type="button" data-t="auto">Auto</button><button type="button" data-t="light">Clair</button><button type="button" data-t="dark">Sombre</button></div><p class="small" style="margin:8px 2px 0">Auto : suit le mode clair / sombre de ton téléphone.</p></section>
+  <section class="secCard"><h2>Apparence</h2><div class="seg2" id="setTheme"><button type="button" data-t="auto">Auto</button><button type="button" data-t="light">Clair</button><button type="button" data-t="dark">Sombre</button></div><p class="small" style="margin:8px 2px 0">Auto : suit le mode clair / sombre de ton téléphone.</p><h3 class="swH">Couleur</h3><div class="swatches" id="setAccent"></div></section>
   <section class="secCard"><h2>Voix et micro</h2>
     <div class="actions"><button type="button" class="ghost" id="tVoice">Tester la voix</button><button type="button" class="ghost" id="tMic">Tester le micro</button><button type="button" class="ghost" id="tSR">Reconnaissance vocale</button><button type="button" class="ghost" id="tNet">Connexion</button></div>
     <div id="tOut" class="diagOut"></div></section>
@@ -7322,6 +7356,11 @@ function buildSheet(){
   <div id="setMoved"></div>`;
   document.body.appendChild(sh);
   $("sheetClose").onclick=closeSettings;
+  {const host=sh.querySelector("#setAccent");
+   const cur=()=>{try{return localStorage.getItem("et_accent")||"orange"}catch(e){return"orange"}};
+   const paint=()=>host.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.a===cur()));
+   host.innerHTML=ACCENTS.map(a=>{const h=a[2];const col=h==null?"#ea580c":`hsl(${h},85%,${(h>70&&h<200)?33:45}%)`;const col2=h==null?"#fb923c":`hsl(${h},90%,62%)`;return `<button type="button" data-a="${a[0]}" aria-label="${a[1]}" style="--c1:${col};--c2:${col2}"><i></i><span>${a[1]}</span></button>`}).join("");
+   host.querySelectorAll("button").forEach(b=>b.onclick=()=>{window.__accent(b.dataset.a);paint()});paint()}
   sh.querySelectorAll("#setTheme [data-t]").forEach(b=>b.onclick=()=>{applyTheme(b.dataset.t);markTheme()});
   $("tVoice").onclick=testVoice;$("tMic").onclick=testMic;$("tSR").onclick=testSR;$("tNet").onclick=testNet;
   const make=()=>{
@@ -8177,7 +8216,7 @@ const I18N_DICT={
 "Pense à la forme utilisée après have / has / had.":"Think of the form used after have / has / had.","Mets au négatif.":"Make it negative.","🟡 améliorable · 🔴 erreur importante / mauvais temps":"🟡 could be better · 🔴 major mistake / wrong tense","Tu peux réécouter avec . La ponctuation finale n’est pas obligatoire.":"You can replay with the audio button. Final punctuation is optional.","Past continuous — Décris une action en cours interrompue dans le passé.":"Past continuous — Describe an action in progress that was interrupted in the past.","Ce que tu faisais, ce que tu attendais, ce qui s’est passé":"What you were doing, what you expected, what happened","Chercher un podcast":"Search a podcast","-ED : écoute du son":"-ED: listen to the sound","-ED : écoute et écriture":"-ED: listen and write",
 "Niveau estimé d’après ta précision :":"Estimated level from your accuracy:",". Parcours validé :":". Path completed:","à faire":"to do","Articles de base":"Basic articles","Écoute simple":"Simple listening","Questions simples":"Simple questions","Vocabulaire courant":"Everyday vocabulary","Prononciation intelligible":"Intelligible pronunciation","Évolution":"Progress over time",
 "Comprendre l’essentiel d’un anglais standard clair et produire un discours simple et cohérent sur des sujets familiers.":"Understand the main points of clear standard English and produce simple, coherent speech on familiar topics.",
-"Clair":"Light","Sombre":"Dark","Connexion":"Connection","Apparence":"Appearance","Reconnaissance vocale":"Speech recognition","Sauvegarde & export":"Backup & export","Aucun mot pour l’instant.":"No words yet.","Garder ici":"Keep here","Copier":"Copy",
+"Clair":"Light","Sombre":"Dark","Couleur":"Colour","Auto : suit le mode clair / sombre de ton téléphone.":"Auto: follows your phone's light / dark mode.","Connexion":"Connection","Apparence":"Appearance","Reconnaissance vocale":"Speech recognition","Sauvegarde & export":"Backup & export","Aucun mot pour l’instant.":"No words yet.","Garder ici":"Keep here","Copier":"Copy",
 "English at Work : phrases de réunion":"English at Work: meeting phrases","Meetings · Office English, épisode 2":"Meetings · Office English, episode 2","Voix en-US non trouvée":"en-US voice not found",
 "objectif":"goal","Parcours CECR A1 → B2":"CEFR path A1 → B2","Accueil":"Home","Vocab.":"Vocab","Audio":"Audio","Garder ici":"Keep here","Choix des temps":"Choosing tenses","Grammaire avancée":"Advanced grammar"
 };
