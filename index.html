@@ -1328,6 +1328,11 @@ html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:n
 :is(body.sessionOn,body:not(.sessionOn)) #exerciseCard #nextBtn.nextGood:not(.hidden):not(.zz){box-shadow:0 8px 20px -8px rgba(22,163,74,.45)!important}
 :is(body.sessionOn,body:not(.sessionOn)) #exerciseCard #nextBtn.nextBad:not(.hidden):not(.zz){box-shadow:0 8px 20px -8px rgba(220,38,38,.45)!important}
 :root[data-theme="dark"] .favTab.on,:root[data-theme="dark"] .tab.active{color:var(--on-accent)!important}
+
+/* ----- barre du bas : effet verre (flou + reflets) ----- */
+.bottomNav{background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,.38))!important;-webkit-backdrop-filter:blur(28px) saturate(190%)!important;backdrop-filter:blur(28px) saturate(190%)!important;border:1px solid rgba(255,255,255,.6)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 0 rgba(255,255,255,.15),0 16px 38px -14px rgba(30,20,10,.35)!important;border-radius:26px!important}
+:root[data-theme="dark"] .bottomNav{background:linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.05))!important;border:1px solid rgba(255,255,255,.16)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.04),0 16px 38px -14px rgba(0,0,0,.7)!important}
+.bottomNav button.active{border-radius:20px!important;background:linear-gradient(160deg,rgba(var(--accent-rgb),.95),rgba(var(--accent-rgb),.72))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(0,0,0,.12),0 8px 18px -8px rgba(var(--accent-rgb),.7)!important}
 </style>
 </head>
 <body>
