@@ -1143,6 +1143,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .fRow.hide:not(.peek) .fEn span{filter:blur(7px);-webkit-user-select:none;user-select:none}
 #modeHelp,.modeHelp{display:none!important}
 
+#question,#ctxHint{-webkit-tap-highlight-color:transparent}
 #exerciseCard:has(#whyBox) #ctxHint{display:none}
 #ctxHint{font-size:13px;color:var(--muted,#8a7f76);font-style:italic;margin:-6px 0 14px;line-height:1.4}
 #exerciseCard:has(#whyBox) #translationWrap{display:none!important}
@@ -8592,6 +8593,20 @@ function kbLang(){
 }
 const __nqKb=newQuestion;
 newQuestion=function(){const r=__nqKb.apply(this,arguments);setTimeout(kbLang,0);return r};
+
+/* ----- Toucher le mot (ou la phrase d'exemple) anglais en haut le lit à voix haute ----- */
+document.addEventListener("click",e=>{
+  try{
+    if(!["review","errors","write","listening"].includes(mode)||!current)return;
+    if(e.target.closest("#favBtn,.optFav,button"))return;
+    const q=e.target.closest("#question"),h=e.target.closest("#ctxHint");
+    if(!q&&!h)return;
+    const item=typeof currentVocabItem==="function"?currentVocabItem():null;if(!item)return;
+    if(q){let raw=q.textContent.trim();const mq=raw.match(/[“"«]\s*(.+?)\s*[”"»]/);if(mq)raw=mq[1];
+      if(norm(raw)===norm(item[0]))speak(item[0])}
+    else speak(h.textContent);
+  }catch(x){}
+});
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
