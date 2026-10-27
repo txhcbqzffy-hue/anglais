@@ -1030,9 +1030,9 @@ input,textarea,select{font-size:16px!important}
 /* fond : calque fixe plein écran (fiable sur iOS), dégradé doux */
 body,:root[data-theme="dark"] body{background:transparent!important;background-attachment:scroll!important}
 html{background:var(--bg)!important;min-height:100%}
-html::before{content:"";position:fixed;left:0;right:0;top:0;bottom:0;z-index:-1;pointer-events:none;
-background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.30),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(255,170,90,.18),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(255,120,50,.14),transparent 70%)}
-:root[data-theme="dark"] html::before{background:radial-gradient(70% 45% at 100% 0%,rgba(var(--accent-rgb),.16),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(251,146,60,.14),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(234,88,12,.14),transparent 70%)}
+html::before{content:"";position:fixed;left:0;right:0;top:-160px;bottom:-60px;z-index:-1;pointer-events:none;
+background:radial-gradient(70% 45% at 100% 160px,rgba(var(--accent-rgb),.30),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(255,170,90,.18),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(255,120,50,.14),transparent 70%)}
+:root[data-theme="dark"] html::before{background:radial-gradient(70% 45% at 100% 160px,rgba(var(--accent-rgb),.16),transparent 70%),radial-gradient(65% 45% at 0% 45%,rgba(251,146,60,.14),transparent 70%),radial-gradient(75% 40% at 85% 100%,rgba(234,88,12,.14),transparent 70%)}
 
 /* explications (+) */
 .expWrap{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
