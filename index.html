@@ -1360,6 +1360,17 @@ button:active:not(:disabled),button:active,.option:active,.blk:active,.cItem:act
 html:has(body.sessionOn)::after,html:has(body.sheetOpen)::after{display:none!important}
 html:has(body.sessionOn)::after,html:has(.sheet:not(.hidden))::after{display:none}
 :is(body.sessionOn,body:not(.sessionOn)) #exerciseCard :is(#checkTextBtn,#checkGrammarBtn,#checkReadingBtn,#checkTranslationTextBtn,#recordBtn,#pronRecordBtn,#checkWritingBtn,#gOk):not(.hidden):not(.zz){box-shadow:none!important}
+
+/* écran de fin de série */
+#exerciseCard:has(#roundRes) :is(#whyBox,.expWrap,#feedback){display:none!important}
+.rrScore{text-align:center;margin:6px 0 4px}
+.rrRing{--c:var(--accent);width:150px;height:150px;border-radius:50%;margin:14px auto 10px;display:grid;place-items:center;position:relative;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--panel3) 0)}
+.rrScore.hi .rrRing{--c:var(--good)}.rrScore.lo .rrRing{--c:#a63246}
+.rrRing::before{content:"";position:absolute;inset:12px;border-radius:50%;background:var(--panel)}
+.rrRing b{position:relative;font-size:46px;font-weight:800;letter-spacing:-.02em;line-height:1;color:var(--text)}
+.rrRing b small{font-size:22px;font-weight:700;color:var(--muted);margin-left:2px}
+.rrPct{font-size:15px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.roundRes button,.roundRes button.primary{box-shadow:none!important}
 </style>
 </head>
 <body>
@@ -8150,7 +8161,7 @@ const __rdRew=reward;
 reward=function(){if(roundOn())roundC++;return __rdRew.apply(this,arguments)};
 const __rdNQ=newQuestion;
 newQuestion=function(){
-  const r=$("roundRes");if(r)r.remove();
+  const r=$("roundRes");if(r)r.remove();{const q=$("rrScore");if(q)q.remove()}
   if(window.__rrVis){/* après « Rejouer » : on rend à nouveau visible ce que l'écran de résultat avait masqué */
     window.__rrVis.forEach(id=>{const e=$(id);if(e)e.classList.remove("hidden")});window.__rrVis=null;
     $("speakBtn").style.visibility="";$("favBtn").style.visibility="";
@@ -8171,12 +8182,15 @@ function roundResult(){
   const c=roundC,p=Math.round(c/ROUND*100);
   $("progress").style.width="100%";$("qCounter").textContent="Terminé";
   $("question").textContent="Série terminée";
-  $("info").textContent=`Résultat : ${c}/${ROUND} (${p} %). ${p>=80?"Très bien, continue comme ça.":p>=50?"Bon travail, les erreurs reviendront en révision.":"Relis les explications (+) puis refais une série."}`;
-  $("info").classList.remove("hidden");
+  $("info").textContent="";$("info").classList.add("hidden");
+  {const old=$("rrScore");if(old)old.remove();
+   const sc=document.createElement("div");sc.id="rrScore";sc.className="rrScore "+(p>=80?"hi":p>=50?"mid":"lo");
+   sc.innerHTML=`<div class="rrRing" style="--p:${p}"><b>${c}<small>/${ROUND}</small></b></div><div class="rrPct">${p} %</div>`;
+   $("info").after(sc);}
   $("speakBtn").style.visibility="hidden";$("favBtn").style.visibility="hidden";
   const d=document.createElement("div");d.id="roundRes";d.className="roundRes";
   d.innerHTML=`<button type="button" class="primary" id="rrAgain">Rejouer</button><button type="button" class="ghost" id="rrBack">Retour</button>`;
-  $("info").after(d);
+  ($("rrScore")||$("info")).after(d);
   $("rrAgain").onclick=()=>{openExercise(mode)};
   $("rrBack").onclick=()=>{const b=$("pbBack");if(b)b.click();else showView("home")};
   try{state.resume=null;saveState()}catch(e){}
