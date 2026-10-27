@@ -8578,6 +8578,20 @@ function ctxHint(){
 }
 const __nqCtx=newQuestion;
 newQuestion=function(){const r=__nqCtx.apply(this,arguments);setTimeout(ctxHint,0);return r};
+
+/* ----- Clavier : langue de saisie selon la réponse attendue (meilleur effort sur iOS) ----- */
+function kbLang(){
+  try{
+    const i=$("answerInput");if(!i)return;
+    const en=/english|anglais/i.test(i.placeholder||"");
+    i.setAttribute("lang",en?"en-US":"fr-FR");
+    i.setAttribute("spellcheck",en?"true":"false");
+    i.setAttribute("autocorrect",en?"on":"off");
+    i.setAttribute("autocapitalize",en?"sentences":"off");
+  }catch(e){}
+}
+const __nqKb=newQuestion;
+newQuestion=function(){const r=__nqKb.apply(this,arguments);setTimeout(kbLang,0);return r};
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
