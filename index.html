@@ -1375,6 +1375,18 @@ html:has(body.sessionOn)::after,html:has(.sheet:not(.hidden))::after{display:non
 html.kbUp :is(body.sessionOn,body:not(.sessionOn)) #exerciseCard :is(#checkTextBtn,#checkGrammarBtn,#checkReadingBtn,#checkTranslationTextBtn,#checkWritingBtn,#nextBtn,#recordBtn,#gOk):not(.hidden),
 html.kbUp #checkTextBtn:not(.hidden),html.kbUp #nextBtn:not(.hidden){bottom:calc(var(--kbH,0px) + 62px)!important;z-index:200!important}
 html.kbUp .bottomNav,html.kbUp .dailyBanner,html.kbUp::after{display:none!important}
+
+.mgList{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.mgRow{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.mgTop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mgTop b{font-size:15px}
+.mgTag{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.mgBar{position:relative;height:7px;border-radius:4px;background:var(--panel3);margin:10px 0 8px}
+.mgBar i{display:block;height:100%;width:calc(var(--p)*1%);border-radius:4px;background:var(--accent)}
+.mgBar::after{content:"";position:absolute;top:-3px;bottom:-3px;left:calc(var(--g)*1%);width:2px;border-radius:1px;background:var(--text);opacity:.55}
+.mgMeta{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--muted);font-weight:600}
+.mgMeta .ok{color:var(--good-text)}
+.mgTodo{margin-top:6px;font-size:12.5px;color:var(--text-soft)}
 </style>
 </head>
 <body>
@@ -7756,8 +7768,10 @@ function lvlRender(){
   const hist=(state.lvlHist||[]).slice(-6).reverse().map(h=>`<div class="dRow"><span>${new Date(h.d+"T12:00:00").toLocaleDateString("en-US",{day:"numeric",month:"long"})}</span><b>${h.l}</b></div>`).join("");
   $("lvlTop").innerHTML=`<div class="lvlScale">${LVLS.map(l=>`<div class="lvlStep${l===lv?" cur":""}${LVLS.indexOf(l)<LVLS.indexOf(lv)?" past":""}"><b>${l}</b>${l==="C1"?"<small>objectif</small>":""}</div>`).join("")}</div>
     <div class="small" style="margin:8px 2px">Niveau estimé d’après ta précision : <b>${lv}</b>. Parcours validé : <b>${cur}</b>${p.complete?" (complet)":""}.</div>
-    ${missing.length?`<h3 class="lvlH">Il te manque pour valider ${cur}</h3><div class="dRows">${missing.map(x=>`<div class="dRow"><span>${escapeHtml(x.label)}</span><b>${x.t}/${cefrPath[cur].attempts} tries · ${Math.round(x.pct)}/${cefrPath[cur].required} %</b></div>`).join("")}</div>`:""}
-    ${hist?`<h3 class="lvlH">Évolution</h3><div class="dRows">${hist}</div>`:""}`;
+    ${missing.length?`<h3 class="lvlH">Il te manque pour valider ${cur}</h3><div class="mgList">${missing.map(x=>{const need=cefrPath[cur].attempts,req=cefrPath[cur].required,pct=Math.round(x.pct),triesOk=x.t>=need,accOk=pct>=req;
+      const todo=[];if(!triesOk)todo.push("do "+(need-x.t)+" more attempt"+((need-x.t)>1?"s":""));if(!accOk)todo.push("raise accuracy by "+(req-pct)+" pts");
+      return `<div class="mgRow"><div class="mgTop"><b>${escapeHtml(x.label)}</b><span class="mgTag">${todo.length?"to do":"done"}</span></div><div class="mgBar" style="--p:${Math.min(100,pct)};--g:${req}"><i></i></div><div class="mgMeta"><span class="${triesOk?"ok":""}">Attempts ${x.t}/${need}${triesOk?" ✓":""}</span><span class="${accOk?"ok":""}">Accuracy ${pct} % · goal ${req} %${accOk?" ✓":""}</span></div>${todo.length?`<div class="mgTodo">To do: ${todo.join(" · ")}</div>`:""}</div>`}).join("")}</div>`:""}
+    `;
 }
 function openLevel(){const s=$("lvlSheet");lvlTrack();lvlRender();try{renderCEFR()}catch(e){}s.classList.remove("hidden");document.body.classList.add("sheetOpen");s.scrollTop=0}
 function closeLevel(){const s=$("lvlSheet");if(s)s.classList.add("hidden");document.body.classList.remove("sheetOpen")}
