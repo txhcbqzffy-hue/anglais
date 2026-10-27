@@ -3936,16 +3936,16 @@ const audioDialogues = [
 ];
 
 const cefrPath = {
- A1:{title:"A1",desc:"Comprendre et produire des échanges très simples sur soi, les besoins courants et les routines.",required:60,attempts:4,competencies:[
+ A1:{title:"A1",desc:"Cadre européen (CECRL) : comprendre et utiliser des expressions familières et quotidiennes et des énoncés très simples ; se présenter et poser des questions simples sur des détails personnels.",required:60,attempts:4,competencies:[
   ["Questions simples","questionsNeg"],["Present simple","thirdPerson"],["Articles de base","articles"],["Vocabulaire courant","quiz"],["Écoute simple","listening"],["Prononciation intelligible","pronunciation"]
  ]},
- A2:{title:"A2",desc:"Gérer des tâches habituelles, parler du passé et comprendre des échanges courts sur des sujets familiers.",required:65,attempts:5,competencies:[
+ A2:{title:"A2",desc:"Cadre européen (CECRL) : comprendre des phrases isolées et des expressions fréquentes sur des domaines immédiats (famille, achats, travail) ; communiquer lors de tâches simples et habituelles ; décrire en termes simples son environnement.",required:65,attempts:5,competencies:[
   ["Past simple","tenses"],["Verbes irréguliers","irregularMix"],["Prépositions","prepositions"],["Comparatifs","comparatives"],["Dialogues familiers","audioDialogues"],["Ordre des mots","wordOrder"]
  ]},
- B1:{title:"B1",desc:"Comprendre l’essentiel d’un anglais standard clair et produire un discours simple et cohérent sur des sujets familiers.",required:70,attempts:6,competencies:[
+ B1:{title:"B1",desc:"Cadre européen (CECRL) : comprendre les points essentiels d’un langage clair et standard ; se débrouiller en voyage ; produire un discours simple et cohérent sur des sujets familiers ; raconter un événement et exposer brièvement des raisons.",required:70,attempts:6,competencies:[
   ["Choix des temps","tenses"],["Connecteurs","connectors"],["Phrasal verbs","phrasal"],["Collocations","collocations"],["Dictée de phrases","dictation"],["Mini-rédaction","writingTask"],["Conversation","conversation"]
  ]},
- B2:{title:"B2",desc:"Comprendre des contenus plus complexes, argumenter et interagir avec davantage d’aisance et de précision.",required:75,attempts:7,competencies:[
+ B2:{title:"B2",desc:"Cadre européen (CECRL) : comprendre le contenu essentiel de textes complexes, concrets ou abstraits ; interagir avec assez de spontanéité et d’aisance avec un locuteur natif ; s’exprimer de façon claire et détaillée sur une grande gamme de sujets.",required:75,attempts:7,competencies:[
   ["Grammaire avancée","grammar"],["Connecteurs nuancés","connectors"],["Rédaction structurée","writingTask"],["Dialogues complexes","audioDialogues"],["Stress & rythme","sentenceStress"],["Sons ciblés","pronLab"],["Conversation professionnelle","conversation"]
  ]}
 };
@@ -4525,6 +4525,7 @@ function cefrUnlocked(level){
   if(idx<=0)return true;
   return cefrLevelProgress(levels[idx-1]).complete;
 }
+function officialLevel(){let r="";for(const l of ["A1","A2","B1","B2"]){if(cefrLevelProgress(l).complete)r=l;else break}return r}
 function currentCEFR(){
   const levels=["A1","A2","B1","B2"];
   let current="A1";
@@ -7757,17 +7758,17 @@ function initJournal(){
 /* ----- niveau estimé : pastille en haut, détail dans une fenêtre ----- */
 const LVLS=["A1","A2","B1","B2","C1"];
 function lvlTrack(){
-  const lv=estimatedLevel();
+  const lv=officialLevel()||"A0";
   if(!Array.isArray(state.lvlHist))state.lvlHist=[];
   const last=state.lvlHist[state.lvlHist.length-1];
   if(!last||last.l!==lv){state.lvlHist.push({d:JD(new Date()),l:lv});if(state.lvlHist.length>30)state.lvlHist.shift();saveState()}
-  const b=$("lvlBtn");if(b)b.innerHTML=`<small>Niveau</small><b>${lv}</b>`;
+  const b=$("lvlBtn");if(b)b.innerHTML=`<small>Niveau</small><b>${lv==="A0"?"–":lv}</b>`;
 }
 function lvlRender(){
-  const lv=estimatedLevel(),cur=currentCEFR(),p=cefrLevelProgress(cur),missing=p.rows.filter(x=>!x.validated);
+  const lv=officialLevel(),NX={"":"A1",A1:"A2",A2:"B1",B1:"B2",B2:"C1"},cur=NX[lv],hasData=!!cefrPath[cur],p=hasData?cefrLevelProgress(cur):null,missing=p?p.rows.filter(x=>!x.validated):[];
   const hist=(state.lvlHist||[]).slice(-6).reverse().map(h=>`<div class="dRow"><span>${new Date(h.d+"T12:00:00").toLocaleDateString("en-US",{day:"numeric",month:"long"})}</span><b>${h.l}</b></div>`).join("");
   $("lvlTop").innerHTML=`<div class="lvlScale">${LVLS.map(l=>`<div class="lvlStep${l===lv?" cur":""}${LVLS.indexOf(l)<LVLS.indexOf(lv)?" past":""}"><b>${l}</b>${l==="C1"?"<small>objectif</small>":""}</div>`).join("")}</div>
-    <div class="small" style="margin:8px 2px">Niveau estimé d’après ta précision : <b>${lv}</b>. Parcours validé : <b>${cur}</b>${p.complete?" (complet)":""}.</div>
+    <div class="small" style="margin:8px 2px">Niveau validé : <b>${lv||"aucun pour l’instant"}</b>. Un niveau est validé quand toutes ses compétences atteignent le nombre d’essais et le taux de réussite requis.${hasData?` Objectif en cours : <b>${cur}</b> (${p.validated}/${p.total} compétences validées).`:" Tu as validé tous les niveaux disponibles (A1 à B2)."}</div>${hasData?`<div class="small" style="margin:6px 2px">${cefrPath[cur].desc}</div>`:""}
     ${missing.length?`<h3 class="lvlH">Il te manque pour valider ${cur}</h3><div class="mgList">${missing.map(x=>{const need=cefrPath[cur].attempts,req=cefrPath[cur].required,c=x.c||0,t=x.t||0,pct=Math.round(x.pct),triesOk=t>=need,accOk=pct>=req;
       const n1=Math.max(0,need-t),n2=Math.max(0,Math.ceil((req*t-100*c)/(100-req))),n=Math.max(n1,n2),pl=(k,a,b)=>k+" "+(k>1?b:a);
       let todo="";
