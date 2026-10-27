@@ -131,6 +131,7 @@ textarea{min-height:105px;resize:vertical;line-height:1.5}
 .feedback{min-height:30px;margin-top:12px;font-weight:750;line-height:1.45}
 .feedback.fbQuiet{display:none!important}
 html.kb,html.kb body{overflow:hidden!important;overscroll-behavior:none}
+html.kb,html.kb body{height:100%!important;max-height:100%!important}
 html.kb body{position:fixed!important;left:0;right:0;width:100%}
 .goodText{color:var(--good)} .badText{color:var(--bad)} .warnText{color:var(--warn)}
 .hidden{display:none!important}
@@ -9089,25 +9090,18 @@ document.addEventListener("click",e=>{
 /* clavier : fond figé (aucun défilement / décalage de la page quand un champ prend le focus) */
 (function(){
   const de=document.documentElement;let y=0;
-  const vv=window.visualViewport;
-  function cmp(){ /* annule le décalage que iOS applique au viewport visuel quand le clavier s'ouvre */
-    if(!vv)return;
-    const on=de.classList.contains("kb");
-    document.body.style.transform=on&&vv.offsetTop>0?"translate3d(0,"+vv.offsetTop+"px,0)":"";
-  }
-  if(vv){vv.addEventListener("scroll",cmp);vv.addEventListener("resize",cmp)}
   const isTxt=t=>t&&t.matches&&t.matches("input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea");
   document.addEventListener("focusin",e=>{
     if(!isTxt(e.target)||de.classList.contains("kb"))return;
     y=window.scrollY||0;
-    document.body.style.top=(-y)+"px";de.classList.add("kb");cmp();[0,80,200,400,700].forEach(t=>setTimeout(cmp,t));
+    document.body.style.top=(-y)+"px";de.classList.add("kb");
   });
   document.addEventListener("focusout",e=>{
     if(!isTxt(e.target))return;
     setTimeout(()=>{
       if(isTxt(document.activeElement))return;
       if(!de.classList.contains("kb"))return;
-      de.classList.remove("kb");document.body.style.top="";document.body.style.transform="";
+      de.classList.remove("kb");document.body.style.top="";
       const prev=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,y);de.style.scrollBehavior=prev;
     },60);
   });
