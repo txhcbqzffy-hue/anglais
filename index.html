@@ -690,8 +690,7 @@ select{appearance:none;-webkit-appearance:none;padding-right:42px!important;back
 /* réponses */
 .progress{height:8px!important;border-radius:10px!important;background:var(--panel3)!important}
 .progress i{border-radius:10px;transition:width .5s var(--ease)!important;background:linear-gradient(90deg,var(--accent),var(--accent2))!important}
-.option{border-radius:8px!important;padding:16px 16px!important;border:1.5px solid var(--line)!important;background:var(--panel)!important;font-weight:600;transition:transform .18s var(--ease),border-color .2s,background .25s,box-shadow .2s;animation:rise .4s var(--ease) both}
-.option:nth-child(2){animation-delay:.05s}.option:nth-child(3){animation-delay:.1s}.option:nth-child(4){animation-delay:.15s}
+.option{border-radius:8px!important;padding:16px 16px!important;border:1.5px solid var(--line)!important;background:var(--panel)!important;font-weight:600;transition:transform .18s var(--ease),border-color .2s,background .25s,box-shadow .2s;animation:none}
 .option:hover:not(:disabled){border-color:var(--accent-line)!important;box-shadow:0 6px 18px -10px rgba(var(--accent-rgb),.9)}
 .option.good{border-color:var(--good)!important;background:var(--good-bg)!important;color:var(--good-text)!important;animation:pop .45s var(--ease)}
 .option.bad{border-color:var(--bad)!important;background:var(--bad-bg)!important;color:var(--bad-text)!important;animation:shake .45s}
@@ -1148,6 +1147,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 #nextBtn.nextGood{background:linear-gradient(135deg,#22c55e,#15803d)!important;border-color:#15803d!important;color:#fff!important;box-shadow:0 10px 26px rgba(22,163,74,.35)!important}
 #nextBtn.nextBad{background:linear-gradient(135deg,#f87171,#dc2626)!important;border-color:#dc2626!important;color:#fff!important;box-shadow:0 10px 26px rgba(220,38,38,.35)!important}
 #nextBtn{transition:background .3s,box-shadow .3s}
+#options .option{opacity:1}
 .kindSeg{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:var(--panel);border:1px solid var(--line);margin:0 0 12px;align-self:flex-start}
 .kindSeg button{min-height:36px;padding:6px 16px;border-radius:10px;border:0;background:transparent;color:var(--text);font-weight:800;font-size:14px;transition:background .25s,color .25s}
 .kindSeg button.on{background:var(--accent);color:var(--on-accent)}
@@ -1155,6 +1155,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .themeSel .chev{flex:none;width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin:-4px 4px 0 0;opacity:.7}
 .blkGrid3 .blk[data-blk="expressions"]{grid-column:1/-1;flex-direction:row;justify-content:center;gap:12px;padding:12px}
 .themeBack{position:fixed;inset:0;z-index:119;background:rgba(24,14,6,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .4s ease;touch-action:none}
+.themeBack:not(.open){-webkit-backdrop-filter:none;backdrop-filter:none;visibility:hidden;transition:opacity .4s ease,visibility 0s linear .4s}
 .themeBack.open{opacity:1;pointer-events:auto}
 .themeDrop{position:fixed;left:0;right:0;top:0;z-index:120;max-height:84vh;max-height:84dvh;display:flex;flex-direction:column;background:var(--bg);border-radius:0 0 28px 28px;box-shadow:0 28px 70px rgba(0,0,0,.32);padding-top:max(12px,env(safe-area-inset-top));transform:translateY(-104%);visibility:hidden;transition:transform .55s cubic-bezier(.22,1,.36,1),visibility 0s linear .55s}
 .themeDrop.open{transform:none;visibility:visible;transition:transform .55s cubic-bezier(.22,1,.36,1),visibility 0s}
