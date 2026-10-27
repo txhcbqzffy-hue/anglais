@@ -9367,6 +9367,42 @@ rand=function(a){
     }catch(e){}
   });
 })();
+
+/* ----- Reprise : quitter un exercice (autre onglet du bas) puis revenir remet l'exercice en cours ----- */
+const RESUME={};
+(function(){
+  const sv=showView;
+  function resume(s,v){
+    try{
+      if(sessOpen)return;
+      if(mode===s.mode&&$("exerciseCard")&&$("exerciseCard").offsetParent===null){
+        if(v==="vocab"||v==="gram"){exOpen=true;barSig="";applyPageVisibility();return}
+      }
+      if(mode===s.mode&&$("exerciseCard")&&$("exerciseCard").offsetParent!==null)return;
+      openExercise(s.mode);
+      qNumber=s.qNumber;roundC=s.roundC||0;
+      const pr=$("progress");if(pr&&roundOn())pr.style.width=(Math.min(Math.max(0,(s.locked?s.qNumber:s.qNumber-1)),ROUND)/ROUND*100)+"%";
+    }catch(e){console.error(e)}
+  }
+  showView=function(v,silent){
+    const prev=currentView;let save=null;
+    try{
+      if(!silent&&pagesReady&&!sessOpen&&prev&&v!==prev&&typeof mode==="string"&&mode.indexOf("view:")!==0){
+        const card=$("exerciseCard");
+        if(card&&card.offsetParent!==null&&!$("roundRes")&&current)save={mode,qNumber,roundC,locked};
+      }
+    }catch(e){}
+    const r=sv.apply(this,arguments);
+    try{
+      const nv=currentView;
+      if(save)RESUME[prev]=save;
+      if(!silent&&prev!==nv&&RESUME[nv]){const s=RESUME[nv];delete RESUME[nv];setTimeout(()=>resume(s,nv),0)}
+    }catch(e){}
+    return r;
+  };
+  /* retour (←) ou fin de série : on oublie la reprise de cette page */
+  document.addEventListener("click",e=>{if(e.target.closest("#pbBack,#rrBack,#rrAgain"))try{delete RESUME[currentView]}catch(x){}},true);
+})();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
