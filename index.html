@@ -6995,7 +6995,8 @@ function renderPageBar(){
       h+=`<div class="blkGrid3">${GRAM_BLOCKS.map(([m,l,ic])=>`<button type="button" class="blk" data-blk="${m}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${l}</b></button>`).join("")}</div>`;
     }
     if(p==="vocab"){
-      const cnt={review:getDueItems().length,errors:Object.values(state.wrong||{}).filter(x=>x>0).length,favorites:(state.favorites||[]).length};
+      const ks=new Set((()=>{try{return vocab().map(x=>x[0])}catch(e){return[]}})());const inK=k=>!ks.size||ks.has(k);
+      const cnt={review:getDueItems().filter(inK).length,errors:Object.entries(state.wrong||{}).filter(([k,x])=>x>0&&inK(k)).length,favorites:(state.favorites||[]).filter(inK).length};
       h+=`<div class="blkGrid3">${VOC_BLOCKS.map(([m,l,ic])=>`<button type="button" class="blk" data-blk="${m}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${l}</b>${cnt[m]?`<em>${cnt[m]}</em>`:""}</button>`).join("")}</div>`;
     }
     h+=groups.map(([t,ms])=>`<div class="blkHead">${escapeHtml(t)}</div><div class="blkGrid">${ms.filter(m=>info[m]).map(m=>`<button type="button" class="blk" data-blk="${m}"><b>${escapeHtml(info[m][1])}</b><small>${escapeHtml(info[m][2]||"")}</small></button>`).join("")}</div>`).join("");
