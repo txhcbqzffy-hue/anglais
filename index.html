@@ -1146,6 +1146,8 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .eyeIc.off{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3Cpath d=%22M3 3l18 18%22/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3Cpath d=%22M3 3l18 18%22/%3E%3C/svg%3E")}
 #nextBtn.nextGood{background:linear-gradient(135deg,#22c55e,#15803d)!important;border-color:#15803d!important;color:#fff!important;box-shadow:0 10px 26px rgba(22,163,74,.35)!important}
 #nextBtn.nextBad{background:linear-gradient(135deg,#f87171,#dc2626)!important;border-color:#dc2626!important;color:#fff!important;box-shadow:0 10px 26px rgba(220,38,38,.35)!important}
+html body #exerciseCard.noDock#exerciseCard.noDock#exerciseCard.noDock{padding-bottom:20px!important}
+#exerciseCard.noDock #feedback:empty{display:none}
 html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:none}
 #nextBtn{transition:background .3s,box-shadow .3s}
 #options .option{opacity:1}
@@ -8813,6 +8815,14 @@ function fitLock(){
         maxB=Math.max(maxB,b.bottom+scrollY);
       });
     });
+    try{
+      const card=$("exerciseCard");
+      if(card){
+        const ids=["nextBtn","checkTextBtn","checkGrammarBtn","checkReadingBtn","checkTranslationTextBtn","checkWritingBtn","recordBtn","pronRecordBtn","gOk"];
+        const any=ids.some(i=>{const e=$(i);return e&&e.getClientRects().length&&getComputedStyle(e).position==="fixed"});
+        card.classList.toggle("noDock",!any);
+      }
+    }catch(x){}
     const fits=maxB>0&&maxB<=limit-2;
     if(fits&&scrollY>0)window.scrollTo(0,0);
     root.classList.toggle("noScroll",fits);
