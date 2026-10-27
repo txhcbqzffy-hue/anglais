@@ -9125,7 +9125,7 @@ document.addEventListener("click",e=>{
       const o=$("options");
       const optMode=o&&o.querySelector(".option.good")&&o.offsetParent!==null;
       const quiet=t==="✅ Correct"||t==="Correct"||(optMode&&(/^❌\s*(Réponse|Answer)\s*:/i.test(t)||/^(Faux|Wrong|False)\s*:/i.test(t)));
-      f.classList.toggle("fbQuiet",!!quiet);
+      if(!t)delete f.dataset.kq;f.classList.toggle("fbQuiet",!!quiet||!!f.dataset.kq);
       if(!quiet){const m=t.match(/^❌\s*(?:Réponse attendue|Expected answer|Réponse|Answer)\s*:\s*(.+)$/i);
         if(m){const w=m[1].trim();f.innerHTML="";const b=document.createElement("b");b.textContent=w;f.appendChild(b)}}
     }catch(e){}
@@ -9246,6 +9246,10 @@ checkOption=function(btn,correct){
         const d=TENSES[TENSE_ALIAS[to]||to];
         h+=`<p><b>${escapeHtml(current.label)}</b></p>`;
         if(d){
+          {const sd=diff(String(current.source||""),target),rm=sd.extra,ad=sd.miss,bits=[];
+            if(rm.length)bits.push("on retire <b>"+rm.map(escapeHtml).join(" ")+"</b>");
+            if(ad.length)bits.push("on ajoute <b>"+ad.map(escapeHtml).join(" ")+"</b>");
+            if(bits.length)h+=`<p><b>Ce qui change :</b> ${bits.join(" · ")}.</p>`;}
           h+=`<p><b>Formule :</b> ${escapeHtml(d.f)}</p>`;
           h+=`<p><b>Pourquoi :</b> ${escapeHtml(d.y)}</p>`;
           if(d.ex&&d.ex[0])h+=`<p><i>Ex : ${escapeHtml(d.ex[0][0])} — ${escapeHtml(d.ex[0][1])}</i></p>`;
@@ -9266,7 +9270,7 @@ checkOption=function(btn,correct){
       const old=$("whyBox");if(old)old.remove();
       const b=document.createElement("div");b.id="whyBox";b.innerHTML=h;
       b.addEventListener("click",e=>{const x=e.target.closest("[data-say]");if(x){try{speak(x.dataset.say)}catch(z){}}});
-      $("feedback").insertAdjacentElement("afterend",b);$("feedback").classList.add("fbQuiet");
+      $("feedback").insertAdjacentElement("afterend",b);$("feedback").dataset.kq="1";$("feedback").classList.add("fbQuiet");
     }catch(e){console.error(e)}
   }
   const arm=()=>{const w=locked,u=($("answerInput").value||"").trim();setTimeout(()=>explain(w,u),0)};
