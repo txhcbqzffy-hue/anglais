@@ -1145,6 +1145,9 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 
 .eyeIc{display:inline-block;width:22px;height:22px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3C/svg%3E") center/contain no-repeat}
 .eyeIc.off{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3Cpath d=%22M3 3l18 18%22/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3Cpath d=%22M3 3l18 18%22/%3E%3C/svg%3E")}
+.kindSeg{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:var(--panel);border:1px solid var(--line);margin:0 0 12px;align-self:flex-start}
+.kindSeg button{min-height:36px;padding:6px 16px;border-radius:10px;border:0;background:transparent;color:var(--text);font-weight:800;font-size:14px;transition:background .25s,color .25s}
+.kindSeg button.on{background:var(--accent);color:var(--on-accent)}
 .themeSel{width:100%;min-height:52px;padding:10px 14px;border-radius:var(--r,10px);border:1px solid var(--line);background:var(--panel);color:var(--text);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left}
 .themeSel .chev{flex:none;width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin:-4px 4px 0 0;opacity:.7}
 .blkGrid3 .blk[data-blk="expressions"]{grid-column:1/-1;flex-direction:row;justify-content:center;gap:12px;padding:12px}
@@ -6842,7 +6845,7 @@ function renderPageBar(){
   const host=$("pageBar");if(!host)return;
   const p=currentView;
   if(p!=="vocab"&&p!=="gram"&&p!=="write"){host.innerHTML="";barSig="";return}
-  const sig=p+"|"+mode+"|"+(state.packFocus||"")+"|"+W()+"|"+exOpen;
+  const sig=p+"|"+mode+"|"+(state.vocKind||"")+"|"+(state.packFocus||"")+"|"+W()+"|"+exOpen;
   if(sig===barSig&&host.firstChild)return;
   barSig=sig;
   const info=modeInfo();
@@ -6858,6 +6861,7 @@ function renderPageBar(){
       const f=state.packFocus||"",o=id=>{const x=PACKS.find(q=>q.id===id);return x?`<option value="${id}"${f===id?" selected":""}>${escapeHtml(x.name)} (${x.words.length})</option>`:""};
       const rank=id=>{const i=PACK_ORDER.indexOf(id);return i<0?99:i};
       const words=PACKS.filter(q=>!PACK_EXPR.includes(q.id)).sort((a,b)=>rank(a.id)-rank(b.id)).map(q=>q.id);
+      h+=`<div class="kindSeg" role="group" aria-label="Type de vocabulaire"><button type="button" data-kind="words" class="${state.vocKind==="words"?"on":""}">Mots</button><button type="button" data-kind="expr" class="${state.vocKind==="expr"?"on":""}">Expressions</button></div>`;
       h+=`<div class="pbField"><span>Thème</span><button type="button" id="pbThemeBtn" class="themeSel"><b>${escapeHtml((PACKS.find(q=>q.id===f)||{}).name||"Tous les thèmes")}</b><i class="chev"></i></button></div>`;
     }
     if(p==="gram"){
@@ -6871,6 +6875,11 @@ function renderPageBar(){
     host.innerHTML=h;
 //    if(p==="vocab")host.insertBefore(avEl(),host.firstChild);
     host.querySelectorAll("[data-blk]").forEach(b=>b.onclick=()=>b.dataset.blk==="expressions"?themeOpen("expr",true):openExercise(b.dataset.blk==="game"?GAME_MODES[Math.floor(Math.random()*GAME_MODES.length)]:b.dataset.blk));
+    host.querySelectorAll("[data-kind]").forEach(b=>b.onclick=()=>{
+      const k=b.dataset.kind;state.vocKind=state.vocKind===k?null:k;
+      if(state.packFocus&&state.vocKind&&PACK_EXPR.includes(state.packFocus)!==(state.vocKind==="expr"))state.packFocus=null;
+      saveState();barSig="";renderPageBar();
+    });
     const tb=$("pbThemeBtn");if(tb)tb.onclick=()=>themeOpen(PACK_EXPR.includes(state.packFocus)?"expr":"words",false);
     const t=$("pbTheme");
     if(t)t.onchange=()=>{state.packFocus=t.value||null;saveState();barSig=""};
@@ -8690,6 +8699,21 @@ function themeClose(){
   d.classList.remove("open");b.classList.remove("open");
   document.body.classList.remove("sheetOpen");
 }
+
+/* ----- Bouton Mots / Expressions : tout le vocabulaire passe en mots ou en expressions ----- */
+const __vocabKind=vocab;
+vocab=function(){
+  try{
+    if(!(window.__focus&&window.__focus.length)&&!state.packFocus&&state.vocKind){
+      const ex=state.vocKind==="expr";
+      const packs=PACKS.filter(p=>PACK_EXPR.includes(p.id)===ex);
+      const out=[];packs.forEach(p=>p.words.forEach(w=>out.push([w[0],w[1],p.id])));
+      if(!ex){baseVocab.forEach(w=>out.push(w));state.custom.forEach(x=>out.push([x.en,x.fr,"custom"]))}
+      if(out.length>=8)return out;
+    }
+  }catch(e){}
+  return __vocabKind.apply(this,arguments);
+};
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
