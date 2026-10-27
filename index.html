@@ -8479,7 +8479,7 @@ checkOption=function(){
 document.addEventListener("click",e=>{
   const t=e.target;if(!t.closest)return;
   if(t.closest(".optFav"))return;
-  const o=t.closest(".option.optDone");
+  const o=t.closest("#options .option");
   if(o){const st=o.querySelector(".optFav");if(st){try{speak(st.dataset.en)}catch(x){}}return}
   const q=t.closest("#question b");
   if(q&&current&&current.direction!=="fr-en"&&OPT_TR_MODES.includes(mode)){try{speak(q.textContent)}catch(x){}}
