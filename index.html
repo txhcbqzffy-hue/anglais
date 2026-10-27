@@ -1119,6 +1119,9 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 /* traduction + favori à côté de chaque choix */
 .option.hasTr{display:flex!important;align-items:center;gap:6px 10px;flex-wrap:nowrap}
 .option.hasTr[data-tr]::after{content:attr(data-tr);order:1;flex:0 8 auto;min-width:0;font-size:.82em;font-weight:500;color:var(--muted);font-style:italic}
+.option.hasTr.optLong{display:grid!important;grid-template-columns:1fr auto;align-items:center;column-gap:10px;row-gap:3px;text-align:left}
+.option.hasTr.optLong[data-tr]::after{grid-column:1;grid-row:2;order:0;font-size:.84em;line-height:1.3}
+.option.hasTr.optLong .optFav{grid-column:2;grid-row:1/span 2;margin:0 -8px 0 0;align-self:center}
 .option.hasTr.optDone{cursor:default}
 .option.hasTr.good[data-tr]::after,.option.hasTr.bad[data-tr]::after{color:inherit;opacity:.75}
 .optFav{order:2;margin-left:auto;flex:none;width:40px;height:40px;margin-right:-8px;border-radius:50%;display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -8465,6 +8468,7 @@ makeOption=function(text,correct){
     if(!OPT_TR_MODES.includes(mode))return;
     const b=box.lastElementChild,e=trLookup(text);if(!b||!e)return;
     b.classList.add("hasTr");
+    if((text+" "+(e.kind==="en"?e.fr:e.en)).length>34)[...box.children].forEach(c=>c.classList.add("optLong"));else if(box.querySelector(".optLong"))b.classList.add("optLong");
     /* la traduction du mot proposé : visible tout de suite quand elle ne donne pas la réponse, sinon après la réponse */
     const tr=e.kind==="en"?e.fr:e.en;
     const spoil=e.kind==="fr"||(current&&current.direction==="fr-en");
