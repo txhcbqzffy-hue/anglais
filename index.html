@@ -8325,7 +8325,7 @@ function favRender(){
   const nV=ALL.filter(x=>x.kind==="vocab").length,nE=ALL.length-nV;
   $("favCount").textContent=ALL.length?" ("+ALL.length+")":"";
   const L=ALL.map((x,i)=>({...x,i})).filter(x=>x.kind===favTab);
-  const hb=$("favHide");hb.textContent=favHide?"Show EN":"Hide EN";hb.classList.toggle("on",favHide);
+  const hb=$("favHide");hb.textContent="👁️";hb.setAttribute("aria-label",favHide?"Afficher l'anglais":"Masquer l'anglais");hb.classList.toggle("on",favHide);
   hb.disabled=!L.length;$("favQcm").disabled=!L.length;
   const tabs=`<div class="favTabs"><button type="button" class="favTab${favTab==="vocab"?" on":""}" data-ftab="vocab">Vocabulaire <span>${nV}</span></button><button type="button" class="favTab${favTab==="expr"?" on":""}" data-ftab="expr">Expressions <span>${nE}</span></button></div>`;
   if(!L.length){box.innerHTML=tabs+`<div class="small" style="margin:18px 2px">Aucun favori ici</div><div class="small" style="margin:0 2px">Touche l’étoile à côté d’un mot ou d’une expression pour l’ajouter.</div>`;return}
@@ -8335,7 +8335,7 @@ function favOpen(){
   let s=$("favSheet");
   if(!s){
     s=document.createElement("div");s.id="favSheet";s.className="sheet hidden";s.setAttribute("role","dialog");s.setAttribute("aria-label","Mes favoris");
-    s.innerHTML=`<div class="sheetHead favHead"><div class="favT"><button type="button" id="favBack" class="ghost backIc" aria-label="Retour">‹</button><h2>Mes favoris<span id="favCount"></span></h2></div><div class="favBtns"><button type="button" id="favHide" class="ghost">Hide EN</button><button type="button" id="favQcm" class="primary">QCM</button></div></div><div id="favBody"></div>`;
+    s.innerHTML=`<div class="sheetHead favHead"><div class="favT"><button type="button" id="favBack" class="ghost backIc" aria-label="Retour">‹</button><h2>Mes favoris<span id="favCount"></span></h2></div><div class="favBtns"><button type="button" id="favHide" class="ghost" aria-label="Masquer l'anglais">👁️</button><button type="button" id="favQcm" class="primary">QCM</button></div></div><div id="favBody"></div>`;
     document.body.appendChild(s);
     $("favBack").onclick=favClose;
     $("favHide").onclick=()=>{favHide=!favHide;try{localStorage.setItem("et_fav_hide",favHide?"1":"0")}catch(e){}favRender()};
