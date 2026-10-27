@@ -9175,6 +9175,40 @@ if(state.vocKind!=="expr"&&state.vocKind!=="words"){state.vocKind="words";try{sa
   reward=function(){const r=rr.apply(this,arguments);bump();return r};
   penalize=function(){const r=rp.apply(this,arguments);bump();return r};
 })();
+
+/* ----- Grammaire (QCM) : quand je me trompe, explication sous les choix ----- */
+const GR_TENSE=[
+ [/^(would|could|should|might) /i,"modal / conditionnel","hypothèse, politesse ou conseil — pas un fait ni une habitude"],
+ [/^will |^won't /i,"futur (will)","décision ou prévision sur ce qui va arriver"],
+ [/^(am|is|are) (not )?\w+ing\b/i,"present continuous","action en cours maintenant ou projet déjà organisé"],
+ [/^(was|were) (not )?\w+ing\b/i,"past continuous","action en cours à un moment du passé"],
+ [/^(has|have) (already |just |never |not )?been \w+ing\b/i,"present perfect continuous","action commencée dans le passé qui continue (for / since)"],
+ [/^(has|have)\b/i,"present perfect","passé relié au présent (résultat, expérience, durée jusqu'à maintenant)"],
+ [/^had\b/i,"past perfect","action passée antérieure à une autre action passée"],
+ [/^\w+ed( \w+)?$|^(went|saw|did|made|took|came|got|ate|wrote|bought|gave|had|met|ran|sent|told|said|found|left|began|knew|thought|brought|paid|read|built|lost|sold|spoke|won)\b/i,"past simple","action terminée à un moment précis du passé"],
+ [/^\w+s$/i,"present simple (3e pers.)","habitude, routine ou fait général : he / she / it + -s"],
+ [/^\w+( \w+)?$/i,"present simple","habitude, routine ou fait général"]
+];
+function grTense(o){const t=String(o).trim();for(const [re,n,u] of GR_TENSE)if(re.test(t))return {n,u};return null}
+const __checkOptionGr=checkOption;
+checkOption=function(btn,correct){
+  const first=!$("options").classList.contains("answered");
+  const r=__checkOptionGr.apply(this,arguments);
+  try{
+    if(first&&!correct&&btn&&current&&["tenses","prepositions","articles","modals","comparatives","irregularPast","irregularPart","irregularMix","thirdPerson","connectors","collocations","phrasal","falseFriends"].includes(mode)&&(current.rule||current.why)){
+      const mine=(btn.textContent||"").trim(),good=String(current.answer||current.a||"").trim();
+      let h=`<h4 class="whyHead"><span>Pourquoi « ${escapeHtml(mine)} » est faux ?</span></h4>`;
+      h+=`<p><b>Indice :</b> ${escapeHtml(current.rule||current.why)}</p><ul class="whyOthers">`;
+      const tm=mode==="tenses"?grTense(mine):null,tg=mode==="tenses"?grTense(good):null;
+      h+=`<li class="whyRow"><span>Ta réponse : <b>${escapeHtml(mine)}</b>${tm?" = "+tm.n+" — "+tm.u+". Ça ne colle pas avec cette phrase.":""}</span></li>`;
+      h+=`<li class="whyRow"><span>Bonne réponse : <b>${escapeHtml(good)}</b>${tg?" = "+tg.n+" — "+tg.u+".":""}</span></li></ul>`;
+      const b=document.createElement("div");b.id="whyBox";b.innerHTML=h;
+      const old=$("whyBox");if(old)old.remove();
+      $("options").insertAdjacentElement("afterend",b);
+    }
+  }catch(e){console.error(e)}
+  return r;
+};
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
