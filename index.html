@@ -5097,7 +5097,7 @@ function checkText(){
   if(ok){
     reward(currentVocabItem(),user);sayVocab();$("feedback").textContent="✅ Correct";$("feedback").className="feedback goodText";if(mode==="exam")examScore++;
   }else{
-    penalize(currentVocabItem(),user);$("feedback").innerHTML=`❌ Réponse attendue : <b>${escapeHtml(expected())}</b>`;$("feedback").className="feedback badText";
+    penalize(currentVocabItem(),user);$("feedback").innerHTML=`<b>${escapeHtml(expected())}</b>`;$("feedback").className="feedback badText";
   }
   if(mode==="finderror")$("feedback").innerHTML+=`<br><span style="color:#d8e0ec">${escapeHtml(current.why)}</span>`;
   finishExamStep();
@@ -8761,7 +8761,7 @@ expHtml=function(e){
     if(locked||!current)return false;
     locked=true;try{clearTimer()}catch(e){}
     try{penalize(currentVocabItem())}catch(e){}
-    const f=$("feedback");f.innerHTML=`❌ Réponse attendue : <b>${escapeHtml(expected())}</b>`;f.className="feedback badText";
+    const f=$("feedback");f.innerHTML=`<b>${escapeHtml(expected())}</b>`;f.className="feedback badText";
     try{finishExamStep()}catch(e){}
     return true;
   };
