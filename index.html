@@ -129,6 +129,7 @@ textarea{min-height:105px;resize:vertical;line-height:1.5}
 .input:focus,textarea:focus{border-color:var(--accent-line)}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .feedback{min-height:30px;margin-top:12px;font-weight:750;line-height:1.45}
+.feedback.fbQuiet{display:none!important}
 .goodText{color:var(--good)} .badText{color:var(--bad)} .warnText{color:var(--warn)}
 .hidden{display:none!important}
 
@@ -9094,6 +9095,24 @@ document.addEventListener("click",e=>{
   document.addEventListener("focusout",e=>{if(e.target&&e.target.id==="answerInput"){on=false}});
   if(vv){vv.addEventListener("scroll",fix);vv.addEventListener("resize",fix)}
   window.addEventListener("scroll",fix,{passive:true});
+})();
+
+/* feedback: pas de "Correct" / "Réponse" redondants avec la couleur */
+(function(){
+  const f=$("feedback");if(!f)return;let busy=false;
+  function chk(){
+    if(busy)return;busy=true;
+    try{
+      const t=(f.textContent||"").trim();
+      const o=$("options");
+      const optMode=o&&o.querySelector(".option.good")&&o.offsetParent!==null;
+      const quiet=t==="✅ Correct"||t==="Correct"||(optMode&&(/^❌ Réponse :/.test(t)||/^Faux :/.test(t)));
+      f.classList.toggle("fbQuiet",!!quiet);
+    }catch(e){}
+    busy=false;
+  }
+  new MutationObserver(chk).observe(f,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:["class"]});
+  document.addEventListener("click",()=>setTimeout(chk,0),true);
 })();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
