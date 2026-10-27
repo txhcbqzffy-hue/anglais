@@ -1181,7 +1181,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
     <div class="brand">
       <div class="logo">E</div>
       <div>
-        <h1>English Trainer<span class="ver">v51</span></h1>
+        <h1>English Trainer<span class="ver">v52</span></h1>
       </div>
     </div>
     <div class="headTools"><button id="settingsBtn" class="gearBtn" type="button" aria-label="Paramètres"><i class="ic ic-gear"></i></button><div class="coin"><b id="coins">0</b> 🪙</div></div>
@@ -8528,6 +8528,21 @@ expHtml=function(e){
     try{whyShow()}catch(e){}
   };
   const empty=()=>WHY_TEXT_MODES.includes(mode)&&!locked&&!$("answerInput").value.trim();
+  const revealAny=(inputId)=>{
+    if(locked||!current)return false;
+    locked=true;try{clearTimer()}catch(e){}
+    try{penalize(currentVocabItem())}catch(e){}
+    const f=$("feedback");f.innerHTML=`❌ Réponse attendue : <b>${escapeHtml(expected())}</b>`;f.className="feedback badText";
+    try{finishExamStep()}catch(e){}
+    return true;
+  };
+  const visible=id=>{const e=$(id);return e&&e.getClientRects().length>0};
+  $("checkGrammarBtn").addEventListener("click",e=>{
+    if(!locked&&visible("grammarInput")&&!$("grammarInput").value.trim()){e.stopImmediatePropagation();e.preventDefault();revealAny()}
+  },true);
+  $("checkTextBtn").addEventListener("click",e=>{
+    if(!WHY_TEXT_MODES.includes(mode)&&!locked&&visible("answerInput")&&!$("answerInput").value.trim()){e.stopImmediatePropagation();e.preventDefault();revealAny()}
+  },true);
   $("checkTextBtn").addEventListener("click",e=>{
     if(empty()){e.stopImmediatePropagation();e.preventDefault();reveal();return}
     setTimeout(()=>{if(locked&&WHY_TEXT_MODES.includes(mode))try{whyShow()}catch(x){}},0);
