@@ -8448,11 +8448,11 @@ function whyClear(){const b=$("whyBox");if(b)b.remove()}
 function whyShow(){
   whyClear();
   const TXT=WHY_TEXT_MODES.includes(mode);
-  if(!(TXT||["quiz","quizReverse","quizMix"].includes(mode))||!current)return;
+  if(!(TXT||["quiz","quizReverse","quizMix","defMatch"].includes(mode))||!current)return;
   const item=current.vocab||(TXT&&typeof currentVocabItem==="function"?currentVocabItem():null);if(!item)return;
   const en=item[0],fr=item[1],n=whyGet(en);
   const box=document.createElement("div");box.id="whyBox";
-  const others=TXT?[]:[...$("options").children].map(x=>x.textContent).filter(t=>norm(t)!==norm(current.answer));
+  const others=(TXT||mode==="defMatch")?[]:[...$("options").children].map(x=>x.textContent).filter(t=>norm(t)!==norm(current.answer));
   const lis=others.map(t=>{
     const e=trLookup(t);if(!e)return "";
     const w=whyGet(e.en),first=w?w.note.split(/(?<=[.!?])\s/)[0]:"";
@@ -8468,7 +8468,7 @@ const __checkOptionWhy=checkOption;
 checkOption=function(){
   const first=!$("options").classList.contains("answered");
   const r=__checkOptionWhy.apply(this,arguments);
-  try{if(first){whyShow();if(["quiz","quizReverse","quizMix"].includes(mode)){const f=$("feedback");if(f){f.textContent="";f.className="feedback"}}}}catch(e){console.error(e)}
+  try{if(first){whyShow();if(["quiz","quizReverse","quizMix","defMatch"].includes(mode)){const f=$("feedback");if(f){f.textContent="";f.className="feedback"}}}}catch(e){console.error(e)}
   return r;
 };
 const __nqWhy=newQuestion;
