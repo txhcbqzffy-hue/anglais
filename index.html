@@ -4951,7 +4951,7 @@ function newQuestion(){
   }
   else if(mode==="tenses"){
     const x=rand(allTenseQuestions);current={...x,answer:x.a};$("question").textContent=x.q;
-    $("info").textContent="Choisis la forme correcte.";$("info").classList.remove("hidden");
+    
     shuffle(x.opts).forEach(o=>makeOption(o,o===x.a));
   }
   else if(mode==="grammar"){
