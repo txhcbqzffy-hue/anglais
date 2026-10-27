@@ -8567,6 +8567,7 @@ function favOpen(){
       if(en){const row=en.closest(".fRow");if(row.classList.contains("hide"))row.classList.toggle("peek");try{speak(en.dataset.say)}catch(z){}return}
     });
   }
+  if(state.vocKind==="words")favTab="vocab";else if(state.vocKind==="expr")favTab="expr";
   favRender();s.classList.remove("hidden");document.body.classList.add("sheetOpen");s.scrollTop=0;
 }
 function favClose(){const s=$("favSheet");if(s)s.classList.add("hidden");document.body.classList.remove("sheetOpen")}
