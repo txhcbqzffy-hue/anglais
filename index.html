@@ -8824,13 +8824,17 @@ function fitLock(){
         card.classList.toggle("noDock",true);
       }
     }catch(x){}
-    root.style.setProperty("--dockSpace",Math.ceil(innerHeight-limit+14)+"px");
+    const ds=Math.ceil(innerHeight-limit+14);
+    if(Math.abs(ds-(window.__ds||0))>3){window.__ds=ds;root.style.setProperty("--dockSpace",ds+"px")}
     const fits=maxB>0&&maxB<=limit-2;
-    if(fits&&scrollY>0)window.scrollTo(0,0);
-    root.classList.toggle("noScroll",fits);
+    // pendant un scroll on ne verrouille jamais (évite les à-coups) ; on ne déverrouille que si ça déborde
+    if(fits&&scrollY>2){return}
+    if(root.classList.contains("noScroll")!==fits)root.classList.toggle("noScroll",fits);
   }catch(e){}
 }
-function fitSoon(){if(fitT)return;fitT=setTimeout(()=>{fitT=0;fitLock()},120)}
+let scrolling=false,scrT=0;
+addEventListener("scroll",()=>{scrolling=true;clearTimeout(scrT);scrT=setTimeout(()=>{scrolling=false;fitSoon()},250)},{passive:true});
+function fitSoon(){if(fitT||scrolling)return;fitT=setTimeout(()=>{fitT=0;fitLock()},120)}
 new MutationObserver(fitSoon).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["class","style","hidden"]});
 addEventListener("resize",fitSoon);addEventListener("orientationchange",fitSoon);
 document.addEventListener("focusin",fitSoon);document.addEventListener("focusout",fitSoon);
@@ -8866,9 +8870,10 @@ document.addEventListener("click",e=>{
     const t=e.touches[0];
     if(e.touches.length!==1||t.clientX>26){x0=null;return}
     x0=t.clientX;y0=t.clientY;dx=0;on=false;lock=false;
+    addEventListener("touchmove",mv,{passive:false});
   },{passive:true});
-  addEventListener("touchmove",e=>{
-    if(x0==null)return;
+  function mv(e){
+    if(x0==null){removeEventListener("touchmove",mv);return}
     const t=e.touches[0];dx=t.clientX-x0;const dy=Math.abs(t.clientY-y0);
     if(!on){
       if(dx>12&&dx>dy*1.4){on=true}
@@ -8880,8 +8885,9 @@ document.addEventListener("click",e=>{
     ind.style.opacity=String(Math.min(1,k*1.2));
     ind.style.transform=`translate(${Math.min(dx,90)-44}px,-50%) scale(${.7+.3*k})`;
     ind.classList.toggle("ready",dx>=80);
-  },{passive:false});
+  }
   const end=()=>{
+    removeEventListener("touchmove",mv);
     if(x0==null)return;
     const go=on&&dx>=80;
     x0=null;on=false;
@@ -8889,7 +8895,7 @@ document.addEventListener("click",e=>{
     if(go)goBack();
   };
   addEventListener("touchend",end,{passive:true});
-  addEventListener("touchcancel",()=>{x0=null;on=false;ind.style.opacity="";ind.style.transform=""},{passive:true});
+  addEventListener("touchcancel",()=>{removeEventListener("touchmove",mv);x0=null;on=false},{passive:true});
   window.__goBack=goBack;
 })();
 sanitizeVisualErrors(document);
