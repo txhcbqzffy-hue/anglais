@@ -9150,7 +9150,7 @@ document.addEventListener("click",e=>{
 /* révision espacée : un mot raté repasse après tous les autres de la session */
 (function(){
   const rp=penalize,rr=reward,oe=openExercise;
-  penalize=function(item){const r=rp.apply(this,arguments);try{if(mode==="review"&&item&&item[0]){REV.retry=REV.retry.filter(k=>k!==item[0]);REV.retry.push(item[0])}}catch(e){}return r};
+  penalize=function(item){const r=rp.apply(this,arguments);try{if(mode==="review"&&item&&item[0]){REV.retry=REV.retry.filter(k=>k!==item[0]);REV.retry.push(item[0]);if(state.review[item[0]]){state.review[item[0]].next=Date.now();saveState();try{updateUI()}catch(e){}}}}catch(e){}return r};
   reward=function(item){const r=rr.apply(this,arguments);try{if(mode==="review"&&item&&item[0])REV.retry=REV.retry.filter(k=>k!==item[0])}catch(e){}return r};
   openExercise=function(m){if(m==="review"){REV.seen=new Set();REV.retry=[]}return oe.apply(this,arguments)};
 })();
