@@ -1149,6 +1149,8 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:none}
 #nextBtn{transition:background .3s,box-shadow .3s}
 #options .option{opacity:1}
+.defSpeak{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin-left:10px;vertical-align:middle;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--accent-text);padding:0}
+.defSpeak i{display:block;width:20px;height:20px;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
 .kindSeg{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:var(--panel);border:1px solid var(--line);margin:0 0 12px;align-self:flex-start}
 .kindSeg button{min-height:36px;padding:6px 16px;border-radius:10px;border:0;background:transparent;color:var(--text);font-weight:800;font-size:14px;transition:background .25s,color .25s}
 .kindSeg button.on{background:var(--accent);color:var(--on-accent)}
@@ -7278,13 +7280,13 @@ function defPool(){
 }
 function startDef(){
   const pool=defPool(),it=rand(pool);
-  $("favBtn").style.visibility="hidden";
+  $("favBtn").style.visibility="";
   const kind=s=>/^to /i.test(s)?"v":"o";
   let others=shuffle(pool.filter(x=>x.en!==it.en&&x.d!==it.d&&kind(x.d)===kind(it.d))).slice(0,3);
   if(others.length<3)others=others.concat(shuffle(pool.filter(x=>x.en!==it.en&&!others.includes(x))).slice(0,3-others.length));
   const v=vocab().find(x=>x[0]===it.en)||[it.en,"","custom"];
   current={vocab:v,answer:it.d,spoken:it.en};
-  $("question").innerHTML=`<b>${escapeHtml(it.en)}</b><br><span class="defAsk">Quelle définition correspond le mieux ?</span>`;
+  $("question").innerHTML=`<b>${escapeHtml(it.en)}</b><button type="button" class="defSpeak" aria-label="Écouter"><i class="bi-audio"></i></button><br><span class="defAsk">Quelle définition correspond le mieux ?</span>`;
   shuffle([it,...others]).forEach(o=>makeOption(o.d,o.d===it.d));
 }
 
@@ -8821,6 +8823,14 @@ new MutationObserver(fitSoon).observe(document.body,{childList:true,subtree:true
 addEventListener("resize",fitSoon);addEventListener("orientationchange",fitSoon);
 document.addEventListener("focusin",fitSoon);document.addEventListener("focusout",fitSoon);
 setTimeout(fitLock,300);
+
+/* ----- Définitions : écouter le mot (bouton + toucher le mot) ----- */
+document.addEventListener("click",e=>{
+  try{
+    if(mode!=="defMatch"||!current)return;
+    if(e.target.closest(".defSpeak")||e.target.closest("#question b")){e.preventDefault();speak(current.spoken||(current.vocab&&current.vocab[0])||"")}
+  }catch(x){}
+});
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
