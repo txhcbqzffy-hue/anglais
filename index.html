@@ -1162,6 +1162,7 @@ button.adaptiveStep:hover{border-color:var(--line);background:var(--panel)}
 .rate button:hover{border-color:var(--line);background:var(--panel)}
 }
 .gSlot.filled{cursor:pointer}
+#exerciseCard.pairsMode .qrow{display:none!important}
 html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:none}
 #nextBtn{transition:background .3s,box-shadow .3s}
 #options .option{opacity:1}
@@ -8803,6 +8804,7 @@ const __nqAd=newQuestion;
 newQuestion=function(){
   const v=vocLevel(),f=Math.floor(v),r=Math.random();
   adTarget=Math.max(0,Math.min(3,r<.15?f+1:r<.7?f:f-1));
+  try{const c=$("exerciseCard");if(c)c.classList.toggle("pairsMode",mode==="gPairs")}catch(e){}
   try{return __nqAd.apply(this,arguments)}finally{adTarget=null}
 };
 
