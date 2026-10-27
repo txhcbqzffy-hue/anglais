@@ -9195,13 +9195,13 @@ checkOption=function(btn,correct){
   const first=!$("options").classList.contains("answered");
   const r=__checkOptionGr.apply(this,arguments);
   try{
-    if(first&&!correct&&btn&&current&&["tenses","prepositions","articles","modals","comparatives","irregularPast","irregularPart","irregularMix","thirdPerson","connectors","collocations","phrasal","falseFriends"].includes(mode)&&(current.rule||current.why)){
+    if(first&&btn&&current&&["tenses","prepositions","articles","modals","comparatives","irregularPast","irregularPart","irregularMix","thirdPerson","connectors","collocations","phrasal","falseFriends"].includes(mode)&&(current.rule||current.why)){
       const mine=(btn.textContent||"").trim(),good=String(current.answer||current.a||"").trim();
-      let h=`<h4 class="whyHead"><span>Pourquoi « ${escapeHtml(mine)} » est faux ?</span></h4>`;
+      let h=`<h4 class="whyHead"><span>Pourquoi « ${escapeHtml(correct?good:mine)} » ${correct?"est juste":"est faux"} ?</span></h4>`;
       h+=`<p><b>Indice :</b> ${escapeHtml(current.rule||current.why)}</p><ul class="whyOthers">`;
       const tm=mode==="tenses"?grTense(mine):null,tg=mode==="tenses"?grTense(good):null;
-      h+=`<li class="whyRow"><span>Ta réponse : <b>${escapeHtml(mine)}</b>${tm?" = "+tm.n+" — "+tm.u+". Ça ne colle pas avec cette phrase.":""}</span></li>`;
-      h+=`<li class="whyRow"><span>Bonne réponse : <b>${escapeHtml(good)}</b>${tg?" = "+tg.n+" — "+tg.u+".":""}</span></li></ul>`;
+      if(!correct)h+=`<li class="whyRow"><span>Ta réponse : <b>${escapeHtml(mine)}</b>${tm?" = "+tm.n+" — "+tm.u+". Ça ne colle pas avec cette phrase.":""}</span></li>`;
+      if(!(correct&&!tg))h+=`<li class="whyRow"><span>${correct?"":"Bonne réponse : "}<b>${escapeHtml(good)}</b>${tg?" = "+tg.n+" — "+tg.u+".":""}</span></li></ul>`;
       const b=document.createElement("div");b.id="whyBox";b.innerHTML=h;
       const old=$("whyBox");if(old)old.remove();
       $("options").insertAdjacentElement("afterend",b);
