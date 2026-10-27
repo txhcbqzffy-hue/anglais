@@ -1148,6 +1148,7 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 #nextBtn.nextBad{background:linear-gradient(135deg,#f87171,#dc2626)!important;border-color:#dc2626!important;color:#fff!important;box-shadow:0 10px 26px rgba(220,38,38,.35)!important}
 html body #exerciseCard.noDock#exerciseCard.noDock#exerciseCard.noDock{padding-bottom:20px!important}
 #exerciseCard.noDock #feedback:empty{display:none}
+html[style] body .app.app.app{padding-bottom:var(--dockSpace,168px)!important}
 html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:none}
 #nextBtn{transition:background .3s,box-shadow .3s}
 #options .option{opacity:1}
@@ -8820,9 +8821,10 @@ function fitLock(){
       if(card){
         const ids=["nextBtn","checkTextBtn","checkGrammarBtn","checkReadingBtn","checkTranslationTextBtn","checkWritingBtn","recordBtn","pronRecordBtn","gOk"];
         const any=ids.some(i=>{const e=$(i);return e&&e.getClientRects().length&&getComputedStyle(e).position==="fixed"});
-        card.classList.toggle("noDock",!any);
+        card.classList.toggle("noDock",true);
       }
     }catch(x){}
+    root.style.setProperty("--dockSpace",Math.ceil(innerHeight-limit+14)+"px");
     const fits=maxB>0&&maxB<=limit-2;
     if(fits&&scrollY>0)window.scrollTo(0,0);
     root.classList.toggle("noScroll",fits);
