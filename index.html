@@ -1143,6 +1143,9 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 .fRow.hide:not(.peek) .fEn span{filter:blur(7px);-webkit-user-select:none;user-select:none}
 #modeHelp,.modeHelp{display:none!important}
 
+.eyeIc{display:inline-block;width:22px;height:22px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3C/svg%3E") center/contain no-repeat}
+.eyeIc.off{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3Cpath d=%22M3 3l18 18%22/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3Cpath d=%22M3 3l18 18%22/%3E%3C/svg%3E")}
+#favHide{display:inline-flex;align-items:center;justify-content:center}
 #question,#ctxHint{-webkit-tap-highlight-color:transparent}
 #exerciseCard:has(#whyBox) #ctxHint{display:none}
 #ctxHint{font-size:13px;color:var(--muted,#8a7f76);font-style:italic;margin:-6px 0 14px;line-height:1.4}
@@ -8325,7 +8328,7 @@ function favRender(){
   const nV=ALL.filter(x=>x.kind==="vocab").length,nE=ALL.length-nV;
   $("favCount").textContent=ALL.length?" ("+ALL.length+")":"";
   const L=ALL.map((x,i)=>({...x,i})).filter(x=>x.kind===favTab);
-  const hb=$("favHide");hb.textContent="👁️";hb.setAttribute("aria-label",favHide?"Afficher l'anglais":"Masquer l'anglais");hb.classList.toggle("on",favHide);
+  const hb=$("favHide");hb.innerHTML=favHide?`<span class="eyeIc off"></span>`:`<span class="eyeIc"></span>`;hb.setAttribute("aria-label",favHide?"Afficher l'anglais":"Masquer l'anglais");hb.classList.toggle("on",favHide);
   hb.disabled=!L.length;$("favQcm").disabled=!L.length;
   const tabs=`<div class="favTabs"><button type="button" class="favTab${favTab==="vocab"?" on":""}" data-ftab="vocab">Vocabulaire <span>${nV}</span></button><button type="button" class="favTab${favTab==="expr"?" on":""}" data-ftab="expr">Expressions <span>${nE}</span></button></div>`;
   if(!L.length){box.innerHTML=tabs+`<div class="small" style="margin:18px 2px">Aucun favori ici</div><div class="small" style="margin:0 2px">Touche l’étoile à côté d’un mot ou d’une expression pour l’ajouter.</div>`;return}
@@ -8335,7 +8338,7 @@ function favOpen(){
   let s=$("favSheet");
   if(!s){
     s=document.createElement("div");s.id="favSheet";s.className="sheet hidden";s.setAttribute("role","dialog");s.setAttribute("aria-label","Mes favoris");
-    s.innerHTML=`<div class="sheetHead favHead"><div class="favT"><button type="button" id="favBack" class="ghost backIc" aria-label="Retour">‹</button><h2>Mes favoris<span id="favCount"></span></h2></div><div class="favBtns"><button type="button" id="favHide" class="ghost" aria-label="Masquer l'anglais">👁️</button><button type="button" id="favQcm" class="primary">QCM</button></div></div><div id="favBody"></div>`;
+    s.innerHTML=`<div class="sheetHead favHead"><div class="favT"><button type="button" id="favBack" class="ghost backIc" aria-label="Retour">‹</button><h2>Mes favoris<span id="favCount"></span></h2></div><div class="favBtns"><button type="button" id="favHide" class="ghost" aria-label="Masquer l'anglais"><span class="eyeIc"></span></button><button type="button" id="favQcm" class="primary">QCM</button></div></div><div id="favBody"></div>`;
     document.body.appendChild(s);
     $("favBack").onclick=favClose;
     $("favHide").onclick=()=>{favHide=!favHide;try{localStorage.setItem("et_fav_hide",favHide?"1":"0")}catch(e){}favRender()};
