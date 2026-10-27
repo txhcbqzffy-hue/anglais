@@ -1163,6 +1163,7 @@ button.adaptiveStep:hover{border-color:var(--line);background:var(--panel)}
 }
 .gSlot.filled{cursor:pointer}
 #exerciseCard.pairsMode .qrow{display:none!important}
+#exerciseCard.gameMode .topline,#exerciseCard.gameMode .progress{display:none!important}
 .gMem{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .memCard{position:relative;min-height:78px;border-radius:14px;border:1.5px solid var(--line);background:var(--accent);color:transparent;font-weight:800;font-size:14px;line-height:1.2;padding:6px;display:grid;place-items:center;transition:background .25s,color .25s,transform .25s}
 .memCard::before{content:"?";position:absolute;inset:0;display:grid;place-items:center;color:var(--on-accent);font-size:24px;font-weight:800}
@@ -7124,8 +7125,9 @@ function gameSpeed(z,all){
   const q=$("question");
   const end=()=>{
     over=true;
-    q.innerHTML=`<b>${score} / ${tot}</b>`;
-    $("spOpts").innerHTML="";
+    q.textContent="";
+    z.innerHTML=`<div class="gScore">${score} / ${tot}</div>`;
+    try{$("exerciseCard").classList.add("pairsMode")}catch(e){}
     window.__out=score>=Math.max(1,tot/2)?"good":"bad";
     gDone(score>=Math.max(1,tot*.7)?"Bien joué":"Encore un tour ?",score>=Math.max(1,tot/2)?"goodText":"warnText");
   };
@@ -8955,7 +8957,7 @@ const __nqAd=newQuestion;
 newQuestion=function(){
   const v=vocLevel(),f=Math.floor(v),r=Math.random();
   adTarget=Math.max(0,Math.min(3,r<.15?f+1:r<.7?f:f-1));
-  try{const c=$("exerciseCard");if(c)c.classList.toggle("pairsMode",["gPairs","gMemory","gListen"].includes(mode))}catch(e){}
+  try{const c=$("exerciseCard");if(c)c.classList.toggle("pairsMode",["gPairs","gMemory","gListen"].includes(mode));c.classList.toggle("gameMode",GAME_MODES.includes(mode))}catch(e){}
   try{return __nqAd.apply(this,arguments)}finally{adTarget=null}
 };
 
