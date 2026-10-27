@@ -1149,6 +1149,9 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 html body #exerciseCard.noDock#exerciseCard.noDock#exerciseCard.noDock{padding-bottom:20px!important}
 #exerciseCard.noDock #feedback:empty{display:none}
 html[style] body .app.app.app{padding-bottom:var(--dockSpace,168px)!important}
+*{-webkit-tap-highlight-color:transparent}
+.option:focus,.option:active,.option:focus-visible{outline:none;border-color:var(--line)}
+.option.good:focus,.option.good:active{border-color:var(--good)!important}.option.bad:focus,.option.bad:active{border-color:var(--bad)!important}
 @media (hover:none){
 .option:hover:not(:disabled){border-color:var(--line)!important;box-shadow:none!important}
 .option:focus,.option:focus-visible{outline:none}
