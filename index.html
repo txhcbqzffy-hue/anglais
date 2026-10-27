@@ -8771,6 +8771,7 @@ expHtml=function(e){
     try{penalize(currentVocabItem())}catch(e){}
     const f=$("feedback");f.innerHTML=`<b>${escapeHtml(expected())}</b>`;f.className="feedback badText";
     try{finishExamStep()}catch(e){}
+    try{if(window.__grExplainEmpty)window.__grExplainEmpty()}catch(e){}
     return true;
   };
   const visible=id=>{const e=$(id);return e&&e.getClientRects().length>0};
@@ -9237,7 +9238,7 @@ checkOption=function(btn,correct){
   }
   function explain(wasLocked,user){
     try{
-      if(wasLocked||!locked||!user||!current||!["transform","finderror"].includes(mode))return;
+      if(wasLocked||!locked||!current||!["transform","finderror"].includes(mode))return;
       const target=String(current.target||current.good||""),exact=norm(user)===norm(target);
       const ok=exact||(current.accepted||[]).some(a=>acceptable(user,a))||acceptable(user,target);
       let h=`<h4 class="whyHead"><span>Pourquoi « ${escapeHtml(target)} » ?</span><button type="button" class="whySpeak" data-say="${escapeHtml(target)}" aria-label="Écouter"><i class="bi-audio icSp"></i></button></h4>`;
@@ -9259,7 +9260,7 @@ checkOption=function(btn,correct){
         h+=`<p><b>Phrase de départ :</b> <i>${escapeHtml(current.bad||"")}</i></p>`;
       }
       const df=diff(user,target);
-      if(!ok){
+      if(!ok&&user){
         const bits=[];
         if(df.miss.length)bits.push(`il manque : <b>${df.miss.map(escapeHtml).join(" ")}</b>`);
         if(df.extra.length)bits.push(`en trop ou incorrect : <b>${df.extra.map(escapeHtml).join(" ")}</b>`);
@@ -9273,6 +9274,7 @@ checkOption=function(btn,correct){
       $("feedback").insertAdjacentElement("afterend",b);$("feedback").dataset.kq="1";$("feedback").classList.add("fbQuiet");
     }catch(e){console.error(e)}
   }
+  window.__grExplainEmpty=()=>explain(false,"");
   const arm=()=>{const w=locked,u=($("answerInput").value||"").trim();setTimeout(()=>explain(w,u),0)};
   $("checkTextBtn").addEventListener("click",arm,true);
   $("answerInput").addEventListener("keydown",e=>{if(e.key==="Enter")arm()},true);
