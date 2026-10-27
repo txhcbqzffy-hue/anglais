@@ -9118,6 +9118,8 @@ document.addEventListener("click",e=>{
       const optMode=o&&o.querySelector(".option.good")&&o.offsetParent!==null;
       const quiet=t==="✅ Correct"||t==="Correct"||(optMode&&(/^❌\s*(Réponse|Answer)\s*:/i.test(t)||/^(Faux|Wrong|False)\s*:/i.test(t)));
       f.classList.toggle("fbQuiet",!!quiet);
+      if(!quiet){const m=t.match(/^❌\s*(?:Réponse attendue|Expected answer|Réponse|Answer)\s*:\s*(.+)$/i);
+        if(m){const w=m[1].trim();f.innerHTML="";const b=document.createElement("b");b.textContent=w;f.appendChild(b)}}
     }catch(e){}
     busy=false;
   }
