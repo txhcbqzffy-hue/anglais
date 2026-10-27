@@ -9533,6 +9533,22 @@ const RESUME={};
     try{const h=b.closest(".kindSeg");const host=h&&h.parentElement;if(host&&host.animate)host.animate([{opacity:.4,transform:"translateX("+(dx<0?"24px":"-24px")+")"},{opacity:1,transform:"none"}],{duration:220,easing:"ease-out"})}catch(x){}
   },{passive:true});
 })();
+
+/* haut-parleur : sur une phrase à trou, lit la phrase complète avec la bonne réponse */
+(function(){
+  const b=$("speakBtn");if(!b)return;
+  b.addEventListener("click",e=>{
+    try{
+      if(!current||["reading","grammar","finderror","transform"].includes(mode))return;
+      const txt=String(current.q||current.sentence||$("question").textContent||"").replace(/[★☆]/g,"").trim();
+      if(!/_{2,}/.test(txt))return;
+      let a=current.a!=null?current.a:current.answer;if(Array.isArray(a))a=a[0];
+      a=String(a||"").trim();if(!a)return;
+      e.stopImmediatePropagation();
+      if(/^(Ø|∅|-|—|no article|zero|rien)$/i.test(a))a="";speak(txt.replace(/_{2,}/,a).replace(/\s+/g," ").trim());
+    }catch(x){}
+  },true);
+})();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
