@@ -8207,7 +8207,7 @@ function I18N(t){
   for(const [re,f] of I18N_RULES){const m=k.match(re);if(m){const r=f.apply(null,m);if(r!==k)return t.replace(k,r)}}
   return t;
 }
-function i18nSkip(n){const e=n.nodeType===1?n:n.parentElement;return !e||e.closest("#expWrap,#lessonPanel,#coursSheet,#tenseSheet,script,style")||(n.nodeType===3&&e.closest("textarea"))}
+function i18nSkip(n){const e=n.nodeType===1?n:n.parentElement;return !e||e.closest("#expWrap,#lessonPanel,#coursSheet,#tenseSheet,#themeList small,script,style")||(n.nodeType===3&&e.closest("textarea"))}
 function i18nNode(n){
   if(n.nodeType===3){if(!i18nSkip(n)){let v=I18N(n.nodeValue);if(v===n.nodeValue&&n.parentElement&&n.parentElement.closest("#question,#info,#modeHelp,#feedback,#translationBox"))v=I18NF(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v}return}
   if(n.nodeType!==1||i18nSkip(n))return;
@@ -8851,13 +8851,14 @@ function themeEnsure(){
   g.addEventListener("pointerup",end);g.addEventListener("pointercancel",end);
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&d.classList.contains("open"))themeClose()});
 }
+const GAME_FR={gPairs:"Relie chaque mot anglais à sa traduction.",gScramble:"Remets les lettres dans l’ordre pour former le mot.",gTrueFalse:"10 cartes : la traduction est-elle juste ?",gMissing:"Complète les lettres qui manquent.",gMemory:"Retourne les cartes et retrouve les paires.",gSpeed:"30 secondes : un maximum de bonnes réponses.",gListen:"Écoute le mot et choisis-le.",gHangman:"Devine le mot lettre par lettre."};
 function themeRender(anim){
   const list=$("themeList");if(!list)return;
   const dr=$("themeDrop");dr.classList.toggle("gamesMode",themeTab==="games");
   dr.querySelector("h3").textContent=themeTab==="games"?"Choisir un jeu":"Choisir un thème";
   if(themeTab==="games"){
     const row=(id,n,d,i)=>`<button type="button" class="themeItem" data-game="${id}" style="--i:${Math.min(i,12)}"><span>${escapeHtml(n)}${d?`<small>${escapeHtml(d)}</small>`:""}</span></button>`;
-    list.innerHTML=row("","Au hasard","Un jeu au choix de l’appli",0)+GAME_MODES.map((m,i)=>row(m,(modeNames[m]||m).replace(/^(Jeu|Game) · /,""),(modeDescriptions[m]||""),i+1)).join("");
+    list.innerHTML=row("","Au hasard","Un jeu au choix de l’appli",0)+GAME_MODES.map((m,i)=>row(m,(modeNames[m]||m).replace(/^(Jeu|Game) · /,""),(GAME_FR[m]||""),i+1)).join("");
     list.scrollTop=0;list.classList.toggle("noanim",!anim);return;
   }
   document.querySelectorAll("#themeDrop [data-tt]").forEach(x=>x.classList.toggle("on",x.dataset.tt===themeTab));
