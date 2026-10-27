@@ -1223,7 +1223,7 @@ html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:n
 #exerciseCard:has(#whyBox) #translationWrap{display:none!important}
 .whyHead{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .icSp{display:block;width:22px;height:22px;margin:auto;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
-#speakBtn{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid var(--line);color:var(--accent-text,var(--accent))}
+#speakBtn{order:-1;display:inline-grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid var(--line);color:var(--accent-text,var(--accent))}
 #speakBtn .icSp{width:24px;height:24px}
 .whySpeak,.defSpeak{color:var(--accent-text,var(--accent))}
 .whySpeak{display:inline-grid;place-items:center;border:1px solid var(--line,#e6d5c8);background:#fff;border-radius:12px;width:40px;height:40px;font-size:18px;line-height:1;cursor:pointer;flex:none}
@@ -9115,6 +9115,23 @@ document.addEventListener("click",e=>{
   }
   new MutationObserver(chk).observe(f,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:["class"]});
   document.addEventListener("click",()=>setTimeout(chk,0),true);
+})();
+
+/* haut-parleur visible dans les QCM/écriture quand la question est le mot anglais */
+(function(){
+  const SP=["quiz","quizMix","write","review","errors","favorites"];
+  const qEl=$("question"),sp=$("speakBtn");if(!qEl||!sp)return;
+  function en(){
+    try{
+      if(!SP.includes(mode)||!current)return null;
+      const it=currentVocabItem();if(!it)return null;
+      let raw=qEl.textContent.trim();const m=raw.match(/[“"«]\s*(.+?)\s*[”"»]/);if(m)raw=m[1];
+      return norm(raw)===norm(it[0])?it[0]:null;
+    }catch(e){return null}
+  }
+  function sync(){const w=en();if(SP.includes(mode))sp.style.display=w?"":"none"}
+  new MutationObserver(sync).observe(qEl,{childList:true,characterData:true,subtree:true});
+  sp.addEventListener("click",e=>{const w=en();if(w){e.stopImmediatePropagation();try{speak(w)}catch(x){}}},true);
 })();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
