@@ -1327,6 +1327,7 @@ html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:n
 /* halo du bouton Next : de la couleur du résultat (vert / rouge), jamais de la couleur d'accent */
 :is(body.sessionOn,body:not(.sessionOn)) #exerciseCard #nextBtn.nextGood:not(.hidden):not(.zz){box-shadow:0 8px 20px -8px rgba(22,163,74,.45)!important}
 :is(body.sessionOn,body:not(.sessionOn)) #exerciseCard #nextBtn.nextBad:not(.hidden):not(.zz){box-shadow:0 8px 20px -8px rgba(220,38,38,.45)!important}
+:root[data-theme="dark"] .favTab.on,:root[data-theme="dark"] .tab.active{color:var(--on-accent)!important}
 </style>
 </head>
 <body>
