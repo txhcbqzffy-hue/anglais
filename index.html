@@ -1323,6 +1323,10 @@ html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:n
 .optFav::before{content:""!important;display:block;width:24px;height:24px;font-size:0!important;background:currentColor;color:var(--muted);-webkit-mask:var(--star-off) center/contain no-repeat;mask:var(--star-off) center/contain no-repeat}
 .optFav.on::before{color:var(--warn)!important;-webkit-mask-image:var(--star-on);mask-image:var(--star-on)}
 .optFav,.optFav:active,.fStar:active{background:transparent!important}
+
+/* halo du bouton Next : de la couleur du résultat (vert / rouge), jamais de la couleur d'accent */
+:is(body.sessionOn,body:not(.sessionOn)) #exerciseCard #nextBtn.nextGood:not(.hidden):not(.zz){box-shadow:0 8px 20px -8px rgba(22,163,74,.45)!important}
+:is(body.sessionOn,body:not(.sessionOn)) #exerciseCard #nextBtn.nextBad:not(.hidden):not(.zz){box-shadow:0 8px 20px -8px rgba(220,38,38,.45)!important}
 </style>
 </head>
 <body>
