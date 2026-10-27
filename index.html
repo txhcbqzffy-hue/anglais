@@ -1145,6 +1145,30 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 
 .eyeIc{display:inline-block;width:22px;height:22px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3C/svg%3E") center/contain no-repeat}
 .eyeIc.off{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3Cpath d=%22M3 3l18 18%22/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3Cpath d=%22M3 3l18 18%22/%3E%3C/svg%3E")}
+.themeSel{width:100%;min-height:52px;padding:10px 14px;border-radius:var(--r,10px);border:1px solid var(--line);background:var(--panel);color:var(--text);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left}
+.themeSel .chev{flex:none;width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin:-4px 4px 0 0;opacity:.7}
+.blkGrid3 .blk[data-blk="expressions"]{grid-column:1/-1;flex-direction:row;justify-content:center;gap:12px;padding:12px}
+.themeBack{position:fixed;inset:0;z-index:119;background:rgba(24,14,6,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .4s ease;touch-action:none}
+.themeBack.open{opacity:1;pointer-events:auto}
+.themeDrop{position:fixed;left:0;right:0;top:0;z-index:120;max-height:84vh;max-height:84dvh;display:flex;flex-direction:column;background:var(--bg);border-radius:0 0 28px 28px;box-shadow:0 28px 70px rgba(0,0,0,.32);padding-top:max(12px,env(safe-area-inset-top));transform:translateY(-104%);visibility:hidden;transition:transform .55s cubic-bezier(.22,1,.36,1),visibility 0s linear .55s}
+.themeDrop.open{transform:none;visibility:visible;transition:transform .55s cubic-bezier(.22,1,.36,1),visibility 0s}
+.themeTop{display:flex;align-items:center;justify-content:space-between;padding:6px 16px 10px}
+.themeTop h3{margin:0;font-size:20px}
+.themeTabs{display:flex;gap:8px;padding:0 16px 10px}
+.themeTabs button{flex:1;min-height:42px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);font-weight:800;transition:background .25s,color .25s}
+.themeTabs button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.themeList{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:2px 16px 6px}
+.themeItem{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:14px 16px;margin-bottom:8px;border-radius:16px;border:1px solid var(--line);background:var(--panel);color:var(--text);font-weight:700;font-size:15px;transition:transform .15s,border-color .2s,background .2s}
+.themeItem:active{transform:scale(.98)}
+.themeItem span{flex:1}
+.themeItem em{font-style:normal;font-size:12px;font-weight:800;color:var(--muted)}
+.themeItem .dot{flex:none;width:18px;height:18px;border-radius:50%;border:2px solid var(--line);transition:all .2s}
+.themeItem.on{border-color:var(--accent);background:rgba(var(--accent-rgb),.12)}
+.themeItem.on .dot{border-color:var(--accent);background:var(--accent);box-shadow:inset 0 0 0 3px var(--panel)}
+.themeDrop.open .themeList:not(.noanim) .themeItem{animation:themeIn .5s cubic-bezier(.22,1,.36,1) both;animation-delay:calc(var(--i)*24ms + 140ms)}
+@keyframes themeIn{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+.themeGrab{flex:none;height:46px;display:grid;place-items:center;touch-action:none;cursor:grab}
+.themeGrab i{width:54px;height:5px;border-radius:3px;background:var(--muted);opacity:.45}
 #favHide{display:inline-flex;align-items:center;justify-content:center}
 #question,#ctxHint{-webkit-tap-highlight-color:transparent}
 #exerciseCard:has(#whyBox) #ctxHint{display:none}
@@ -6812,7 +6836,7 @@ setMode=function(m,k){__setModeOrig(m,k);pageFollowMode()};
 /* ----- barre de choix rapide (menus déroulants) : Vocabulaire et Grammaire ----- */
 let barSig="";
 const GRAM_BLOCKS=[["articles","Articles","type"],["thirdPerson","3e personne","user"],["wordOrder","Ordre des mots","order"],["questionsNeg","Questions et négations","help"],["prepositions","Prépositions","pin"],["comparatives","Comparatifs","scale"],["tenses","Temps","clock"],["irregularMix","Irréguliers","list"],["edListen","Verbes en -ED","audio"],["modals","Modaux","key"],["transform","Transformer","repeat"],["finderror","Trouver l’erreur","search"]];
-const VOC_BLOCKS=[["quizMix","Quiz","quiz"],["defMatch","Définitions","def"],["phrases","Phrases à trous","gap"],["reverse","Écrire","write"],["review","Révision","redo"],["game","Jeux","game"],["phrasal","Phrasal verbs","swap"],["falseFriends","Faux amis","warn"],["favorites","Favoris","star"]];
+const VOC_BLOCKS=[["quizMix","Quiz","quiz"],["defMatch","Définitions","def"],["phrases","Phrases à trous","gap"],["reverse","Écrire","write"],["review","Révision","redo"],["game","Jeux","game"],["phrasal","Phrasal verbs","swap"],["falseFriends","Faux amis","warn"],["favorites","Favoris","star"],["expressions","Expressions","list"]];
 function modeInfo(){const info={};Object.values(goalModeGroups).forEach(g=>g.modes.forEach(x=>{if(!info[x[0]])info[x[0]]=x}));return info}
 function renderPageBar(){
   const host=$("pageBar");if(!host)return;
@@ -6834,7 +6858,7 @@ function renderPageBar(){
       const f=state.packFocus||"",o=id=>{const x=PACKS.find(q=>q.id===id);return x?`<option value="${id}"${f===id?" selected":""}>${escapeHtml(x.name)} (${x.words.length})</option>`:""};
       const rank=id=>{const i=PACK_ORDER.indexOf(id);return i<0?99:i};
       const words=PACKS.filter(q=>!PACK_EXPR.includes(q.id)).sort((a,b)=>rank(a.id)-rank(b.id)).map(q=>q.id);
-      h+=`<label class="pbField"><span>Thème</span><select id="pbTheme"><option value=""${f?"":" selected"}>Tous les thèmes</option><optgroup label="Mots par métier et par sujet">${words.map(o).join("")}</optgroup><optgroup label="Expressions">${PACK_EXPR.map(o).join("")}</optgroup></select></label>`;
+      h+=`<div class="pbField"><span>Thème</span><button type="button" id="pbThemeBtn" class="themeSel"><b>${escapeHtml((PACKS.find(q=>q.id===f)||{}).name||"Tous les thèmes")}</b><i class="chev"></i></button></div>`;
     }
     if(p==="gram"){
       h+=`<div class="blkGrid3">${GRAM_BLOCKS.map(([m,l,ic])=>`<button type="button" class="blk" data-blk="${m}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${l}</b></button>`).join("")}</div>`;
@@ -6846,7 +6870,8 @@ function renderPageBar(){
     h+=groups.map(([t,ms])=>`<div class="blkHead">${escapeHtml(t)}</div><div class="blkGrid">${ms.filter(m=>info[m]).map(m=>`<button type="button" class="blk" data-blk="${m}"><b>${escapeHtml(info[m][1])}</b><small>${escapeHtml(info[m][2]||"")}</small></button>`).join("")}</div>`).join("");
     host.innerHTML=h;
 //    if(p==="vocab")host.insertBefore(avEl(),host.firstChild);
-    host.querySelectorAll("[data-blk]").forEach(b=>b.onclick=()=>openExercise(b.dataset.blk==="game"?GAME_MODES[Math.floor(Math.random()*GAME_MODES.length)]:b.dataset.blk));
+    host.querySelectorAll("[data-blk]").forEach(b=>b.onclick=()=>b.dataset.blk==="expressions"?themeOpen("expr",true):openExercise(b.dataset.blk==="game"?GAME_MODES[Math.floor(Math.random()*GAME_MODES.length)]:b.dataset.blk));
+    const tb=$("pbThemeBtn");if(tb)tb.onclick=()=>themeOpen(PACK_EXPR.includes(state.packFocus)?"expr":"words",false);
     const t=$("pbTheme");
     if(t)t.onchange=()=>{state.packFocus=t.value||null;saveState();barSig=""};
     return;
@@ -7860,7 +7885,7 @@ const I18N_DICT={
 "Pas encore de réponse":"No answer yet","Réviser":"Review","Révision":"Review","Révision espacée":"Spaced review","Mes erreurs":"My mistakes","Mes favoris":"My favorites","Favoris":"Favorites",
 "Aucune erreur enregistrée":"No mistakes recorded","Aucun favori":"No favorites","Verbes irréguliers":"Irregular verbs","Test de niveau":"Level test",
 "Tester mon niveau":"Test my level","Vocabulaire":"Vocabulary","Grammaire":"Grammar","Écoute":"Listening","Temps":"Tenses","Prépositions":"Prepositions","Définitions":"Definitions","Phrases à trous":"Fill in the blanks",
-"Quiz":"Quiz","Jeux":"Games","Phrasal verbs":"Phrasal verbs","Faux amis":"False friends","Retour":"Back","‹ Retour":"‹ Back","Commencer":"Start","Reprendre":"Resume","Réduire":"Minimize","Fermer":"Close",
+"Quiz":"Quiz","Choisir un thème":"Choose a theme","Jeux":"Games","Phrasal verbs":"Phrasal verbs","Faux amis":"False friends","Retour":"Back","‹ Retour":"‹ Back","Commencer":"Start","Reprendre":"Resume","Réduire":"Minimize","Fermer":"Close",
 "Valider":"Submit","Vérifier":"Check","Suivant":"Next","Question suivante →":"Next question →","Voir la réponse / traduction":"Show answer / translation","Rejouer":"Play again","Détail":"Details",
 "Thème":"Theme","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
 "Questions et négations":"Questions & negatives","Questions & négations":"Questions & negatives","Ordre des mots":"Word order","Choisir le bon temps":"Choose the right tense","Construire une phrase":"Build a sentence","Transformer une phrase":"Transform a sentence",
@@ -8610,6 +8635,61 @@ document.addEventListener("click",e=>{
     else speak(h.textContent);
   }catch(x){}
 });
+
+/* ----- Choix du thème : menu qui descend du haut, se ferme en tirant la poignée vers le haut ----- */
+let themeLaunch=false,themeTab="words";
+function themeEnsure(){
+  if($("themeDrop"))return;
+  const b=document.createElement("div");b.id="themeBack";b.className="themeBack";
+  const d=document.createElement("div");d.id="themeDrop";d.className="themeDrop";d.setAttribute("role","dialog");
+  d.innerHTML=`<div class="themeTop"><h3>Choisir un thème</h3><button type="button" class="ghost backIc" id="themeX" aria-label="Fermer">✕</button></div>
+  <div class="themeTabs"><button type="button" data-tt="words">Mots</button><button type="button" data-tt="expr">Expressions</button></div>
+  <div class="themeList" id="themeList"></div>
+  <div class="themeGrab" id="themeGrab" aria-label="Tirer vers le haut pour fermer"><i></i></div>`;
+  document.body.appendChild(b);document.body.appendChild(d);
+  b.addEventListener("click",themeClose);$("themeX").addEventListener("click",themeClose);
+  d.querySelectorAll("[data-tt]").forEach(x=>x.addEventListener("click",()=>{themeTab=x.dataset.tt;themeRender(true)}));
+  $("themeList").addEventListener("click",e=>{
+    const it=e.target.closest(".themeItem");if(!it)return;
+    const id=it.dataset.id||"";
+    state.packFocus=id||null;saveState();barSig="";
+    try{renderPageBar()}catch(x){}
+    themeClose();
+    if(themeLaunch&&id)setTimeout(()=>{try{openExercise("quizMix")}catch(x){}},380);
+  });
+  const g=$("themeGrab");let y0=null,dy=0;
+  g.addEventListener("pointerdown",e=>{y0=e.clientY;dy=0;d.style.transition="none";b.style.transition="none";try{g.setPointerCapture(e.pointerId)}catch(x){}});
+  g.addEventListener("pointermove",e=>{if(y0==null)return;dy=Math.min(0,e.clientY-y0);d.style.transform=`translateY(${dy}px)`;b.style.opacity=String(Math.max(0,1+dy/Math.max(1,d.offsetHeight)))});
+  const end=()=>{if(y0==null)return;y0=null;d.style.transition="";b.style.transition="";
+    if(dy<-45){d.style.transform="";b.style.opacity="";themeClose()}else{d.style.transform="";b.style.opacity=""}dy=0};
+  g.addEventListener("pointerup",end);g.addEventListener("pointercancel",end);
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&d.classList.contains("open"))themeClose()});
+}
+function themeRender(anim){
+  const list=$("themeList");if(!list)return;
+  document.querySelectorAll("#themeDrop [data-tt]").forEach(x=>x.classList.toggle("on",x.dataset.tt===themeTab));
+  const rank=id=>{const i=PACK_ORDER.indexOf(id);return i<0?99:i};
+  const packs=themeTab==="expr"?PACK_EXPR.map(id=>PACKS.find(p=>p.id===id)).filter(Boolean):PACKS.filter(p=>!PACK_EXPR.includes(p.id)).sort((a,b)=>rank(a.id)-rank(b.id));
+  const f=state.packFocus||"";
+  const row=(id,name,n,i)=>`<button type="button" class="themeItem${f===id?" on":""}" data-id="${id}" style="--i:${Math.min(i,12)}"><span>${escapeHtml(name)}</span>${n?`<em>${n}</em>`:""}<i class="dot"></i></button>`;
+  list.innerHTML=row("","Tous les thèmes","",0)+packs.map((p,i)=>row(p.id,p.name,p.words.length,i+1)).join("");
+  list.scrollTop=0;
+  list.classList.toggle("noanim",!anim);
+}
+function themeOpen(tab,launch){
+  themeEnsure();themeTab=tab||"words";themeLaunch=!!launch;
+  const d=$("themeDrop"),b=$("themeBack");
+  themeRender(true);
+  d.style.transform="";d.style.transition="";b.style.opacity="";b.style.transition="";
+  document.body.classList.add("sheetOpen");
+  void d.offsetHeight;
+  b.classList.add("open");d.classList.add("open");
+}
+function themeClose(){
+  const d=$("themeDrop"),b=$("themeBack");if(!d)return;
+  d.classList.remove("open");b.classList.remove("open");
+  document.body.classList.remove("sheetOpen");
+}
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
