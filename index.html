@@ -1223,7 +1223,9 @@ html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:n
 #exerciseCard:has(#whyBox) #translationWrap{display:none!important}
 .whyHead{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .icSp{display:block;width:22px;height:22px;margin:auto;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
-#speakBtn{display:inline-grid;place-items:center}
+#speakBtn{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid var(--line);color:var(--accent-text,var(--accent))}
+#speakBtn .icSp{width:24px;height:24px}
+.whySpeak,.defSpeak{color:var(--accent-text,var(--accent))}
 .whySpeak{display:inline-grid;place-items:center;border:1px solid var(--line,#e6d5c8);background:#fff;border-radius:12px;width:40px;height:40px;font-size:18px;line-height:1;cursor:pointer;flex:none}
 #whyBox{margin-top:14px;margin-bottom:0;padding:14px 14px 12px;border:1px solid var(--accent-line);border-radius:16px;background:rgba(var(--accent-rgb),.07);font-size:14.5px;line-height:1.45;text-align:left}
 #whyBox h4{margin:0 0 6px;font-size:15px;color:var(--accent-text)}
