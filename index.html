@@ -9614,6 +9614,19 @@ const RESUME={};
   document.addEventListener("focusin",()=>{setTimeout(upd,50);setTimeout(upd,350)});
   document.addEventListener("focusout",()=>{setTimeout(upd,80);setTimeout(upd,400)});
 })();
+
+/* clavier ouvert d'office quand la question se répond au clavier (appel synchrone dans le geste = iOS l'accepte) */
+function focusTyping(){
+  try{
+    const i=$("answerInput"),z=$("textZone"),card=$("exerciseCard");
+    if(!i||!z||!card||z.classList.contains("hidden")||card.offsetParent===null||i.offsetParent===null||i.disabled||i.readOnly||locked)return;
+    if(document.activeElement===i)return;
+    if(typeof mode!=="string"||mode.indexOf("view:")===0)return;
+    i.focus({preventScroll:true});
+  }catch(e){}
+}
+{const nq=newQuestion;newQuestion=function(){const r=nq.apply(this,arguments);focusTyping();return r};
+ const oe=openExercise;openExercise=function(){const r=oe.apply(this,arguments);focusTyping();setTimeout(focusTyping,60);return r};}
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
