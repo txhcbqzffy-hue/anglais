@@ -6176,7 +6176,7 @@ function tagPages(){
     else if(["modeHelp","lessonPanel","exerciseCard"].includes(el.id)||el.classList.contains("toolbar"))pg="zone";
     else if(/^Ajouter ton vocab/.test(H(el)))pg="none";
     else if(/^Maîtrise/.test(H(el)))pg="vocab";
-    else if(/^(Fiches|3e personne|Verbes irréguliers|Verbes en -ED)/.test(H(el)))pg="gram";
+    else if(/^(Fiches|3e personne|Verbes irréguliers|Verbes en -ED)/.test(H(el)))pg="none";
     return {el,pg};
   });
 }
