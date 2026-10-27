@@ -9126,7 +9126,7 @@ function fitLock(){
       if(card){
         const ids=["nextBtn","checkTextBtn","checkGrammarBtn","checkReadingBtn","checkTranslationTextBtn","checkWritingBtn","recordBtn","pronRecordBtn","gOk"];
         const any=ids.some(i=>{const e=$(i);return e&&e.getClientRects().length&&getComputedStyle(e).position==="fixed"});
-        card.classList.toggle("noDock",true);
+        card.classList.toggle("noDock",!document.body.classList.contains("sessionOn"));
       }
     }catch(x){}
     const ds=Math.ceil(innerHeight-limit+14);
