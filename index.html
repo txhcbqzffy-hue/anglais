@@ -1149,6 +1149,15 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 html body #exerciseCard.noDock#exerciseCard.noDock#exerciseCard.noDock{padding-bottom:20px!important}
 #exerciseCard.noDock #feedback:empty{display:none}
 html[style] body .app.app.app{padding-bottom:var(--dockSpace,168px)!important}
+@media (hover:none){
+.option:hover:not(:disabled){border-color:var(--line)!important;box-shadow:none!important}
+.option:focus,.option:focus-visible{outline:none}
+.goalBtn:hover:not(.active){border-color:var(--line);background:var(--panel)}
+.exerciseChoice:hover{border-color:var(--line);background:var(--panel)}
+button.adaptiveStep:hover{border-color:var(--line);background:var(--panel)}
+.vCard:hover,.showCard:hover{border-color:var(--line)}
+.rate button:hover{border-color:var(--line);background:var(--panel)}
+}
 html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:none}
 #nextBtn{transition:background .3s,box-shadow .3s}
 #options .option{opacity:1}
