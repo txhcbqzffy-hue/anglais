@@ -130,6 +130,8 @@ textarea{min-height:105px;resize:vertical;line-height:1.5}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .feedback{min-height:30px;margin-top:12px;font-weight:750;line-height:1.45}
 .feedback.fbQuiet{display:none!important}
+html.kb,html.kb body{overflow:hidden!important;overscroll-behavior:none}
+html.kb body{position:fixed!important;left:0;right:0;width:100%}
 .goodText{color:var(--good)} .badText{color:var(--bad)} .warnText{color:var(--warn)}
 .hidden{display:none!important}
 
@@ -9081,22 +9083,24 @@ document.addEventListener("click",e=>{
   window.__goBack=goBack;
 })();
 
-/* keyboard: keep page from panning when input opens */
+/* clavier : fond figé (aucun défilement / décalage de la page quand un champ prend le focus) */
 (function(){
-  const vv=window.visualViewport;let on=false;
-  function fix(){
-    if(!on)return;
-    const a=document.activeElement;if(!a||a.id!=="answerInput")return;
-    if(window.scrollY>0||(vv&&vv.offsetTop>0)){
-      const r=a.getBoundingClientRect();const top=r.bottom+window.scrollY;
-      const h=vv?vv.height:innerHeight;
-      if(top<h-16)window.scrollTo(0,0);
-    }
-  }
-  document.addEventListener("focusin",e=>{if(e.target&&e.target.id==="answerInput"){on=true;[0,60,150,300,500,800].forEach(t=>setTimeout(fix,t))}});
-  document.addEventListener("focusout",e=>{if(e.target&&e.target.id==="answerInput"){on=false}});
-  if(vv){vv.addEventListener("scroll",fix);vv.addEventListener("resize",fix)}
-  window.addEventListener("scroll",fix,{passive:true});
+  const de=document.documentElement;let y=0;
+  const isTxt=t=>t&&t.matches&&t.matches("input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea");
+  document.addEventListener("focusin",e=>{
+    if(!isTxt(e.target)||de.classList.contains("kb"))return;
+    y=window.scrollY||0;
+    document.body.style.top=(-y)+"px";de.classList.add("kb");
+  });
+  document.addEventListener("focusout",e=>{
+    if(!isTxt(e.target))return;
+    setTimeout(()=>{
+      if(isTxt(document.activeElement))return;
+      if(!de.classList.contains("kb"))return;
+      de.classList.remove("kb");document.body.style.top="";
+      const prev=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,y);de.style.scrollBehavior=prev;
+    },60);
+  });
 })();
 
 /* feedback: pas de "Correct" / "Réponse" redondants avec la couleur */
