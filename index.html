@@ -9092,7 +9092,7 @@ document.addEventListener("click",e=>{
   const de=document.documentElement;let y=0;
   const isTxt=t=>t&&t.matches&&t.matches("input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea");
   document.addEventListener("focusin",e=>{
-    if(!isTxt(e.target)||de.classList.contains("kb"))return;
+    if(!isTxt(e.target)||de.classList.contains("kb")||!e.target.closest("#exerciseCard"))return;
     y=window.scrollY||0;
     document.body.style.top=(-y)+"px";de.classList.add("kb");
   });
