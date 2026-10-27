@@ -1221,7 +1221,9 @@ html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:n
 #ctxHint{font-size:13px;color:var(--muted,#8a7f76);font-style:italic;margin:-6px 0 14px;line-height:1.4}
 #exerciseCard:has(#whyBox) #translationWrap{display:none!important}
 .whyHead{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.whySpeak{border:1px solid var(--line,#e6d5c8);background:#fff;border-radius:12px;width:40px;height:40px;font-size:18px;line-height:1;cursor:pointer;flex:none}
+.icSp{display:block;width:22px;height:22px;margin:auto;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+#speakBtn{display:inline-grid;place-items:center}
+.whySpeak{display:inline-grid;place-items:center;border:1px solid var(--line,#e6d5c8);background:#fff;border-radius:12px;width:40px;height:40px;font-size:18px;line-height:1;cursor:pointer;flex:none}
 #whyBox{margin-top:14px;margin-bottom:0;padding:14px 14px 12px;border:1px solid var(--accent-line);border-radius:16px;background:rgba(var(--accent-rgb),.07);font-size:14.5px;line-height:1.45;text-align:left}
 #whyBox h4{margin:0 0 6px;font-size:15px;color:var(--accent-text)}
 #whyBox p{margin:6px 0}
@@ -1429,7 +1431,7 @@ html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:n
       <div id="question" class="question"></div>
       <div class="iconRow">
         <button id="favBtn" class="round star" title="Favori">☆</button>
-        <button id="speakBtn" class="round" title="Écouter">🔊</button>
+        <button id="speakBtn" class="round" title="Écouter" aria-label="Écouter"><i class="bi-audio icSp"></i></button>
       </div>
     </div>
 
@@ -4982,7 +4984,7 @@ function newQuestion(){
     current={answer:sentence,spoken:sentence,shadow:true};
     $("question").textContent=sentence;
     $("pronZone").classList.remove("hidden");
-    $("info").textContent="1. Écoute avec 🔊  2. Répète immédiatement  3. Appuie sur Parler. Le score vérifie surtout les mots reconnus.";$("info").classList.remove("hidden");
+    $("info").textContent="1. Écoute avec le bouton haut-parleur  2. Répète immédiatement  3. Appuie sur Parler. Le score vérifie surtout les mots reconnus.";$("info").classList.remove("hidden");
     if(!selfTesting)if(!selfTesting)setTimeout(()=>speak(sentence),180);
   }
   else if(mode==="writingTask"){
@@ -8624,7 +8626,7 @@ function whyShow(){
     const w=whyGet(e.en),first=w?w.note.split(/(?<=[.!?])\s/)[0]:"";
     return `<li class="whyRow"><span><b>${escapeHtml(e.en)}</b> = ${escapeHtml(e.fr)}${first?" — "+escapeHtml(first):""}</span>${whyStar(e.en)}</li>`;
   }).filter(Boolean).join("");
-  box.innerHTML=`<h4 class="whyHead"><span>Pourquoi « ${escapeHtml(en)} » ?</span><button type="button" class="whySpeak" data-say="${escapeHtml(en)}" aria-label="Écouter">🔊</button></h4><p class="whyRow"><span><b>${escapeHtml(en)}</b> = ${escapeHtml(fr)}</span>${whyStar(en)}</p>`
+  box.innerHTML=`<h4 class="whyHead"><span>Pourquoi « ${escapeHtml(en)} » ?</span><button type="button" class="whySpeak" data-say="${escapeHtml(en)}" aria-label="Écouter"><i class="bi-audio icSp"></i></button></h4><p class="whyRow"><span><b>${escapeHtml(en)}</b> = ${escapeHtml(fr)}</span>${whyStar(en)}</p>`
     +(n?`<p>${escapeHtml(n.note)}</p><div class="whyEx" data-say="${escapeHtml(n.ex)}">${escapeHtml(n.ex)}<i>${escapeHtml(n.fr)}</i></div>`:"")
     +(lis?`<p style="margin-top:10px"><b>À ne pas confondre avec :</b></p><ul class="whyOthers">${lis}</ul>`:"");
   box.addEventListener("click",e=>{const x=e.target.closest("[data-say]");if(x){try{speak(x.dataset.say)}catch(z){}}});
@@ -9074,6 +9076,24 @@ document.addEventListener("click",e=>{
   addEventListener("touchend",end,{passive:true});
   addEventListener("touchcancel",()=>{removeEventListener("touchmove",mv);x0=null;on=false},{passive:true});
   window.__goBack=goBack;
+})();
+
+/* keyboard: keep page from panning when input opens */
+(function(){
+  const vv=window.visualViewport;let on=false;
+  function fix(){
+    if(!on)return;
+    const a=document.activeElement;if(!a||a.id!=="answerInput")return;
+    if(window.scrollY>0||(vv&&vv.offsetTop>0)){
+      const r=a.getBoundingClientRect();const top=r.bottom+window.scrollY;
+      const h=vv?vv.height:innerHeight;
+      if(top<h-16)window.scrollTo(0,0);
+    }
+  }
+  document.addEventListener("focusin",e=>{if(e.target&&e.target.id==="answerInput"){on=true;[0,60,150,300,500,800].forEach(t=>setTimeout(fix,t))}});
+  document.addEventListener("focusout",e=>{if(e.target&&e.target.id==="answerInput"){on=false}});
+  if(vv){vv.addEventListener("scroll",fix);vv.addEventListener("resize",fix)}
+  window.addEventListener("scroll",fix,{passive:true});
 })();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
