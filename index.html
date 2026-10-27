@@ -1145,6 +1145,9 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 
 .eyeIc{display:inline-block;width:22px;height:22px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3C/svg%3E") center/contain no-repeat}
 .eyeIc.off{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3Cpath d=%22M3 3l18 18%22/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223%22/%3E%3Cpath d=%22M3 3l18 18%22/%3E%3C/svg%3E")}
+#nextBtn.nextGood{background:linear-gradient(135deg,#22c55e,#15803d)!important;border-color:#15803d!important;color:#fff!important;box-shadow:0 10px 26px rgba(22,163,74,.35)!important}
+#nextBtn.nextBad{background:linear-gradient(135deg,#f87171,#dc2626)!important;border-color:#dc2626!important;color:#fff!important;box-shadow:0 10px 26px rgba(220,38,38,.35)!important}
+#nextBtn{transition:background .3s,box-shadow .3s}
 .kindSeg{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:var(--panel);border:1px solid var(--line);margin:0 0 12px;align-self:flex-start}
 .kindSeg button{min-height:36px;padding:6px 16px;border-radius:10px;border:0;background:transparent;color:var(--text);font-weight:800;font-size:14px;transition:background .25s,color .25s}
 .kindSeg button.on{background:var(--accent);color:var(--on-accent)}
@@ -8714,6 +8717,32 @@ vocab=function(){
   }catch(e){}
   return __vocabKind.apply(this,arguments);
 };
+
+/* ----- Bouton « Question suivante » : vert si juste, rouge si faux ----- */
+window.__out="";
+const __rwNx=reward,__pnNx=penalize;
+reward=function(){window.__out="good";return __rwNx.apply(this,arguments)};
+penalize=function(){window.__out="bad";return __pnNx.apply(this,arguments)};
+function paintNext(){
+  try{
+    const nb=$("nextBtn");if(!nb)return;
+    nb.classList.remove("nextGood","nextBad");
+    if(nb.classList.contains("hidden"))return;
+    let r=window.__out;
+    if(!r){
+      const fb=$("feedback"),op=$("options");
+      if(fb&&fb.classList.contains("badText")||op&&op.querySelector(".bad"))r="bad";
+      else if(fb&&fb.classList.contains("goodText")||op&&op.querySelector(".good"))r="good";
+    }
+    if(r)nb.classList.add(r==="good"?"nextGood":"nextBad");
+  }catch(e){}
+}
+(function(){
+  const nb=$("nextBtn");if(!nb)return;
+  new MutationObserver(()=>setTimeout(paintNext,0)).observe(nb,{attributes:true,attributeFilter:["class"]});
+})();
+const __nqNx=newQuestion;
+newQuestion=function(){window.__out="";const nb=$("nextBtn");if(nb)nb.classList.remove("nextGood","nextBad");return __nqNx.apply(this,arguments)};
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
