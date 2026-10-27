@@ -4461,6 +4461,7 @@ function scheduleReview(item,good){
   r.next=Date.now()+intervals[r.step];
   state.review[key]=r;
 }
+const REV={seen:new Set(),retry:[]};
 function getDueItems(){return Object.entries(state.review).filter(([,r])=>r.next<=Date.now()).map(([k])=>k)}
 function isFavorite(word){return state.favorites.includes(word)}
 function updateFavButton(){
@@ -4960,9 +4961,11 @@ function newQuestion(){
     $("info").textContent=x.bad;$("info").classList.remove("hidden");$("textZone").classList.remove("hidden");$("answerInput").placeholder="Phrase correcte";
   }
   else if(mode==="review"){
-    const due=getDueItems(),pool=all.filter(x=>due.includes(x[0]));
-    if(!pool.length){emptyState("Aucune révision due.","Les mots reviennent automatiquement : 10 min → 1 jour → 3 jours → 7 jours.");return}
-    const item=rand(pool);current={vocab:item,answer:item[1]};$("question").textContent=item[0];$("textZone").classList.remove("hidden");$("answerInput").placeholder="Traduction française";
+    const due=getDueItems(),pool=all.filter(x=>due.includes(x[0])&&!REV.seen.has(x[0])&&!REV.retry.includes(x[0]));
+    let item=pool.length?rand(pool):(REV.retry.length?all.find(x=>x[0]===REV.retry[0]):null);
+    if(!item){emptyState("Aucune révision due.","Les mots reviennent automatiquement : 10 min → 1 jour → 3 jours → 7 jours.");return}
+    REV.seen.add(item[0]);
+    current={vocab:item,answer:item[1]};$("question").textContent=item[0];$("textZone").classList.remove("hidden");$("answerInput").placeholder="Traduction française";
   }
   else if(mode==="errors"){
     const keys=Object.entries(state.wrong).filter(([,n])=>n>0).sort((a,b)=>b[1]-a[1]).map(([k])=>k),pool=all.filter(x=>keys.includes(x[0]));
@@ -9136,6 +9139,14 @@ document.addEventListener("click",e=>{
   function sync(){const w=en();if(SP.includes(mode))sp.style.display=w?"":"none"}
   new MutationObserver(sync).observe(qEl,{childList:true,characterData:true,subtree:true});
   sp.addEventListener("click",e=>{const w=en();if(w){e.stopImmediatePropagation();try{speak(w)}catch(x){}}},true);
+})();
+
+/* révision espacée : un mot raté repasse après tous les autres de la session */
+(function(){
+  const rp=penalize,rr=reward,oe=openExercise;
+  penalize=function(item){const r=rp.apply(this,arguments);try{if(mode==="review"&&item&&item[0]){REV.retry=REV.retry.filter(k=>k!==item[0]);REV.retry.push(item[0])}}catch(e){}return r};
+  reward=function(item){const r=rr.apply(this,arguments);try{if(mode==="review"&&item&&item[0])REV.retry=REV.retry.filter(k=>k!==item[0])}catch(e){}return r};
+  openExercise=function(m){if(m==="review"){REV.seen=new Set();REV.retry=[]}return oe.apply(this,arguments)};
 })();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
