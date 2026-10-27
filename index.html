@@ -9226,6 +9226,53 @@ checkOption=function(btn,correct){
   }catch(e){console.error(e)}
   return r;
 };
+
+/* ----- Transformer une phrase / Trouver l'erreur : explication sous la réponse (juste ou faux) ----- */
+(function(){
+  const tok=t=>String(t).toLowerCase().replace(/[^a-z0-9' ’-]/g," ").replace(/’/g,"'").split(/\s+/).filter(Boolean);
+  function diff(user,target){
+    const u=tok(user),t=tok(target),um=u.slice(),miss=[];
+    t.forEach(w=>{const i=um.indexOf(w);if(i>=0)um.splice(i,1);else miss.push(w)});
+    return {miss,extra:um};
+  }
+  function explain(wasLocked,user){
+    try{
+      if(wasLocked||!locked||!user||!current||!["transform","finderror"].includes(mode))return;
+      const target=String(current.target||current.good||""),exact=norm(user)===norm(target);
+      const ok=exact||(current.accepted||[]).some(a=>acceptable(user,a))||acceptable(user,target);
+      let h=`<h4 class="whyHead"><span>Pourquoi « ${escapeHtml(target)} » ?</span><button type="button" class="whySpeak" data-say="${escapeHtml(target)}" aria-label="Écouter"><i class="bi-audio icSp"></i></button></h4>`;
+      if(mode==="transform"){
+        const to=String(current.label||"").split("→").pop().trim();
+        const d=TENSES[TENSE_ALIAS[to]||to];
+        h+=`<p><b>${escapeHtml(current.label)}</b></p>`;
+        if(d){
+          h+=`<p><b>Formule :</b> ${escapeHtml(d.f)}</p>`;
+          h+=`<p><b>Pourquoi :</b> ${escapeHtml(d.y)}</p>`;
+          if(d.ex&&d.ex[0])h+=`<p><i>Ex : ${escapeHtml(d.ex[0][0])} — ${escapeHtml(d.ex[0][1])}</i></p>`;
+        }
+      }else{
+        h+=`<p>${escapeHtml(current.why||"")}</p>`;
+        h+=`<p><b>Phrase de départ :</b> <i>${escapeHtml(current.bad||"")}</i></p>`;
+      }
+      const df=diff(user,target);
+      if(!ok){
+        const bits=[];
+        if(df.miss.length)bits.push(`il manque : <b>${df.miss.map(escapeHtml).join(" ")}</b>`);
+        if(df.extra.length)bits.push(`en trop ou incorrect : <b>${df.extra.map(escapeHtml).join(" ")}</b>`);
+        if(bits.length)h+=`<p><b>Ce qui coince :</b> ${bits.join(" · ")}.</p>`;
+      }else if(!exact&&df.miss.length&&df.miss.length===df.extra.length){
+        h+=`<p><b>Petite faute d’orthographe :</b> ${df.extra.map((w,i)=>escapeHtml(w)+" → <b>"+escapeHtml(df.miss[i])+"</b>").join(" · ")}</p>`;
+      }
+      const old=$("whyBox");if(old)old.remove();
+      const b=document.createElement("div");b.id="whyBox";b.innerHTML=h;
+      b.addEventListener("click",e=>{const x=e.target.closest("[data-say]");if(x){try{speak(x.dataset.say)}catch(z){}}});
+      $("feedback").insertAdjacentElement("afterend",b);$("feedback").classList.add("fbQuiet");
+    }catch(e){console.error(e)}
+  }
+  const arm=()=>{const w=locked,u=($("answerInput").value||"").trim();setTimeout(()=>explain(w,u),0)};
+  $("checkTextBtn").addEventListener("click",arm,true);
+  $("answerInput").addEventListener("keydown",e=>{if(e.key==="Enter")arm()},true);
+})();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
