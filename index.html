@@ -4813,7 +4813,7 @@ function newQuestion(){
   }
   else if(mode==="write"||mode==="reverse"){
     const item=rand(all);current={vocab:item,answer:mode==="write"?item[1]:item[0]};
-    $("question").textContent=mode==="write"?`Traduis : “${item[0]}”`:`Traduis en anglais : “${item[1]}”`;
+    $("question").textContent=mode==="write"?item[0]:item[1];
     $("textZone").classList.remove("hidden");$("answerInput").placeholder=mode==="write"?"Réponse en français":"Réponse en anglais";
   }
   else if(mode==="listening"){
