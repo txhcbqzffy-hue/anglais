@@ -1371,6 +1371,10 @@ html:has(body.sessionOn)::after,html:has(.sheet:not(.hidden))::after{display:non
 .rrRing b small{font-size:22px;font-weight:700;color:var(--muted);margin-left:2px}
 .rrPct{font-size:15px;font-weight:700;color:var(--muted);margin-bottom:6px}
 .roundRes button,.roundRes button.primary{box-shadow:none!important}
+
+html.kbUp :is(body.sessionOn,body:not(.sessionOn)) #exerciseCard :is(#checkTextBtn,#checkGrammarBtn,#checkReadingBtn,#checkTranslationTextBtn,#checkWritingBtn,#nextBtn,#recordBtn,#gOk):not(.hidden),
+html.kbUp #checkTextBtn:not(.hidden),html.kbUp #nextBtn:not(.hidden){bottom:calc(var(--kbH,0px) + 8px)!important;z-index:200!important}
+html.kbUp .bottomNav,html.kbUp .dailyBanner,html.kbUp::after{display:none!important}
 </style>
 </head>
 <body>
@@ -9594,6 +9598,21 @@ const RESUME={};
       if(/^(Ø|∅|-|—|no article|zero|rien)$/i.test(a))a="";speak(txt.replace(/_{2,}/,a).replace(/\s+/g," ").trim());
     }catch(x){}
   },true);
+})();
+
+/* clavier ouvert : le bouton Submit / Next suit le haut du clavier (plus besoin de fermer le clavier) */
+(function(){
+  const vv=window.visualViewport;if(!vv)return;const de=document.documentElement;let raf=0;
+  function upd(){
+    cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{
+      const kb=Math.max(0,Math.round(innerHeight-vv.height-vv.offsetTop));
+      de.style.setProperty("--kbH",kb+"px");
+      de.classList.toggle("kbUp",kb>80&&de.classList.contains("kb"));
+    });
+  }
+  vv.addEventListener("resize",upd);vv.addEventListener("scroll",upd);
+  document.addEventListener("focusin",()=>{setTimeout(upd,50);setTimeout(upd,350)});
+  document.addEventListener("focusout",()=>{setTimeout(upd,80);setTimeout(upd,400)});
 })();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
