@@ -1114,8 +1114,8 @@ body.sessionOn #exerciseCard:has(:is(#checkTextBtn,#checkGrammarBtn,#checkReadin
 @media(max-width:380px){.cRow{grid-template-columns:1fr}.cRow .fr{border-left:0;padding-left:0}}
 
 /* traduction + favori à côté de chaque choix */
-.option.hasTr{display:flex!important;align-items:center;gap:6px 10px;flex-wrap:wrap}
-.option.hasTr[data-tr]::after{content:attr(data-tr);order:1;font-size:.82em;font-weight:500;color:var(--muted);font-style:italic}
+.option.hasTr{display:flex!important;align-items:center;gap:6px 10px;flex-wrap:nowrap}
+.option.hasTr[data-tr]::after{content:attr(data-tr);order:1;flex:0 8 auto;min-width:0;font-size:.82em;font-weight:500;color:var(--muted);font-style:italic}
 .option.hasTr.optDone{cursor:default}
 .option.hasTr.good[data-tr]::after,.option.hasTr.bad[data-tr]::after{color:inherit;opacity:.75}
 .optFav{order:2;margin-left:auto;flex:none;width:40px;height:40px;margin-right:-8px;border-radius:50%;display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
