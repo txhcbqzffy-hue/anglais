@@ -4964,7 +4964,7 @@ function newQuestion(){
     $("info").textContent=x.source;$("info").classList.remove("hidden");$("textZone").classList.remove("hidden");$("answerInput").placeholder="Phrase transformée";
   }
   else if(mode==="finderror"){
-    const x=rand(errorQuestions);current={...x,answer:x.good};$("question").textContent="Corrige cette phrase.";
+    const x=rand(errorQuestions);current={...x,answer:x.good};$("question").textContent="";
     $("info").textContent=x.bad;$("info").classList.remove("hidden");$("textZone").classList.remove("hidden");$("answerInput").placeholder="Phrase correcte";
   }
   else if(mode==="review"){
@@ -8978,7 +8978,7 @@ const __nqAd=newQuestion;
 newQuestion=function(){
   const v=vocLevel(),f=Math.floor(v),r=Math.random();
   adTarget=Math.max(0,Math.min(3,r<.15?f+1:r<.7?f:f-1));
-  try{const c=$("exerciseCard");if(c)c.classList.toggle("pairsMode",["gPairs","gMemory","gListen"].includes(mode));c.classList.toggle("gameMode",GAME_MODES.includes(mode))}catch(e){}
+  try{const c=$("exerciseCard");if(c)c.classList.toggle("pairsMode",["gPairs","gMemory","gListen","finderror"].includes(mode));c.classList.toggle("gameMode",GAME_MODES.includes(mode))}catch(e){}
   try{return __nqAd.apply(this,arguments)}finally{adTarget=null}
 };
 
