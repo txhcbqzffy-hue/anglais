@@ -1308,6 +1308,9 @@ html.noScroll,html.noScroll body{overflow:hidden!important;overscroll-behavior:n
 :root[data-theme="dark"] .swatches button i{background:var(--c2)}
 .swatches button.on i{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--c1)}
 .swatches button.on{color:var(--text)!important}
+#whyBox.whyOk{background:var(--good-bg)!important;border-color:var(--good-line)!important}
+#whyBox.whyOk h4{color:var(--good-text)!important}
+#whyBox.whyOk .whyEx{background:rgba(var(--panel-rgb),.6)!important}
 </style>
 </head>
 <body>
@@ -8098,6 +8101,10 @@ reward=function(){if(roundOn())roundC++;return __rdRew.apply(this,arguments)};
 const __rdNQ=newQuestion;
 newQuestion=function(){
   const r=$("roundRes");if(r)r.remove();
+  if(window.__rrVis){/* après « Rejouer » : on rend à nouveau visible ce que l'écran de résultat avait masqué */
+    window.__rrVis.forEach(id=>{const e=$(id);if(e)e.classList.remove("hidden")});window.__rrVis=null;
+    $("speakBtn").style.visibility="";$("favBtn").style.visibility="";
+  }
   if(qNumber===1)roundC=0;
   __rdNQ.apply(this,arguments);
   try{rndBar()}catch(e){}
@@ -8108,6 +8115,7 @@ nextQuestion=function(){
   return __rdNext.apply(this,arguments);
 };
 function roundResult(){
+  window.__rrVis=["options","wordBank","textZone","grammarZone","gameZone"].filter(id=>{const e=$(id);return e&&!e.classList.contains("hidden")});
   resetZones();
   ["options","wordBank","textZone","grammarZone","gameZone"].forEach(id=>{const e=$(id);if(e)e.classList.add("hidden")});
   const c=roundC,p=Math.round(c/ROUND*100);
@@ -9462,6 +9470,28 @@ const RESUME={};
   };
   /* retour (←) ou fin de série : on oublie la reprise de cette page */
   document.addEventListener("click",e=>{if(e.target.closest("#pbBack,#rrBack,#rrAgain"))try{delete RESUME[currentView]}catch(x){}},true);
+})();
+
+/* explication : fond vert clair si la réponse est juste ; ligne « ✅ Correct — … » masquée quand l'explication est là */
+(function(){
+  const card=$("exerciseCard"),f=$("feedback");if(!card||!f)return;let busy=false;
+  function sync(){
+    if(busy)return;busy=true;
+    try{
+      const b=$("whyBox");
+      if(b){
+        const t=(f.textContent||"").trim(),o=$("options");
+        const optsOn=o&&o.offsetParent!==null&&o.querySelector(".option");
+        const ok=optsOn?(!!o.querySelector(".option.good")&&!o.querySelector(".option.bad,.option.wrong")):/^✅/.test(t);
+        b.classList.toggle("whyOk",!!ok);
+        if(/^✅/.test(t)){f.dataset.kq="1";f.classList.add("fbQuiet")}
+      }
+    }catch(e){}
+    busy=false;
+  }
+  let tm=0;const later=()=>{clearTimeout(tm);tm=setTimeout(sync,40)};
+  new MutationObserver(later).observe(card,{childList:true,subtree:true});
+  document.addEventListener("click",()=>{later();setTimeout(sync,250)},true);
 })();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
