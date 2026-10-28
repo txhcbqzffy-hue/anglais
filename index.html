@@ -9481,6 +9481,24 @@ checkOption=function(btn,correct){
   const first=!$("options").classList.contains("answered");
   const r=__checkOptionGr.apply(this,arguments);
   try{
+    if(first&&btn&&current&&["edPron","edListen","sPron"].includes(mode)&&current.spoken){
+      const mine=(btn.textContent||"").trim(),good=String(current.answer||"").trim(),isS=mode==="sPron",w=current.spoken;
+      const RULES=isS?{"/s/":["/s/","après un son non voisé (p, t, k, f)","works, stops, books"],"/z/":["/z/","après une voyelle ou un son voisé (b, d, g, v, l, m, n, r)","plays, runs, calls"],"/ɪz/":["/ɪz/","après un son sifflant (s, z, sh, ch, ge) : une syllabe de plus","washes, watches, uses"]}
+        :{"/t/":["/t/","après un son non voisé (p, k, f, s, sh, ch)","worked, helped, watched"],"/d/":["/d/","après une voyelle ou un son voisé (b, g, v, z, l, m, n, r)","played, called, opened"],"/ɪd/":["/ɪd/","après /t/ ou /d/ : une syllabe de plus","wanted, needed, decided"]};
+      const line=k=>{const r=RULES[k];return r?`<li class="whyRow"><span><b>${escapeHtml(r[0])}</b> = ${r[1]}<br><i>Ex : ${escapeHtml(r[2])}</i></span></li>`:""};
+      const f=$("feedback");f.textContent=correct?"✅ Correct":"❌ Réponse : "+good;f.className="feedback "+(correct?"goodText":"badText");
+      let h=`<h4 class="whyHead"><span>Pourquoi « ${escapeHtml(correct?good:mine)} » ${correct?"est juste":"est faux"} ?</span><button type="button" class="whySpeak" data-say="${escapeHtml(w)}" aria-label="Écouter"><i class="bi-audio icSp"></i></button></h4>`;
+      h+=`<p>Le mot était <b>${escapeHtml(w)}</b> : il se prononce avec <b>${escapeHtml(good)}</b> à la fin.</p><ul class="whyOthers">`;
+      h+=correct?line(good):line(mine)+line(good);
+      h+=`</ul>`;
+      const b=document.createElement("div");b.id="whyBox";b.innerHTML=h;
+      b.addEventListener("click",e=>{const x=e.target.closest("[data-say]");if(x){try{speak(x.dataset.say)}catch(z){}}});
+      const old=$("whyBox");if(old)old.remove();
+      $("feedback").insertAdjacentElement("afterend",b);
+      return r;
+    }
+  }catch(e){console.error(e)}
+  try{
     if(first&&btn&&current&&["tenses","prepositions","articles","modals","comparatives","irregularPast","irregularPart","irregularMix","thirdPerson","connectors","collocations","phrasal","falseFriends"].includes(mode)&&(current.rule||current.why)){
       const mine=(btn.textContent||"").trim(),good=String(current.answer||current.a||"").trim();
       let h=`<h4 class="whyHead"><span>Pourquoi « ${escapeHtml(correct?good:mine)} » ${correct?"est juste":"est faux"} ?</span></h4>`;
