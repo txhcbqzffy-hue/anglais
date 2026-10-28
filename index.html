@@ -7403,8 +7403,11 @@ function gameTrueFalse(z,all){
       z.querySelectorAll(".gTF").forEach(x=>x.disabled=true);
       const right=(b.dataset.v==="1")===truth;
       if(right){ok++;reward(item,shown)}else penalize(item,shown);
-      const f=$("feedback");f.textContent=right?"Correct":"Faux : "+item[0]+" = "+item[1];f.className="feedback "+(right?"goodText":"badText");
-      n++;setTimeout(()=>{$("feedback").textContent="";next()},right?450:1300);
+      const f=$("feedback");f.textContent=(right?"Correct":"Faux")+" — "+item[0]+" = "+item[1];f.className="feedback "+(right?"goodText":"badText");
+      b.classList.add(right?"tfOk":"tfKo");
+      n++;const nb=$("nextBtn");nb.textContent=n>=N?"Voir le score":"Question suivante →";nb.classList.remove("hidden");
+      const h=ev=>{if(!(ev.target.closest&&ev.target.closest("#nextBtn")))return;ev.preventDefault();ev.stopImmediatePropagation();document.removeEventListener("click",h,true);nb.classList.add("hidden");$("feedback").textContent="";next()};
+      document.addEventListener("click",h,true);
     });
   };
   next();
