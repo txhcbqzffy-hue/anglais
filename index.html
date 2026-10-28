@@ -932,7 +932,7 @@ header{margin-bottom:2px!important}
 .jwHead{display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px}
 .jwList{display:grid;gap:2px;max-height:300px;overflow:auto}
 .jwRow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
-.jwRow span{display:flex;flex-direction:column;min-width:0}.jwRow small{color:var(--muted);font-size:11.5px}
+.jwRow span{display:flex;flex-direction:column;min-width:0}.jwRow small{color:var(--muted);font-size:13px;margin-top:2px}
 .jwBar{width:64px;height:6px;border-radius:4px;background:var(--line);overflow:hidden;flex:none}.jwBar u{display:block;height:100%;background:#22c55e;border-radius:4px}
 .pbarHead{font-size:12px;font-weight:800;color:var(--muted);margin:14px 0 6px}
 .pbars{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end}
@@ -7690,7 +7690,17 @@ function jWordLists(){
   const by=(a,b)=>b[1].last-a[1].last;
   return {learning:learning.sort(by),mastered:mastered.sort(by)};
 }
-function jFr(en){const x=vocab().find(v=>v[0]===en);return x?x[1]:""}
+let __frMap=null,__frN=-1;
+function jFr(en){
+  const n=(typeof PACKS!=="undefined"?PACKS.length:0)+baseVocab.length+(state.custom||[]).length;
+  if(!__frMap||__frN!==n){__frMap=new Map();__frN=n;
+    const add=(a,b)=>{if(a&&b&&!__frMap.has(String(a).toLowerCase()))__frMap.set(String(a).toLowerCase(),b)};
+    baseVocab.forEach(w=>add(w[0],w[1]));
+    try{PACKS.forEach(pk=>pk.words.forEach(w=>add(w[0],w[1])))}catch(e){}
+    (state.custom||[]).forEach(x=>add(x.en,x.fr));
+  }
+  return __frMap.get(String(en).toLowerCase())||"";
+}
 
 function jRender(force){
   const host=$("weekPanel");if(!host)return;
@@ -7753,7 +7763,7 @@ function jWords(wl){
   box.innerHTML=`<div class="jwHead"><b>${jOpenList==="learning"?"Mots en cours":"Mots appris"} (${list.length})</b><button type="button" class="primary" id="jQcm">QCM</button></div>
     <div class="jwList">${list.map(([w,v])=>`<div class="jwRow"><span><b>${escapeHtml(w)}</b><small>${escapeHtml(jFr(w))}</small></span><i class="jwBar"><u style="width:${Math.max(4,v.score)}%"></u></i></div>`).join("")}</div>`;
   $("jQcm").onclick=()=>{
-    let items=list.map(([w])=>vocab().find(v=>v[0]===w)).filter(Boolean);
+    let items=list.map(([w])=>vocab().find(v=>v[0]===w)||(jFr(w)?[w,jFr(w),"custom"]:null)).filter(Boolean);
     if(items.length<4){$("jQcm").textContent="4 mots minimum";return}
     if(items.length<8){const have=new Set(items.map(x=>x[0]));items=items.concat(shuffle(vocab().filter(v=>!have.has(v[0]))).slice(0,8-items.length))}
     window.__focus=items;jFocusNext=true;openExercise("quizMix");
