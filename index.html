@@ -1574,6 +1574,7 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
         <option value="articles">Articles : a / an / the / Ø</option>
         <option value="prepositions">Prépositions : in / on / at</option>
         <option value="comparatives">Comparatifs & superlatifs</option>
+        <option value="wordEndings">Word endings</option>
         <option value="modals">Modaux</option>
         <option value="thirdPerson">3e personne : he / she / it</option>
         <option value="edSpell">Past régulier : orthographe -ed</option>
@@ -4281,6 +4282,54 @@ const allDictationSentences = [...dictationSentences,...generatedDictationSenten
 const allArticleQuestions = [...articleQuestions,...generatedArticleQuestions];
 const allPrepositionQuestions = [...prepositionQuestions,...generatedPrepositionQuestions];
 const allComparativeQuestions = [...comparativeQuestions,...generatedComparativeQuestions];
+
+/* ----- Terminaisons des mots : nom, adjectif, adverbe ou verbe ? ----- */
+const ENDING_POS={Noun:"nom",Adjective:"adjectif",Adverb:"adverbe",Verb:"verbe"};
+const ENDING_SFX={
+ "-ness":["Noun","forme des noms (qualité)","happy → happiness"],"-tion":["Noun","forme des noms (action, résultat)","decide → decision"],"-sion":["Noun","forme des noms (action, résultat)","decide → decision"],
+ "-ment":["Noun","forme des noms (action, résultat)","develop → development"],"-ity":["Noun","forme des noms (qualité)","able → ability"],"-ship":["Noun","forme des noms (relation, état)","friend → friendship"],
+ "-ence":["Noun","forme des noms","differ → difference"],"-ance":["Noun","forme des noms","important → importance"],"-er":["Noun","désigne souvent la personne qui fait l’action","teach → teacher"],
+ "-or":["Noun","désigne souvent la personne qui fait l’action","act → actor"],"-ist":["Noun","désigne une personne (métier, spécialité)","tour → tourist"],"-dom":["Noun","forme des noms (état)","free → freedom"],
+ "-ful":["Adjective","forme des adjectifs (plein de…)","care → careful"],"-less":["Adjective","forme des adjectifs (sans…)","home → homeless"],"-ous":["Adjective","forme des adjectifs","danger → dangerous"],
+ "-able":["Adjective","forme des adjectifs (qu’on peut…)","comfort → comfortable"],"-ible":["Adjective","forme des adjectifs (qu’on peut…)","possible, visible"],"-al":["Adjective","forme des adjectifs","nation → national"],
+ "-ive":["Adjective","forme des adjectifs","create → creative"],"-ic":["Adjective","forme des adjectifs","economy → economic"],"-y":["Adjective","forme souvent des adjectifs (nom + y)","rain → rainy"],"-ish":["Adjective","forme des adjectifs (ressemble à…)","child → childish"],
+ "-ly":["Adverb","forme la plupart des adverbes de manière","quick → quickly"],
+ "-ise":["Verb","forme des verbes (rendre…)","modern → modernise"],"-ize":["Verb","forme des verbes (rendre…)","real → realize"],"-ify":["Verb","forme des verbes (rendre…)","simple → simplify"],"-en":["Verb","forme des verbes (rendre plus…)","short → shorten"]
+};
+const ENDING_WORDS=[
+ ["happiness","-ness"],["kindness","-ness"],["decision","-sion"],["information","-tion"],["development","-ment"],["agreement","-ment"],["ability","-ity"],["possibility","-ity"],["friendship","-ship"],["difference","-ence"],["importance","-ance"],["teacher","-er"],["actor","-or"],["tourist","-ist"],["freedom","-dom"],
+ ["careful","-ful"],["useful","-ful"],["helpless","-less"],["homeless","-less"],["dangerous","-ous"],["famous","-ous"],["comfortable","-able"],["possible","-ible"],["national","-al"],["creative","-ive"],["economic","-ic"],["rainy","-y"],["sunny","-y"],["childish","-ish"],
+ ["quickly","-ly"],["carefully","-ly"],["slowly","-ly"],["easily","-ly"],["fluently","-ly"],
+ ["organise","-ise"],["modernise","-ise"],["realize","-ize"],["simplify","-ify"],["clarify","-ify"],["strengthen","-en"],["shorten","-en"]
+];
+const ENDING_GAPS=[
+ ["She drives very ___. (care)","carefully",["care","careful","carefully","carefulness"],"Après un verbe, on décrit la manière avec un adverbe : care → carefully."],
+ ["He gave me some ___ advice. (use)","useful",["use","useful","usefully","usefulness"],"Devant un nom (advice), il faut un adjectif : use → useful."],
+ ["Her ___ surprised everyone. (happy)","happiness",["happy","happily","happiness","happier"],"Après « her », on attend un nom : happy → happiness."],
+ ["This is a very ___ idea. (create)","creative",["create","creation","creative","creatively"],"Devant un nom (idea), il faut un adjectif : create → creative."],
+ ["The ___ of the project was fast. (develop)","development",["develop","developed","development","developing"],"Après « the », on attend un nom : develop → development."],
+ ["They worked ___ . (quick)","quickly",["quick","quicker","quickly","quickness"],"Après un verbe, on décrit la manière avec un adverbe : quick → quickly."],
+ ["He is a very ___ person. (friend)","friendly",["friend","friendly","friendship","friendlily"],"Devant un nom (person), il faut un adjectif : friend → friendly (attention : -ly, mais c’est un adjectif)."],
+ ["We need to ___ the process. (simple)","simplify",["simple","simply","simplify","simplicity"],"Après « to », on attend un verbe : simple → simplify."],
+ ["It is a ___ area. (danger)","dangerous",["danger","dangerous","dangerously","endanger"],"Devant un nom (area), il faut un adjectif : danger → dangerous."],
+ ["The ___ was clear. (decide)","decision",["decide","decisive","decision","decisively"],"Après « the » + sujet de la phrase : un nom : decide → decision."],
+ ["She speaks English ___. (fluent)","fluently",["fluent","fluency","fluently","fluentness"],"Après un verbe, on décrit la manière avec un adverbe : fluent → fluently."],
+ ["Thank you for your ___. (kind)","kindness",["kind","kindly","kindness","kinder"],"Après « your », on attend un nom : kind → kindness."],
+ ["He lost his keys because he is so ___. (care)","careless",["care","careless","carelessly","carelessness"],"Après « is so », il faut un adjectif : care → careless (sans soin)."],
+ ["We signed the ___ yesterday. (agree)","agreement",["agree","agreeable","agreement","agreeing"],"Après « the », on attend un nom : agree → agreement."],
+ ["The ___ is open all day. (tour)","tourist",["tour","tourist","touristic","touring"],"Le nom de la personne : tour → tourist (-ist)."],
+ ["This chair is very ___. (comfort)","comfortable",["comfort","comfortably","comfortable","comforting"],"Après « is very », il faut un adjectif : comfort → comfortable."],
+ ["I need to ___ my English. (strong)","strengthen",["strong","strongly","strength","strengthen"],"Après « to », on attend un verbe : strong → strengthen."],
+ ["The ___ of the road is a problem. (dangerous)","danger",["danger","dangerous","dangerously","endanger"],"Après « the … of », on attend un nom : dangerous → danger."],
+ ["He answered the question ___. (easy)","easily",["easy","easier","easily","easiness"],"Après un verbe, on décrit la manière avec un adverbe : easy → easily."],
+ ["It was a ___ day. (rain)","rainy",["rain","rainy","rainily","raining"],"Devant un nom (day), il faut un adjectif : rain → rainy."]
+];
+const allEndingQuestions=(()=>{
+  const labels=["Noun","Adjective","Verb","Adverb"];
+  const a=ENDING_WORDS.map(([w,sx])=>{const [pos,why,ex]=ENDING_SFX[sx];return {q:"What kind of word is “"+w+"”?",a:pos,opts:labels.slice(),why:"« "+sx+" » "+why+" ("+ex+")."}});
+  const b=ENDING_GAPS.map(([q,ans,opts,why])=>({q,a:ans,opts,why}));
+  return a.concat(b);
+})();
 const allModalQuestions = [...modalQuestions,...generatedModalQuestions];
 
 function exerciseBankSize(){
@@ -4421,7 +4470,7 @@ function ensureDaily(){
 }
 function skillForMode(){
   if(["defMatch","gPairs","gScramble","gTrueFalse","gMissing","gMemory","gSpeed","gListen","gHangman","quiz","quizReverse","quizMix","phrases","write","reverse","review","errors","favorites","phrasal","collocations","falseFriends"].includes(mode))return"vocab";
-  if(["grammar","transform","finderror","edSpell","thirdPerson","articles","prepositions","comparatives","modals","questionsNeg","wordOrder","connectors"].includes(mode))return"grammar";
+  if(["grammar","transform","finderror","edSpell","thirdPerson","articles","prepositions","comparatives","wordEndings","modals","questionsNeg","wordOrder","connectors"].includes(mode))return"grammar";
   if(["listening","dictation","edPron","edListen","edDict","sPron","audioDialogues"].includes(mode))return"listening";
   if(["pronunciation","shadowing","conversation","pronLab","wordStress","sentenceStress"].includes(mode))return"speaking";
   if(["reading","translationText"].includes(mode))return"reading";
@@ -4432,7 +4481,7 @@ function skillForMode(){
 
 const conceptModeLabels={
   questionsNeg:"Questions & négations",wordOrder:"Ordre des mots",tenses:"Choix des temps",articles:"Articles",
-  prepositions:"Prépositions",comparatives:"Comparatifs",modals:"Modaux",thirdPerson:"3e personne",
+  prepositions:"Prépositions",comparatives:"Comparatifs",wordEndings:"Terminaisons des mots",modals:"Modaux",thirdPerson:"3e personne",
   edSpell:"Past régulier -ED",edPron:"Prononciation -ED",sPron:"Prononciation -S/-ES",
   irregularPast:"Irréguliers · past simple",irregularPart:"Irréguliers · participe passé",irregularMix:"Irréguliers",
   phrasal:"Phrasal verbs",collocations:"Collocations",falseFriends:"Faux amis",connectors:"Connecteurs",
@@ -4907,7 +4956,7 @@ const modeNames={
  tenses:"Choisir le bon temps",edPron:"-ED : prononciation",edSpell:"-ED : orthographe",
  irregularPast:"Irréguliers : past simple",irregularPart:"Irréguliers : participe passé",irregularMix:"Irréguliers : mix",
  sPron:"-S/-ES : prononciation",thirdPerson:"3e personne",articles:"Articles",prepositions:"Prépositions",
- comparatives:"Comparatifs & superlatifs",modals:"Modaux",grammar:"Construire une phrase",transform:"Transformer une phrase",
+ comparatives:"Comparatifs & superlatifs",wordEndings:"Word endings",modals:"Modaux",grammar:"Construire une phrase",transform:"Transformer une phrase",
  finderror:"Trouver l’erreur",phrasal:"Phrasal verbs",collocations:"Collocations",falseFriends:"Faux amis",connectors:"Connecteurs",
  reading:"Lecture & compréhension",translationText:"Traduction de texte EN → FR",audioDialogues:"Dialogues audio",pronunciation:"Prononciation",pronLab:"Laboratoire des sons",wordStress:"Accent tonique",sentenceStress:"Rythme & accent de phrase",shadowing:"Shadowing",writingTask:"Mini-rédaction",
  conversation:"Conversation simulée",review:"Révision espacée",errors:"Mes erreurs",favorites:"Mes favoris",
@@ -4922,6 +4971,7 @@ const miniLessons={
   articles:{title:"a / an / the / Ø",rule:"a/an = singulier non spécifique ; the = élément identifié ; Ø = souvent pluriel ou indénombrable pris en général.",examples:["a manager · an email","the report we discussed · English is useful"],trap:"a/an dépend du son initial, pas de la lettre : a university, an hour."},
   prepositions:{title:"in / on / at",rule:"Temps : at pour une heure, on pour un jour/date, in pour mois/année/saison. Lieu : in = à l’intérieur d’une zone, at = point, on = surface.",examples:["at 9 · on Monday · in 2026","in Paris · at work · on the table"],trap:"Ces règles ont des expressions figées : apprends aussi les exemples en contexte."},
   modals:{title:"Modaux",rule:"Après can/could/should/must/might/will/would : base verbale sans “to”.",examples:["You should practise.","Could you help me?"],trap:"Pas de “can to”, pas de “does can”."},
+  wordEndings:{title:"Terminaisons des mots",rule:"La fin d’un mot indique souvent sa nature : -tion, -ment, -ness = nom · -ful, -less, -ous, -able = adjectif · -ly = adverbe · -ise, -ify, -en = verbe.",examples:["happy → happiness (nom)","care → careful (adj.) → carefully (adv.)"],trap:"Attention : friendly, lovely, lonely finissent par -ly mais sont des adjectifs."},
   comparatives:{title:"Comparatifs & superlatifs",rule:"Adjectif court : -er/-est. Adjectif long : more/most. Certains sont irréguliers.",examples:["fast → faster → fastest","good → better → best"],trap:"Ne mélange pas “more” et “-er” : pas “more easier”."},
   thirdPerson:{title:"3e personne",rule:"Au present simple affirmatif, he/she/it prend -s/-es. Après does/doesn’t, le verbe redevient la base.",examples:["She works.","Does she work?"],trap:"“She work” est faux à l’affirmatif ; “Does she works?” est faux en question."},
   edSpell:{title:"Orthographe du past régulier",rule:"+ed en général ; -e → +d ; consonne+y → -ied ; certaines consonnes finales doublent.",examples:["work → worked · live → lived","study → studied · stop → stopped"],trap:"L’orthographe ne dit pas directement comment -ed se prononce."},
@@ -4962,6 +5012,7 @@ function toggleLesson(){
 }
 
 const modeDescriptions={
+  wordEndings:"-tion, -ful, -ly, -ise… : nom, adjectif, adverbe ou verbe ?",
  quiz:"QCM anglais → français : reconnais le sens du mot ou de l’expression.",
  quizReverse:"QCM français → anglais : pars du sens français et retrouve le mot ou l’expression anglaise.",
  quizMix:"Variante mixte : certaines questions vont de l’anglais vers le français, d’autres du français vers l’anglais.",
@@ -5151,6 +5202,11 @@ function newQuestion(){
     $("question").textContent=x.q;
     shuffle(x.opts).forEach(o=>makeOption(o,o===x.a));
   }
+  else if(mode==="wordEndings"){
+    const x=rand(allEndingQuestions);current={...x,answer:x.a};
+    $("question").textContent=x.q;
+    (x.opts.length===4&&x.opts[0]==="Noun"?x.opts:shuffle(x.opts)).forEach(o=>makeOption(o,o===x.a));
+  }
   else if(mode==="comparatives"){
     const x=rand(allComparativeQuestions);current={...x,answer:x.a};
     $("question").textContent=x.q;
@@ -5291,7 +5347,7 @@ function checkOption(btn,correct){
       :"Après une voyelle ou un son voisé (hors sons sifflants).";
     $("feedback").textContent+=" — "+rule;
   }
-  if(["articles","prepositions","comparatives","modals","phrasal","collocations","falseFriends","connectors"].includes(mode) && current.why)$("feedback").textContent+=" — "+current.why;
+  if(["articles","prepositions","comparatives","wordEndings","modals","phrasal","collocations","falseFriends","connectors"].includes(mode) && current.why)$("feedback").textContent+=" — "+current.why;
   if(mode==="wordStress")$("feedback").textContent+=` — IPA : ${current.ipa}`;
   if(mode==="sentenceStress")$("feedback").textContent+=` — ${current.note}`;
   finishExamStep();
@@ -6135,6 +6191,7 @@ const goalModeGroups={
     ["articles","Articles","a / an / the / Ø"],
     ["prepositions","Prépositions","in / on / at"],
     ["comparatives","Comparatifs & superlatifs","better, more useful, the best..."],
+    ["wordEndings","Terminaisons des mots","-tion, -ful, -ly : nom, adjectif, adverbe ou verbe ?"],
     ["modals","Modaux","can, could, should, must, might, would"],
     ["thirdPerson","3e personne","he / she / it + -s / -es"],
     ["edSpell","Past régulier -ED","worked, studied, stopped..."],
@@ -7015,6 +7072,7 @@ const SUBGROUPS={
     ["Temps et verbes",["tenses","grammar","transform","irregularPast","irregularPart","irregularMix"]],
     ["Structure de la phrase",["questionsNeg","wordOrder","finderror"]],
     ["Petits mots",["articles","prepositions","comparatives","modals","thirdPerson","connectors"]],
+    ["Formation des mots",["wordEndings"]],
     ["Verbes en -ED",["edPron","edListen","edSpell","edDict"]],
     ["Prononciation -S/-ES",["sPron"]]
   ],
@@ -7125,7 +7183,7 @@ setMode=function(m,k){__setModeOrig(m,k);pageFollowMode()};
 
 /* ----- barre de choix rapide (menus déroulants) : Vocabulaire et Grammaire ----- */
 let barSig="";
-const GRAM_BLOCKS=[["articles","Articles","type"],["thirdPerson","3e personne","user"],["wordOrder","Ordre des mots","order"],["questionsNeg","Questions et négations","help"],["prepositions","Prépositions","pin"],["comparatives","Comparatifs","scale"],["tenses","Temps","clock"],["irregularMix","Irréguliers","list"],["edListen","Verbes en -ED","audio"],["modals","Modaux","key"],["transform","Transformer","repeat"],["finderror","Trouver l’erreur","search"]];
+const GRAM_BLOCKS=[["articles","Articles","type"],["thirdPerson","3e personne","user"],["wordOrder","Ordre des mots","order"],["questionsNeg","Questions et négations","help"],["prepositions","Prépositions","pin"],["comparatives","Comparatifs","scale"],["wordEndings","Word endings","swap"],["tenses","Temps","clock"],["irregularMix","Irréguliers","list"],["edListen","Verbes en -ED","audio"],["modals","Modaux","key"],["transform","Transformer","repeat"],["finderror","Trouver l’erreur","search"]];
 const VOC_BLOCKS=[["quizMix","Quiz","quiz"],["defMatch","Définitions","def"],["phrases","Phrases à trous","gap"],["reverse","Écrire","write"],["review","Révision","redo"],["game","Jeux","game"],["phrasal","Phrasal verbs","swap"],["falseFriends","Faux amis","warn"],["expressions","Expressions","list"]];
 function modeInfo(){const info={};Object.values(goalModeGroups).forEach(g=>g.modes.forEach(x=>{if(!info[x[0]])info[x[0]]=x}));return info}
 function renderPageBar(){
@@ -7152,7 +7210,7 @@ function renderPageBar(){
       h+=`<div class="pbField"><span>Thème</span><button type="button" id="pbThemeBtn" class="themeSel"><b>${escapeHtml((PACKS.find(q=>q.id===f)||{}).name||"Tous les thèmes")}</b><i class="chev"></i></button></div>`;
     }
     if(p==="gram"){
-      const GT=[["Temps et verbes","Tenses & verbs"],["Structure de la phrase","Sentence structure"],["Petits mots","Small words"],["Verbes en -ED","-ED verbs"],["Prononciation -S/-ES","-S/-ES pronunciation"]];
+      const GT=[["Temps et verbes","Tenses & verbs"],["Structure de la phrase","Sentence structure"],["Petits mots","Small words"],["Formation des mots","Word formation"],["Verbes en -ED","-ED verbs"],["Prononciation -S/-ES","-S/-ES pronunciation"]];
       const gf=state.gramTheme||"",gg=(SUBGROUPS.grammar.find(x=>x[0]===gf)||[0,null])[1],tl=(GT.find(x=>x[0]===gf)||[0,"All themes"])[1];
       h+=`<div class="pbField"><span>Theme</span><label class="themeSel gSel"><b>${tl}</b><i class="chev"></i><select id="pbGTheme" aria-label="Theme"><option value=""${gf?"":" selected"}>All themes</option>${GT.map(([k,v])=>`<option value="${k}"${gf===k?" selected":""}>${v}</option>`).join("")}</select></label></div>`;
       h+=`<div class="blkGrid3">${GRAM_BLOCKS.filter(([m])=>!gg||gg.includes(m)).map(([m,l,ic])=>`<button type="button" class="blk" data-blk="${m}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${l}</b></button>`).join("")}</div>`;
@@ -9499,7 +9557,7 @@ checkOption=function(btn,correct){
     }
   }catch(e){console.error(e)}
   try{
-    if(first&&btn&&current&&["tenses","prepositions","articles","modals","comparatives","irregularPast","irregularPart","irregularMix","thirdPerson","connectors","collocations","phrasal","falseFriends"].includes(mode)&&(current.rule||current.why)){
+    if(first&&btn&&current&&["tenses","prepositions","articles","modals","comparatives","wordEndings","irregularPast","irregularPart","irregularMix","thirdPerson","connectors","collocations","phrasal","falseFriends"].includes(mode)&&(current.rule||current.why)){
       const mine=(btn.textContent||"").trim(),good=String(current.answer||current.a||"").trim();
       let h=`<h4 class="whyHead"><span>Pourquoi « ${escapeHtml(correct?good:mine)} » ${correct?"est juste":"est faux"} ?</span></h4>`;
       h+=`<p><b>Indice :</b> ${escapeHtml(current.rule||current.why)}</p><ul class="whyOthers">`;
