@@ -1455,6 +1455,19 @@ button:focus,button:focus-visible,summary:focus,summary:focus-visible,.pgTile:fo
 #favSheet{padding-bottom:110px!important}
 
 .bottomNav .navVoc button,.bottomNav .navVoc button.active{font-size:9.5px!important;letter-spacing:-.2px}
+
+.bottomNav .navVoc{display:block}
+.bottomNav .navVoc::after{display:none!important}
+.bottomNav .navVoc button{width:100%;height:100%}
+.navVoc .icPair{display:flex;gap:2px;align-items:center;justify-content:center}
+.navVoc .icPair .ic{width:20px;height:20px}
+.navVoc .ic-fav{color:var(--nav-off)!important}
+.navVoc .lb{display:block}.navVoc .lbF{display:none}
+.bottomNav.favOn .navVoc .lbV{display:none}.bottomNav.favOn .navVoc .lbF{display:block}
+.bottomNav.favOn .navVoc .ic-fav{color:var(--accent)!important}
+.bottomNav.favOn .navVoc .ic-vocab{color:var(--nav-off)!important}
+.bottomNav.favOn .navVoc button{color:var(--accent)!important}
+.bottomNav .navVoc button{font-size:10.5px!important}
 </style>
 </head>
 <body>
@@ -1997,7 +2010,7 @@ button:focus,button:focus-visible,summary:focus,summary:focus-visible,.pgTile:fo
 </div>
 
 <nav class="bottomNav" aria-label="Navigation">
-  <div class="navVoc"><button data-view="vocab"><i class="ic ic-vocab"></i>Vocab.</button><button type="button" id="navFav" aria-label="Favoris"><i class="ic ic-fav"></i>Favs</button></div>
+  <div class="navVoc"><button data-view="vocab" id="navFav" aria-label="Vocabulaire / Favoris"><span class="icPair"><i class="ic ic-vocab"></i><i class="ic ic-fav"></i></span><span class="lb lbV">Vocab</span><span class="lb lbF">Favs</span></button></div>
   <button data-view="gram"><i class="ic ic-gram"></i>Grammaire</button>
   <button class="active" data-view="home"><i class="ic ic-home"></i>Accueil</button>
   <button data-view="audio"><i class="ic ic-audio"></i>Audio</button>
@@ -7886,15 +7899,16 @@ function initLevel(){
   lvlTrack();
 }
 
-/* moitié droite de « Vocab. » : étoile = favoris, re-clic = retour au vocabulaire */
+/* bouton unique Vocab / Favs : un appui bascule d'une page à l'autre */
 function initNavLong(){
   const f=$("navFav");if(!f||f.dataset.on)return;f.dataset.on="1";
   const nav=document.querySelector(".bottomNav"),isOpen=()=>{const sh=$("favSheet");return !!sh&&!sh.classList.contains("hidden")};
   const sync=()=>nav.classList.toggle("favOn",isOpen());
-  f.addEventListener("click",e=>{e.preventDefault();
+  f.addEventListener("click",e=>{e.preventDefault();e.stopImmediatePropagation();
     if(isOpen()){favClose();showView("vocab")}
-    else{showView("vocab");openExercise("favorites")}
-    sync()});
+    else if(currentView==="vocab"){openExercise("favorites")}
+    else showView("vocab");
+    sync()},true);
   document.addEventListener("click",()=>setTimeout(sync,30),true);
   new MutationObserver(sync).observe($("favSheet")||document.body,{attributes:true,attributeFilter:["class"]});
   sync();
