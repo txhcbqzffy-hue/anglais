@@ -7651,7 +7651,7 @@ function startEd(m){
   if(m==="edListen"){
     current={answer:x[1],spoken:x[0]};
     $("question").textContent="Écoute le verbe : quel est le son final de -ed ?";
-    $("info").textContent="Le mot est caché. Réécoute autant que tu veux avec le bouton audio.";$("info").classList.remove("hidden");
+    $("info").textContent="";$("info").classList.add("hidden");
     shuffle(["/t/","/d/","/ɪd/"]).forEach(o=>makeOption(o,o===x[1]));
   }else{
     current={answer:x[0],spoken:x[0],accepted:[x[0]]};
