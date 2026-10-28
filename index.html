@@ -1434,6 +1434,12 @@ button:focus,button:focus-visible,summary:focus,summary:focus-visible,.pgTile:fo
 .dayDetail>b{display:none!important}
 
 .dChip{border-radius:9px!important;cursor:pointer}
+
+[data-fw]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.jwRow[data-fav="1"] b::after{content:" ★";color:var(--accent)}
+.dChip[data-fav="1"]::after{content:" ★";color:var(--accent)}
+#favToast{position:fixed;left:50%;bottom:150px;transform:translate(-50%,10px);background:#1f2224;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:400}
+#favToast.on{opacity:1;transform:translate(-50%,0)}
 </style>
 </head>
 <body>
@@ -7795,7 +7801,7 @@ function jDetail(){
     ${d.session?`<div class="dRow"><span>Séance du jour</span><b>${d.session.c}/${d.session.t}</b></div>`:""}${rows?`<div class="dRows">${rows}</div>`:""}
     ${ws.length?`<div class="dWords"><small>Mots travaillés (${ws.length})</small><div>${ws.slice(0,24).map(w=>`<span class="dChip ${d.words[w].w?"bad":"ok"}">${escapeHtml(w)}</span>`).join("")}</div></div>`:""}</div>`;
   $("dayMore").onclick=()=>{jMore=!jMore;$("dayExtra").classList.toggle("hidden",!jMore);$("dayMore").textContent=jMore?"Masquer le détail":"Détail"};
-  box.querySelectorAll(".dChip").forEach(c=>{const w=c.textContent;c.dataset.w=w;c.onclick=()=>{const fr=jFr(c.dataset.w);if(!fr)return;const on=c.classList.toggle("tr");c.textContent=on?fr:c.dataset.w}});
+  box.querySelectorAll(".dChip").forEach(c=>{const w=c.textContent;c.dataset.w=w;c.dataset.fw=w;c.onclick=()=>{const fr=jFr(c.dataset.w);if(!fr)return;const on=c.classList.toggle("tr");c.textContent=on?fr:c.dataset.w}});
   wire();
 }
 function jWords(wl){
@@ -7804,7 +7810,7 @@ function jWords(wl){
   const list=wl[jOpenList];
   if(!list.length){box.innerHTML=`<div class="small" style="margin:10px 0">Aucun mot pour l’instant.</div>`;return}
   box.innerHTML=`<div class="jwHead"><b>${jOpenList==="learning"?"Mots en cours":"Mots appris"} (${list.length})</b><button type="button" class="primary" id="jQcm">QCM</button></div>
-    <div class="jwList">${list.map(([w,v])=>`<div class="jwRow"><span><b>${escapeHtml(w)}</b><small>${escapeHtml(jFr(w))}</small></span><i class="jwBar"><u style="width:${Math.max(4,v.score)}%"></u></i></div>`).join("")}</div>`;
+    <div class="jwList">${list.map(([w,v])=>`<div class="jwRow" data-fw="${escapeHtml(w)}"><span><b>${escapeHtml(w)}</b><small>${escapeHtml(jFr(w))}</small></span><i class="jwBar"><u style="width:${Math.max(4,v.score)}%"></u></i></div>`).join("")}</div>`;
   $("jQcm").onclick=()=>{
     let items=list.map(([w])=>vocab().find(v=>v[0]===w)||(jFr(w)?[w,jFr(w),"custom"]:null)).filter(Boolean);
     if(items.length<4){$("jQcm").textContent="4 mots minimum";return}
@@ -9713,6 +9719,32 @@ function focusTyping(){
 }
 {const nq=newQuestion;newQuestion=function(){const r=nq.apply(this,arguments);focusTyping();return r};
  const oe=openExercise;openExercise=function(){const r=oe.apply(this,arguments);focusTyping();setTimeout(focusTyping,60);return r};}
+
+/* appui long sur un mot / une expression = favori */
+(function(){
+  let t=null,sx=0,sy=0,fired=false;
+  const sel="[data-fw]";
+  const toast=msg=>{let n=document.getElementById("favToast");if(!n){n=document.createElement("div");n.id="favToast";document.body.appendChild(n)}n.textContent=msg;n.classList.add("on");clearTimeout(n._t);n._t=setTimeout(()=>n.classList.remove("on"),1500)};
+  const mark=()=>document.querySelectorAll(sel).forEach(e=>e.dataset.fav=isFavorite(e.dataset.fw)?"1":"0");
+  window.__markFav=mark;
+  document.addEventListener("pointerdown",e=>{
+    const el=e.target.closest&&e.target.closest(sel);if(!el)return;
+    fired=false;sx=e.clientX;sy=e.clientY;clearTimeout(t);
+    t=setTimeout(()=>{
+      fired=true;const w=el.dataset.fw,was=isFavorite(w);
+      state.favorites=was?state.favorites.filter(x=>x!==w):[...state.favorites,w];
+      try{if(!was&&!trLookup(w)){const fr=jFr(w);if(fr){state.custom.push({en:w,fr,auto:true});__trSig=""}}}catch(x){}
+      saveState();mark();toast(was?"Removed from favorites":"★ Added to favorites");
+      try{navigator.vibrate&&navigator.vibrate(15)}catch(x){}
+    },500);
+  },true);
+  const cancel=()=>clearTimeout(t);
+  document.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10)cancel()},true);
+  ["pointerup","pointercancel","scroll"].forEach(ev=>document.addEventListener(ev,cancel,true));
+  document.addEventListener("click",e=>{if(fired&&e.target.closest&&e.target.closest(sel)){e.stopPropagation();e.preventDefault();fired=false}},true);
+  document.addEventListener("contextmenu",e=>{if(e.target.closest&&e.target.closest(sel))e.preventDefault()});
+  new MutationObserver(()=>{clearTimeout(mark._t);mark._t=setTimeout(mark,60)}).observe(document.body,{childList:true,subtree:true});
+})();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
 updateUI();
