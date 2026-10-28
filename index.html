@@ -1472,6 +1472,8 @@ button:focus,button:focus-visible,summary:focus,summary:focus-visible,.pgTile:fo
 .bottomNav .navVoc .lb{font-size:10.5px!important;margin:0!important;line-height:1.2;font-weight:700}
 .bottomNav .navVoc .icPair{margin:0!important;font-size:0}
 .navVoc .icPair .ic{width:18px!important;height:18px!important}
+
+#favBack{display:none!important}
 </style>
 </head>
 <body>
@@ -7114,7 +7116,7 @@ setMode=function(m,k){__setModeOrig(m,k);pageFollowMode()};
 /* ----- barre de choix rapide (menus déroulants) : Vocabulaire et Grammaire ----- */
 let barSig="";
 const GRAM_BLOCKS=[["articles","Articles","type"],["thirdPerson","3e personne","user"],["wordOrder","Ordre des mots","order"],["questionsNeg","Questions et négations","help"],["prepositions","Prépositions","pin"],["comparatives","Comparatifs","scale"],["tenses","Temps","clock"],["irregularMix","Irréguliers","list"],["edListen","Verbes en -ED","audio"],["modals","Modaux","key"],["transform","Transformer","repeat"],["finderror","Trouver l’erreur","search"]];
-const VOC_BLOCKS=[["quizMix","Quiz","quiz"],["defMatch","Définitions","def"],["phrases","Phrases à trous","gap"],["reverse","Écrire","write"],["review","Révision","redo"],["game","Jeux","game"],["phrasal","Phrasal verbs","swap"],["falseFriends","Faux amis","warn"],["favorites","Favoris","star"],["expressions","Expressions","list"]];
+const VOC_BLOCKS=[["quizMix","Quiz","quiz"],["defMatch","Définitions","def"],["phrases","Phrases à trous","gap"],["reverse","Écrire","write"],["review","Révision","redo"],["game","Jeux","game"],["phrasal","Phrasal verbs","swap"],["falseFriends","Faux amis","warn"],["expressions","Expressions","list"]];
 function modeInfo(){const info={};Object.values(goalModeGroups).forEach(g=>g.modes.forEach(x=>{if(!info[x[0]])info[x[0]]=x}));return info}
 function renderPageBar(){
   const host=$("pageBar");if(!host)return;
