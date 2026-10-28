@@ -4800,7 +4800,7 @@ function speakAmerican(text,rate=.82){
 
 function englishAudioForCurrent(){
   if(mode==="phrases" && current?.q) return current.q.replace("____",current.a);
-  if(["articles","prepositions","comparatives","modals","tenses","phrasal","collocations","connectors"].includes(mode) && current?.q){
+  if(["articles","prepositions","comparatives","wordEndings","modals","tenses","phrasal","collocations","connectors"].includes(mode) && current?.q){
     return current.q.replace("___",current.a||current.answer||"");
   }
   if(mode==="falseFriends" && current?.q) return current.q;
@@ -6283,7 +6283,7 @@ function updateFocus(){
 
 function syncModeCategory(m){
   const category=
-    ["questionsNeg","wordOrder","tenses","grammar","transform","finderror","articles","prepositions","comparatives","modals","thirdPerson","edSpell","irregularPast","irregularPart","irregularMix","edPron","edListen","edDict","sPron","connectors"].includes(m)?"grammar":
+    ["questionsNeg","wordOrder","tenses","grammar","transform","finderror","articles","prepositions","comparatives","wordEndings","modals","thirdPerson","edSpell","irregularPast","irregularPart","irregularMix","edPron","edListen","edDict","sPron","connectors"].includes(m)?"grammar":
     ["defMatch","gPairs","gScramble","gTrueFalse","gMissing","gMemory","gSpeed","gListen","gHangman","quiz","quizReverse","quizMix","phrases","phrasal","collocations","falseFriends","write","reverse"].includes(m)?"vocab":
     ["listening","dictation","audioDialogues","pronunciation","pronLab","wordStress","sentenceStress","shadowing","conversation"].includes(m)?"understand":
     ["reading","translationText","writingTask"].includes(m)?"produce":
