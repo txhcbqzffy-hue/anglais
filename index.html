@@ -6338,7 +6338,7 @@ function accordionize(){
   const a1=find("Profil d’erreurs"),a2=find("Progression");
   if(pp&&a1&&a2){const row=document.createElement("div");row.id="accRow";row.className="accRow";root.insertBefore(row,pp);row.appendChild(a1);row.appendChild(a2);
     [a1,a2].forEach(d=>{const pane=document.createElement("div");pane.className="accPane";pane.hidden=true;[...d.children].forEach(c=>{if(c.tagName!=="SUMMARY")pane.appendChild(c)});row.appendChild(pane);d._pane=pane;
-      d.querySelector("summary").addEventListener("click",e=>{e.preventDefault();const on=pane.hidden;[a1,a2].forEach(x=>{x._pane.hidden=true;x.classList.remove("on")});if(on){pane.hidden=false;d.classList.add("on");pane.style.animation="none";void pane.offsetWidth;pane.style.animation=""}})})}
+      d.querySelector("summary").addEventListener("click",e=>{e.preventDefault();const on=pane.hidden;[a1,a2].forEach(x=>{x._pane.hidden=true;x.classList.remove("on")});if(on){pane.hidden=false;d.classList.add("on");pane.style.animation="none";void pane.offsetWidth;pane.style.animation="";setTimeout(()=>{try{const y=row.getBoundingClientRect().top+window.scrollY-70;window.scrollTo({top:Math.max(0,y),behavior:"smooth"})}catch(e){}},40)}})})}
 }
 function tagPages(){
   const root=$("view-train"),H=e=>((e.querySelector("h2,h3,b")||{}).textContent||"").trim();
