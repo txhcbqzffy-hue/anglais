@@ -1442,6 +1442,19 @@ button:focus,button:focus-visible,summary:focus,summary:focus-visible,.pgTile:fo
 #favToast.on{opacity:1;transform:translate(-50%,0)}
 
 .gSel{position:relative}.gSel select{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px}
+
+/* Vocab. | ★ : deux moitiés */
+.bottomNav .navVoc{display:flex;min-width:0;position:relative;z-index:1}
+.bottomNav .navVoc button{flex:1 1 0;min-width:0;padding:4px 0!important}
+.bottomNav .navVoc::after{content:"";position:absolute;top:18%;bottom:18%;left:50%;width:1px;background:var(--line);opacity:.8;pointer-events:none}
+.ic-fav{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z'/%3E%3C/svg%3E")}
+.bottomNav.favOn .navVoc [data-view="vocab"]{color:var(--nav-off)!important}
+.bottomNav.favOn #navFav{color:var(--accent)!important}
+
+.bottomNav.favOn{z-index:120!important}
+#favSheet{padding-bottom:110px!important}
+
+.bottomNav .navVoc button,.bottomNav .navVoc button.active{font-size:9.5px!important;letter-spacing:-.2px}
 </style>
 </head>
 <body>
@@ -1984,7 +1997,7 @@ button:focus,button:focus-visible,summary:focus,summary:focus-visible,.pgTile:fo
 </div>
 
 <nav class="bottomNav" aria-label="Navigation">
-  <button data-view="vocab"><i class="ic ic-vocab"></i>Vocab.</button>
+  <div class="navVoc"><button data-view="vocab"><i class="ic ic-vocab"></i>Vocab.</button><button type="button" id="navFav" aria-label="Favoris"><i class="ic ic-fav"></i>Favs</button></div>
   <button data-view="gram"><i class="ic ic-gram"></i>Grammaire</button>
   <button class="active" data-view="home"><i class="ic ic-home"></i>Accueil</button>
   <button data-view="audio"><i class="ic ic-audio"></i>Audio</button>
@@ -7873,16 +7886,18 @@ function initLevel(){
   lvlTrack();
 }
 
-/* appui long sur « Vocab. » : ouvre les favoris */
+/* moitié droite de « Vocab. » : étoile = favoris, re-clic = retour au vocabulaire */
 function initNavLong(){
-  const b=document.querySelector(".bottomNav [data-view='vocab']");if(!b||b.dataset.long)return;b.dataset.long="1";
-  let t=null,fired=false,sx=0,sy=0;
-  const cancel=()=>{clearTimeout(t);t=null};
-  b.addEventListener("pointerdown",e=>{fired=false;sx=e.clientX;sy=e.clientY;cancel();t=setTimeout(()=>{fired=true;t=null;try{navigator.vibrate&&navigator.vibrate(15)}catch(x){}showView("vocab");openExercise("favorites")},500)});
-  b.addEventListener("pointermove",e=>{if(t&&Math.hypot(e.clientX-sx,e.clientY-sy)>10)cancel()});
-  ["pointerup","pointercancel","pointerleave"].forEach(ev=>b.addEventListener(ev,cancel));
-  b.addEventListener("click",e=>{if(fired){e.stopImmediatePropagation();e.preventDefault();fired=false}},true);
-  b.addEventListener("contextmenu",e=>e.preventDefault());
+  const f=$("navFav");if(!f||f.dataset.on)return;f.dataset.on="1";
+  const nav=document.querySelector(".bottomNav"),isOpen=()=>{const sh=$("favSheet");return !!sh&&!sh.classList.contains("hidden")};
+  const sync=()=>nav.classList.toggle("favOn",isOpen());
+  f.addEventListener("click",e=>{e.preventDefault();
+    if(isOpen()){favClose();showView("vocab")}
+    else{showView("vocab");openExercise("favorites")}
+    sync()});
+  document.addEventListener("click",()=>setTimeout(sync,30),true);
+  new MutationObserver(sync).observe($("favSheet")||document.body,{attributes:true,attributeFilter:["class"]});
+  sync();
 }
 
 /* ----- séance du jour : 10 questions selon le niveau, bannière au-dessus du menu ----- */
