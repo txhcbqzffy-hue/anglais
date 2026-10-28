@@ -6935,6 +6935,12 @@ function initPWA(){
     bar.innerHTML='<span>Nouvelle version installée.</span><button class="primary" type="button">Recharger</button>';
     bar.querySelector("button").onclick=()=>location.reload();
     document.body.appendChild(bar);
+    window.__needReload=true;
+  });
+  /* nouvelle version prête : on recharge dès que l'appli passe en arrière-plan, et on cherche les mises à jour au retour */
+  document.addEventListener("visibilitychange",()=>{
+    if(document.hidden){if(window.__needReload){try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}location.reload()}}
+    else{try{navigator.serviceWorker.getRegistration().then(r=>r&&r.update()).catch(()=>{})}catch(e){}}
   });
   window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})});
 }
@@ -9796,7 +9802,7 @@ function focusTyping(){
   let hiddenAt=0;
   document.addEventListener("visibilitychange",()=>{
     if(document.hidden){hiddenAt=Date.now();return}
-    if(hiddenAt&&Date.now()-hiddenAt>5*60*1000){
+    if(hiddenAt&&Date.now()-hiddenAt>60*1000){
       try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}
       try{saveState()}catch(e){}
       location.reload();
