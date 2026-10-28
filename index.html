@@ -1387,6 +1387,21 @@ html.kbUp .bottomNav,html.kbUp .dailyBanner,html.kbUp::after{display:none!import
 .mgMeta{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--muted);font-weight:600}
 .mgMeta .ok{color:var(--good-text)}
 .mgTodo{margin-top:6px;font-size:12.5px;color:var(--text-soft)}
+
+/* Accueil : Progression ≠ Profil d'erreurs, flèche à la place de la croix */
+.acc>summary::after,.acc[open]>summary::after{content:""!important;width:9px!important;height:9px!important;min-width:0!important;border:solid var(--muted)!important;border-width:0 2px 2px 0!important;border-radius:0!important;background:none!important;transform:rotate(45deg) translate(-2px,-2px)!important;transition:transform .25s!important;flex:none}
+.acc[open]>summary::after{transform:rotate(-135deg) translate(-2px,-2px)!important;border-color:var(--accent)!important}
+#skillBars,#conceptProfile{gap:0!important}
+#skillBars .profileRow,#conceptProfile .profileRow{display:grid!important;grid-template-columns:1fr auto!important;gap:7px 12px!important;align-items:center;padding:13px 2px!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;background:none!important;cursor:pointer}
+#skillBars .profileRow:last-child,#conceptProfile .profileRow:last-child{border-bottom:0!important}
+#skillBars .profileRow>.profileBar,#conceptProfile .profileRow>.profileBar{grid-column:1/-1;grid-row:2;height:6px!important;border-radius:6px!important;background:var(--panel2)!important;overflow:hidden}
+#skillBars .profileRow>.profilePct,#conceptProfile .profileRow>.profilePct{grid-column:2;grid-row:1;font-weight:800;font-size:15px}
+#skillBars .reviewConcept,#conceptProfile .reviewConcept{display:none!important}
+#skillBars .profileBar i{background:var(--accent)!important;border-radius:6px!important}
+#skillBars .profilePct{color:var(--accent-text,var(--accent))!important}
+#conceptProfile .profileBar i{background:var(--bad)!important;border-radius:6px!important}
+#conceptProfile .profilePct{color:var(--bad)!important}
+#conceptProfile .profileName::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--bad);margin-right:8px;vertical-align:1px}
 </style>
 </head>
 <body>
@@ -4487,14 +4502,14 @@ function renderConceptProfile(){
   $("conceptProfile").innerHTML=entries.length?entries.map(s=>{
     const pct=conceptAccuracy(s);
     return `<div class="profileRow">
-      <div><div class="profileName">${entries.indexOf(s)+1}. ${escapeHtml(s.label)}</div><div class="profileMeta">${s.t-s.c} erreur(s) sur ${s.t}</div></div>
-      <div class="profileBar"><i style="width:${pct}%"></i></div>
-      <div class="profilePct">${pct}%</div>
+      <div><div class="profileName">${escapeHtml(s.label)}</div><div class="profileMeta">${s.t-s.c} mistake${s.t-s.c>1?"s":""} out of ${s.t}</div></div>
+      <div class="profileBar"><i style="width:${100-pct}%"></i></div>
+      <div class="profilePct">${100-pct}% errors</div>
       <button class="ghost reviewConcept" data-concept-mode="${escapeHtml(s.mode)}">Réviser</button>
     </div>`;
   }).join(""):`<div class="small">Aucune erreur pour l’instant.</div>`;
 
-  document.querySelectorAll("[data-concept-mode]").forEach(b=>b.onclick=()=>setMode(b.dataset.conceptMode));
+  document.querySelectorAll("[data-concept-mode]").forEach(b=>{b.onclick=()=>setMode(b.dataset.conceptMode);b.parentElement.onclick=e=>{if(e.target!==b)b.click()}});
 
   $("errorLog").innerHTML=state.errorLog.length?state.errorLog.slice(0,12).map(e=>
     `<div class="errorItem"><b>${escapeHtml(e.concept)}</b>
@@ -7876,12 +7891,12 @@ renderSkills=function(){
   const rows=Object.keys(SKILL_LABELS).map(k=>{const s=state.skills[k]||{c:0,t:0};return {k,c:s.c,t:s.t,p:s.t?Math.round(s.c/s.t*100):0}})
     .sort((a,b)=>(a.t===0)-(b.t===0)||a.p-b.p||b.t-a.t);
   host.innerHTML=rows.map((r,i)=>`<div class="profileRow">
-    <div><div class="profileName">${i+1}. ${SKILL_LABELS[r.k]}</div><div class="profileMeta">${r.t?r.c+" juste(s) sur "+r.t:"Pas encore de réponse"}</div></div>
+    <div><div class="profileName">${SKILL_LABELS[r.k]}</div><div class="profileMeta">${r.t?r.c+" correct out of "+r.t:"Pas encore de réponse"}</div></div>
     <div class="profileBar"><i style="width:${r.p}%"></i></div>
-    <div class="profilePct">${r.p}%</div>
+    <div class="profilePct">${r.p}% correct</div>
     <button class="ghost reviewConcept" data-skill-mode="${SKILL_MODE[r.k]}">Réviser</button>
   </div>`).join("");
-  host.querySelectorAll("[data-skill-mode]").forEach(b=>b.onclick=()=>openExercise(b.dataset.skillMode));
+  host.querySelectorAll("[data-skill-mode]").forEach(b=>{b.onclick=()=>openExercise(b.dataset.skillMode);b.parentElement.onclick=e=>{if(e.target!==b)b.click()}});
 };
 
 function sessHeadEnsure(){
