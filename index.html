@@ -1373,7 +1373,7 @@ html:has(body.sessionOn)::after,html:has(.sheet:not(.hidden))::after{display:non
 .roundRes button,.roundRes button.primary{box-shadow:none!important}
 
 html.kbUp :is(body.sessionOn,body:not(.sessionOn)) #exerciseCard :is(#checkTextBtn,#checkGrammarBtn,#checkReadingBtn,#checkTranslationTextBtn,#checkWritingBtn,#nextBtn,#recordBtn,#gOk):not(.hidden),
-html.kbUp #checkTextBtn:not(.hidden),html.kbUp #nextBtn:not(.hidden){bottom:calc(var(--kbH,0px) + 62px)!important;z-index:200!important}
+html.kbUp #checkTextBtn:not(.hidden),html.kbUp #nextBtn:not(.hidden){bottom:calc(var(--kbH,0px) + var(--kbPad,62px))!important;z-index:200!important}
 html.kbUp .bottomNav,html.kbUp .dailyBanner,html.kbUp::after{display:none!important}
 
 .mgList{display:flex;flex-direction:column;gap:10px;margin-top:6px}
@@ -9743,7 +9743,7 @@ const RESUME={};
   function upd(){
     cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{
       const kb=Math.max(0,Math.round(innerHeight-vv.height-vv.offsetTop));
-      de.style.setProperty("--kbH",kb+"px");
+      de.style.setProperty("--kbH",kb+"px");de.style.setProperty("--kbPad",(kb>335?10:62)+"px");
       de.classList.toggle("kbUp",kb>80&&de.classList.contains("kb"));
     });
   }
