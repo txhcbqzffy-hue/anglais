@@ -1402,6 +1402,14 @@ html.kbUp .bottomNav,html.kbUp .dailyBanner,html.kbUp::after{display:none!import
 #conceptProfile .profileBar i{background:var(--bad)!important;border-radius:6px!important}
 #conceptProfile .profilePct{color:var(--bad)!important}
 #conceptProfile .profileName::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--bad);margin-right:8px;vertical-align:1px}
+
+/* Ouverture identique pour Profil d'erreurs et Progression */
+.accRow{grid-template-columns:1fr!important;gap:8px!important}
+.accRow .acc,.accRow .acc[open]{grid-column:1/-1!important;order:0!important}
+.accRow .acc>summary{padding:16px 18px!important;min-height:54px!important;font-size:15px!important}
+@keyframes accIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.accRow .acc[open]>:not(summary){animation:accIn .28s ease both}
+.accRow .acc[open]>:not(summary) .profileRow{animation:accIn .32s ease both}
 </style>
 </head>
 <body>
