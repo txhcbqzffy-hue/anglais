@@ -1427,6 +1427,11 @@ html.kbUp .bottomNav,html.kbUp .dailyBanner,html.kbUp::after{display:none!import
 .tfWhy{margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--panel2);font-size:14px;line-height:1.45;text-align:left;animation:accIn .28s ease both}
 .tfWhy>b{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
 .tfEx{margin-top:8px}.tfEx small{color:var(--muted);font-weight:700}.tfExFr{color:var(--muted)}
+
+/* Pas de contour au toucher ; pas de titre de date */
+.pgTile.sel,.accRow .acc.on{border-color:var(--line)!important;box-shadow:none!important}
+button:focus,button:focus-visible,summary:focus,summary:focus-visible,.pgTile:focus,.wd:focus,[tabindex]:focus-visible{outline:none!important;box-shadow:none}
+.dayDetail>b{display:none!important}
 </style>
 </head>
 <body>
