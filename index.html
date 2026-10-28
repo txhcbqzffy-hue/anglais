@@ -4781,6 +4781,7 @@ function speak(text){
   speakWithLocale(text,"en-US",.82);
 }
 function speakCurrent(){
+  if(mode==="wordEndings"&&current&&current.q){const m=/“([^”]+)”/.exec(current.q);speak(m?m[1]:current.q.replace(/_{2,}/,current.a).replace(/\s*\([^)]*\)\s*$/,""));return}
   if(mode==="reading"){speak(current?.text);return}
   if(mode==="phrases"){speak(current?.q.replace("____",current.a));return}
   if(mode==="grammar"){speak(locked?current?.model:"");if(!locked)$("feedback").textContent="Réponds d’abord pour écouter la phrase modèle.";return}
@@ -4799,6 +4800,7 @@ function speakAmerican(text,rate=.82){
 }
 
 function englishAudioForCurrent(){
+  if(mode==="wordEndings" && current?.q){const m=/“([^”]+)”/.exec(current.q);if(m)return m[1]}
   if(mode==="phrases" && current?.q) return current.q.replace("____",current.a);
   if(["articles","prepositions","comparatives","wordEndings","modals","tenses","phrasal","collocations","connectors"].includes(mode) && current?.q){
     return current.q.replace("___",current.a||current.answer||"");
@@ -9815,7 +9817,7 @@ const RESUME={};
       let a=current.a!=null?current.a:current.answer;if(Array.isArray(a))a=a[0];
       a=String(a||"").trim();if(!a)return;
       e.stopImmediatePropagation();
-      if(/^(Ø|∅|-|—|no article|zero|rien)$/i.test(a))a="";speak(txt.replace(/_{2,}/,a).replace(/\s+/g," ").trim());
+      if(/^(Ø|∅|-|—|no article|zero|rien)$/i.test(a))a="";speak(txt.replace(/_{2,}/,a).replace(mode==="wordEndings"?/\s*\([^)]*\)\s*$/:/$^/,"").replace(/\s+/g," ").trim());
     }catch(x){}
   },true);
 })();
