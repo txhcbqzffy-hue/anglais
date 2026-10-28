@@ -1432,6 +1432,8 @@ html.kbUp .bottomNav,html.kbUp .dailyBanner,html.kbUp::after{display:none!import
 .pgTile.sel,.accRow .acc.on{border-color:var(--line)!important;box-shadow:none!important}
 button:focus,button:focus-visible,summary:focus,summary:focus-visible,.pgTile:focus,.wd:focus,[tabindex]:focus-visible{outline:none!important;box-shadow:none}
 .dayDetail>b{display:none!important}
+
+.dChip{border-radius:9px!important;cursor:pointer}
 </style>
 </head>
 <body>
@@ -7793,6 +7795,7 @@ function jDetail(){
     ${d.session?`<div class="dRow"><span>Séance du jour</span><b>${d.session.c}/${d.session.t}</b></div>`:""}${rows?`<div class="dRows">${rows}</div>`:""}
     ${ws.length?`<div class="dWords"><small>Mots travaillés (${ws.length})</small><div>${ws.slice(0,24).map(w=>`<span class="dChip ${d.words[w].w?"bad":"ok"}">${escapeHtml(w)}</span>`).join("")}</div></div>`:""}</div>`;
   $("dayMore").onclick=()=>{jMore=!jMore;$("dayExtra").classList.toggle("hidden",!jMore);$("dayMore").textContent=jMore?"Masquer le détail":"Détail"};
+  box.querySelectorAll(".dChip").forEach(c=>{const w=c.textContent;c.dataset.w=w;c.onclick=()=>{const fr=jFr(c.dataset.w);if(!fr)return;const on=c.classList.toggle("tr");c.textContent=on?fr:c.dataset.w}});
   wire();
 }
 function jWords(wl){
