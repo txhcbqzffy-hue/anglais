@@ -1440,6 +1440,8 @@ button:focus,button:focus-visible,summary:focus,summary:focus-visible,.pgTile:fo
 .dChip[data-fav="1"]::after{content:" ★";color:var(--accent)}
 #favToast{position:fixed;left:50%;bottom:150px;transform:translate(-50%,10px);background:#1f2224;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:400}
 #favToast.on{opacity:1;transform:translate(-50%,0)}
+
+.gSel{position:relative}.gSel select{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px}
 </style>
 </head>
 <body>
@@ -7088,7 +7090,7 @@ function renderPageBar(){
   const host=$("pageBar");if(!host)return;
   const p=currentView;
   if(p!=="vocab"&&p!=="gram"&&p!=="write"){host.innerHTML="";barSig="";return}
-  const sig=p+"|"+mode+"|"+(state.vocKind||"")+"|"+(state.packFocus||"")+"|"+W()+"|"+exOpen;
+  const sig=p+"|"+mode+"|"+(state.gramTheme||"")+"|"+(state.vocKind||"")+"|"+(state.packFocus||"")+"|"+W()+"|"+exOpen;
   if(sig===barSig&&host.firstChild)return;
   barSig=sig;
   const info=modeInfo();
@@ -7108,7 +7110,10 @@ function renderPageBar(){
       h+=`<div class="pbField"><span>Thème</span><button type="button" id="pbThemeBtn" class="themeSel"><b>${escapeHtml((PACKS.find(q=>q.id===f)||{}).name||"Tous les thèmes")}</b><i class="chev"></i></button></div>`;
     }
     if(p==="gram"){
-      h+=`<div class="blkGrid3">${GRAM_BLOCKS.map(([m,l,ic])=>`<button type="button" class="blk" data-blk="${m}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${l}</b></button>`).join("")}</div>`;
+      const GT=[["Temps et verbes","Tenses & verbs"],["Structure de la phrase","Sentence structure"],["Petits mots","Small words"],["Verbes en -ED","-ED verbs"],["Prononciation -S/-ES","-S/-ES pronunciation"]];
+      const gf=state.gramTheme||"",gg=(SUBGROUPS.grammar.find(x=>x[0]===gf)||[0,null])[1],tl=(GT.find(x=>x[0]===gf)||[0,"All themes"])[1];
+      h+=`<div class="pbField"><span>Theme</span><label class="themeSel gSel"><b>${tl}</b><i class="chev"></i><select id="pbGTheme" aria-label="Theme"><option value=""${gf?"":" selected"}>All themes</option>${GT.map(([k,v])=>`<option value="${k}"${gf===k?" selected":""}>${v}</option>`).join("")}</select></label></div>`;
+      h+=`<div class="blkGrid3">${GRAM_BLOCKS.filter(([m])=>!gg||gg.includes(m)).map(([m,l,ic])=>`<button type="button" class="blk" data-blk="${m}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${l}</b></button>`).join("")}</div>`;
     }
     if(p==="vocab"){
       const ks=new Set((()=>{try{return vocab().map(x=>x[0])}catch(e){return[]}})());const inK=k=>!ks.size||ks.has(k);
@@ -7124,6 +7129,7 @@ function renderPageBar(){
       if(state.packFocus&&state.vocKind&&PACK_EXPR.includes(state.packFocus)!==(state.vocKind==="expr"))state.packFocus=null;
       saveState();barSig="";renderPageBar();
     });
+    const gs=$("pbGTheme");if(gs)gs.onchange=()=>{state.gramTheme=gs.value||"";saveState();barSig="";renderPageBar()};
     const tb=$("pbThemeBtn");if(tb)tb.onclick=()=>themeOpen(PACK_EXPR.includes(state.packFocus)?"expr":"words",false);
     const t=$("pbTheme");
     if(t)t.onchange=()=>{state.packFocus=t.value||null;saveState();barSig=""};
