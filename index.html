@@ -6945,7 +6945,7 @@ function initPWA(){
 function initV28(){
   applyTheme(themePref());
   if($("themeBtn"))$("themeBtn").onclick=toggleTheme;
-  document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{showView(b.dataset.view);try{history.replaceState(null,"","#"+(b.dataset.view==="home"?"":b.dataset.view))}catch(e){}}));
+  document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{showView(b.dataset.view);try{}catch(e){}}));
   initTranslate();
   const vt=$("view-train");vt.parentNode.insertBefore($("view-audio"),vt);vt.parentNode.insertBefore($("view-translate"),vt);
   const G=goalModeGroups,all=[].concat(G.understand.modes,G.produce.modes),by=m=>all.find(x=>x[0]===m);
@@ -9789,6 +9789,21 @@ function focusTyping(){
   document.addEventListener("click",e=>{if(fired&&e.target.closest&&e.target.closest(sel)){e.stopPropagation();e.preventDefault();fired=false}},true);
   document.addEventListener("contextmenu",e=>{if(e.target.closest&&e.target.closest(sel))e.preventDefault()});
   new MutationObserver(()=>{clearTimeout(mark._t);mark._t=setTimeout(mark,60)}).observe(document.body,{childList:true,subtree:true});
+})();
+
+/* retour dans l'appli après une vraie pause : on repart de l'accueil (pas dans l'exercice laissé ouvert) */
+(function(){
+  let hiddenAt=0;
+  document.addEventListener("visibilitychange",()=>{
+    if(document.hidden){hiddenAt=Date.now();return}
+    if(hiddenAt&&Date.now()-hiddenAt>5*60*1000){
+      try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}
+      try{saveState()}catch(e){}
+      location.reload();
+    }
+    hiddenAt=0;
+  });
+  window.addEventListener("pageshow",e=>{if(e.persisted){try{history.replaceState(null,"",location.pathname+location.search)}catch(x){}location.reload()}});
 })();
 sanitizeVisualErrors(document);
 visualGuardObserver.observe(document.body,{childList:true,subtree:true});
