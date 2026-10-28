@@ -4530,7 +4530,7 @@ function renderConceptProfile(){
     </div>`;
   }).join(""):`<div class="small">Aucune erreur pour l’instant.</div>`;
 
-  document.querySelectorAll("[data-concept-mode]").forEach(b=>{b.onclick=()=>setMode(b.dataset.conceptMode);b.parentElement.onclick=e=>{if(e.target!==b)b.click()}});
+  document.querySelectorAll("[data-concept-mode]").forEach(b=>{b.onclick=()=>{let m=b.dataset.conceptMode;if(m==="definitions")m="defMatch";if(![...$("modeSelect").options].some(o=>o.value===m))m="quizMix";openExercise(m)};b.parentElement.onclick=e=>{if(e.target!==b)b.click()}});
 
   $("errorLog").innerHTML=state.errorLog.length?state.errorLog.slice(0,12).map(e=>
     `<div class="errorItem"><b>${escapeHtml(e.concept)}</b>
