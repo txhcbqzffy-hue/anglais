@@ -1410,6 +1410,19 @@ html.kbUp .bottomNav,html.kbUp .dailyBanner,html.kbUp::after{display:none!import
 @keyframes accIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 .accRow .acc[open]>:not(summary){animation:accIn .28s ease both}
 .accRow .acc[open]>:not(summary) .profileRow{animation:accIn .32s ease both}
+
+/* Deux tuiles côte à côte, panneau commun dessous (même animation) */
+.accRow{grid-template-columns:1fr 1fr!important;gap:8px!important}
+.accRow .acc,.accRow .acc[open]{grid-column:auto!important}
+.accRow .acc>summary{padding:14px 14px!important;min-height:50px!important;font-size:15px!important}
+.accRow .acc.on>summary::after{transform:rotate(-135deg) translate(-2px,-2px)!important;border-color:var(--accent)!important}
+.accRow .acc.on{border-color:rgba(var(--accent-rgb),.5)!important}
+.accPane{grid-column:1/-1;grid-row:2;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);overflow:hidden;animation:accIn .28s ease both}
+.accPane[hidden]{display:none}
+.accPane>section,.accPane>div{margin:0!important;border:0!important;box-shadow:none!important;background:none!important;border-radius:0!important}
+.accPane h2{display:none}
+.accPane .panel,.accPane section{padding:6px 16px 10px!important}
+.accPane .profileRow{animation:accIn .32s ease both}
 </style>
 </head>
 <body>
@@ -6314,7 +6327,9 @@ function accordionize(){
   });
   const find=t=>[...root.children].find(e=>e.tagName==="DETAILS"&&e.firstChild&&e.firstChild.textContent.indexOf(t)===0),pp=$("revPanel");
   const a1=find("Profil d’erreurs"),a2=find("Progression");
-  if(pp&&a1&&a2){const row=document.createElement("div");row.id="accRow";row.className="accRow";root.insertBefore(row,pp);row.appendChild(a1);row.appendChild(a2)}
+  if(pp&&a1&&a2){const row=document.createElement("div");row.id="accRow";row.className="accRow";root.insertBefore(row,pp);row.appendChild(a1);row.appendChild(a2);
+    [a1,a2].forEach(d=>{const pane=document.createElement("div");pane.className="accPane";pane.hidden=true;[...d.children].forEach(c=>{if(c.tagName!=="SUMMARY")pane.appendChild(c)});row.appendChild(pane);d._pane=pane;
+      d.querySelector("summary").addEventListener("click",e=>{e.preventDefault();const on=pane.hidden;[a1,a2].forEach(x=>{x._pane.hidden=true;x.classList.remove("on")});if(on){pane.hidden=false;d.classList.add("on");pane.style.animation="none";void pane.offsetWidth;pane.style.animation=""}})})}
 }
 function tagPages(){
   const root=$("view-train"),H=e=>((e.querySelector("h2,h3,b")||{}).textContent||"").trim();
