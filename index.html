@@ -4583,7 +4583,7 @@ function renderConceptProfile(){
       <div class="profilePct">${100-pct}% errors</div>
       <button class="ghost reviewConcept" data-concept-mode="${escapeHtml(s.mode)}">Réviser</button>
     </div>`;
-  }).join(""):`<div class="small">Aucune erreur pour l’instant.</div>`;
+  }).join(""):"";
 
   document.querySelectorAll("[data-concept-mode]").forEach(b=>{b.onclick=()=>{let m=b.dataset.conceptMode;if(m==="definitions")m="defMatch";if(![...$("modeSelect").options].some(o=>o.value===m))m="quizMix";openExercise(m)};b.parentElement.onclick=e=>{if(e.target!==b)b.click()}});
 
@@ -6384,7 +6384,7 @@ function accordionize(){
   const a1=find("Profil d’erreurs"),a2=find("Progression");
   if(pp&&a1&&a2){const row=document.createElement("div");row.id="accRow";row.className="accRow";root.insertBefore(row,pp);row.appendChild(a1);row.appendChild(a2);
     [a1,a2].forEach(d=>{const pane=document.createElement("div");pane.className="accPane";pane.hidden=true;[...d.children].forEach(c=>{if(c.tagName!=="SUMMARY")pane.appendChild(c)});row.appendChild(pane);d._pane=pane;
-      d.querySelector("summary").addEventListener("click",e=>{e.preventDefault();const on=pane.hidden;[a1,a2].forEach(x=>{x._pane.hidden=true;x.classList.remove("on")});if(on){pane.hidden=false;d.classList.add("on");pane.style.animation="none";void pane.offsetWidth;pane.style.animation="";setTimeout(()=>{try{const y=row.getBoundingClientRect().top+window.scrollY-70;window.scrollTo({top:Math.max(0,y),behavior:"smooth"})}catch(e){}},40)}})})}
+      d.querySelector("summary").addEventListener("click",e=>{e.preventDefault();if(pane.hidden&&!pane.querySelector(".profileRow"))return;const on=pane.hidden;[a1,a2].forEach(x=>{x._pane.hidden=true;x.classList.remove("on")});if(on){pane.hidden=false;d.classList.add("on");pane.style.animation="none";void pane.offsetWidth;pane.style.animation="";setTimeout(()=>{try{const y=row.getBoundingClientRect().top+window.scrollY-70;window.scrollTo({top:Math.max(0,y),behavior:"smooth"})}catch(e){}},40)}})})}
 }
 function tagPages(){
   const root=$("view-train"),H=e=>((e.querySelector("h2,h3,b")||{}).textContent||"").trim();
@@ -7999,7 +7999,7 @@ const SKILL_MODE={vocab:"quizMix",grammar:"tenses",listening:"dictation",reading
 renderSkills=function(){
   const host=$("skillBars");if(!host)return;
   const rows=Object.keys(SKILL_LABELS).map(k=>{const s=state.skills[k]||{c:0,t:0};return {k,c:s.c,t:s.t,p:s.t?Math.round(s.c/s.t*100):0}})
-    .sort((a,b)=>(a.t===0)-(b.t===0)||a.p-b.p||b.t-a.t);
+    .filter(r=>r.t>0).sort((a,b)=>a.p-b.p||b.t-a.t);
   host.innerHTML=rows.map((r,i)=>`<div class="profileRow">
     <div><div class="profileName">${SKILL_LABELS[r.k]}</div><div class="profileMeta">${r.t?r.c+" correct out of "+r.t:"Pas encore de réponse"}</div></div>
     <div class="profileBar"><i style="width:${r.p}%"></i></div>
