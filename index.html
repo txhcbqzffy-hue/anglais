@@ -7856,7 +7856,7 @@ function jWords(wl){
   const box=$("jWords");if(!box)return;
   if(!jOpenList){box.innerHTML="";return}
   const list=wl[jOpenList];
-  if(!list.length){box.innerHTML=`<div class="small" style="margin:10px 0">Aucun mot pour l’instant.</div>`;return}
+  if(!list.length){box.innerHTML="";return}
   box.innerHTML=`<div class="jwHead"><b>${jOpenList==="learning"?"Mots en cours":"Mots appris"} (${list.length})</b><button type="button" class="primary" id="jQcm">QCM</button></div>
     <div class="jwList">${list.map(([w,v])=>`<div class="jwRow" data-fw="${escapeHtml(w)}"><span><b>${escapeHtml(w)}</b><small>${escapeHtml(jFr(w))}</small></span><i class="jwBar"><u style="width:${Math.max(4,v.score)}%"></u></i></div>`).join("")}</div>`;
   $("jQcm").onclick=()=>{
