@@ -1423,6 +1423,10 @@ html.kbUp .bottomNav,html.kbUp .dailyBanner,html.kbUp::after{display:none!import
 .accPane h2{display:none}
 .accPane .panel,.accPane section{padding:6px 16px 10px!important}
 .accPane .profileRow{animation:accIn .32s ease both}
+
+.tfWhy{margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--panel2);font-size:14px;line-height:1.45;text-align:left;animation:accIn .28s ease both}
+.tfWhy>b{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.tfEx{margin-top:8px}.tfEx small{color:var(--muted);font-weight:700}.tfExFr{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -7405,6 +7409,11 @@ function gameTrueFalse(z,all){
       if(right){ok++;reward(item,shown)}else penalize(item,shown);
       const f=$("feedback");f.textContent=(right?"Correct":"Faux")+" — "+item[0]+" = "+item[1];f.className="feedback "+(right?"goodText":"badText");
       b.classList.add(right?"tfOk":"tfKo");
+      (()=>{const esc=escapeHtml,box=document.createElement("div");box.className="tfWhy";
+        box.innerHTML=`<b>Why?</b><div>“${esc(item[1])}” is how you say “${esc(item[0])}”. Don’t mix it up with “${esc(other[1])}”, which is “${esc(other[0])}”.</div><div class="tfEx"></div>`;
+        z.appendChild(box);
+        try{avTatoeba(item[0]).then(r=>{if(r&&box.isConnected&&current&&current.vocab===item){box.querySelector(".tfEx").innerHTML=`<small>Example</small><div>${esc(r.ex)}</div><div class="tfExFr">${esc(r.exFr)}</div>`}}).catch(()=>{})}catch(e){}
+      })();
       n++;const nb=$("nextBtn");nb.textContent=n>=N?"Voir le score":"Question suivante →";nb.classList.remove("hidden");
       const h=ev=>{if(!(ev.target.closest&&ev.target.closest("#nextBtn")))return;ev.preventDefault();ev.stopImmediatePropagation();document.removeEventListener("click",h,true);nb.classList.add("hidden");$("feedback").textContent="";next()};
       document.addEventListener("click",h,true);
