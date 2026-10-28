@@ -7809,7 +7809,7 @@ function jDetail(){
   const gauge=`<div class="gauge"><div class="gaugeTop"><span>Temps passé</span><b>${Math.floor(sec/60)} min <small>/ ${GOAL}</small></b></div><div class="gaugeBar"><i style="width:${pct}%"></i></div></div>`;
   const wl=jWordLists();
   const tiles=`<div class="pgTiles"><button type="button" class="pgTile${jOpenList==="learning"?" sel":""}" data-pl="learning"><b>${wl.learning.length}</b><span>Mots en cours</span></button><button type="button" class="pgTile${jOpenList==="mastered"?" sel":""}" data-pl="mastered"><b>${wl.mastered.length}</b><span>Mots appris</span></button></div><div id="jWords"></div>`;
-  const wire=()=>{box.querySelectorAll("[data-pl]").forEach(b=>b.onclick=()=>{jOpenList=jOpenList===b.dataset.pl?"":b.dataset.pl;jRender(true)});jWords(wl)};
+  const wire=()=>{box.querySelectorAll("[data-pl]").forEach(b=>b.onclick=()=>{jOpenList=jOpenList===b.dataset.pl?"":b.dataset.pl;jRender(true);if(jOpenList)setTimeout(()=>{try{const t=document.querySelector(".pgTiles");if(t)window.scrollTo({top:Math.max(0,t.getBoundingClientRect().top+window.scrollY-80),behavior:"smooth"})}catch(e){}},60)});jWords(wl)};
   if(!d||(!d.n&&d.sec<30)){box.innerHTML=`<b>${title}</b>${gauge}${tiles}<div class="small" style="margin-top:8px">Rien de fait ce jour-là.</div>`;wire();return}
   const rows=Object.entries(d.modes).sort((a,b)=>b[1].n-a[1].n).map(([m,v])=>`<div class="dRow"><span>${escapeHtml(modeNames[m]||m)}</span><b>${v.ok}/${v.n}</b></div>`).join("");
   const ws=Object.keys(d.words);
