@@ -22,3 +22,4 @@ _Rien pour l'instant._
 ## Fait
 
 - v29 : 5 pages (Accueil, Vocabulaire, Grammaire, Audio, Écriture), 26 thèmes de vocabulaire, séance du jour, mini-jeux, paramètres, signalement.
+- v229 : refonte de la page Audio (accueil avec stats et recommandation, niveaux des dialogues, 37 dialogues A1 à C1, 60 dictées, 45 phrases de shadowing, écoute lente, réécoute par réplique, voix distinctes A/B, podcasts commentés).

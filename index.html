@@ -1478,6 +1478,24 @@ button:focus,button:focus-visible,summary:focus,summary:focus-visible,.pgTile:fo
 /* Pas de contour sur les bonnes / mauvaises réponses (toutes les pages) */
 button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk,.gTF.tfKo,#options .option.good,#options .option.bad,.opt.good,.opt.bad,.good.option,.bad.option,[class*="Opt"].good,[class*="Opt"].bad{border-color:transparent!important;outline:0!important;box-shadow:none!important}
 .good:focus,.bad:focus{outline:0!important}
+
+/* ---- Audio : accueil, outils d'écoute ---- */
+.auTiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.auTile{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.auTile b{font-size:22px;line-height:1.1}.auTile span{font-size:11.5px;color:var(--muted)}
+.auFocus{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding:12px;border:1px solid var(--accent-line,var(--line));border-radius:8px;background:rgba(var(--accent-rgb),.1)}
+.auFocus b{font-size:15px}
+.auLv{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 2px}
+.auLv .chip2 small{opacity:.65;margin-left:5px;font-size:11px}
+.auStat{display:flex;flex-direction:column;align-items:flex-end;flex:0 0 auto;min-width:58px;font-weight:800;font-size:15px}
+.auStat small{font-size:11px;color:var(--muted);font-weight:600}
+.auStat.ok{color:#1f9d55}.auStat.low{color:#c0392b}
+.auTools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.auVoice summary{cursor:pointer;font-weight:800;font-size:15px}
+.audioScript .dialogueLine{display:flex;align-items:flex-start;gap:10px;padding:6px 8px;border-radius:6px}
+.audioScript .dialogueLine.now{background:rgba(var(--accent-rgb),.16)}
+.auLn{flex:0 0 auto;width:30px;height:30px;min-height:30px!important;padding:0!important;border-radius:50%!important;border:1px solid var(--line);background:var(--panel);color:var(--text);font-size:11px;line-height:1}
+@media(max-width:420px){.auTile b{font-size:19px}}
 </style>
 </head>
 <body>
@@ -3830,7 +3848,47 @@ const dictationSentences = [
 "We carried out a survey to understand our customers.",
 "Please fill in the form before the interview.",
 "I would travel more if I had more money.",
-"Remote workers often use productivity tools to meet deadlines."
+"Remote workers often use productivity tools to meet deadlines.",
+"Could you share the dashboard with the whole team?",
+"The conversion rate has increased by three percent.",
+"I'm checking the tracking tags before the launch.",
+"Our website traffic dropped after the redesign.",
+"We should compare this month with the same period last year.",
+"The report will be ready by the end of the week.",
+"She asked me to update the spreadsheet this morning.",
+"Most of our visitors come from mobile devices.",
+"Can you explain how this metric is calculated?",
+"The campaign didn't perform as well as we expected.",
+"I'll send you the final version as soon as possible.",
+"They have just announced a new product.",
+"We're looking for a more reliable solution.",
+"If the data is accurate, we can make a decision tomorrow.",
+"He has been working on this project since January.",
+"Please make sure that everyone has access to the folder.",
+"The client would like to postpone the meeting until next Monday.",
+"I'm afraid I won't be able to attend the workshop.",
+"Let's focus on the most important results first.",
+"Our bounce rate is higher on the landing page.",
+"Would you mind sending me the link again?",
+"The train to Lille leaves from platform six.",
+"I booked a table for four at half past eight.",
+"It takes about twenty minutes to get to the office.",
+"Unfortunately, the flight has been delayed by an hour.",
+"I used to work in a small agency before joining this company.",
+"We need to reduce the loading time of our pages.",
+"She told me that she would call back later.",
+"Despite the delay, the team delivered the project on time.",
+"I'm not sure whether the figures include taxes.",
+"Could you give me some feedback on my presentation?",
+"The newsletter is sent every Tuesday morning.",
+"If I had more time, I would learn another language.",
+"He suggested that we should test two different versions.",
+"We've reached our target for the third quarter.",
+"There were far fewer visitors than we had predicted.",
+"I would rather work from home on Wednesdays.",
+"They are going to change the layout of the homepage.",
+"Nobody told me that the deadline had been moved.",
+"The more data we collect, the better our decisions will be."
 ];
 
 const shadowingSentences = [
@@ -3848,7 +3906,37 @@ const shadowingSentences = [
 "The meeting has been moved to Thursday afternoon.",
 "Would you mind repeating that, please?",
 "Let me know if you need any help.",
-"I used to work in hospitality before studying marketing."
+"I used to work in hospitality before studying marketing.",
+"Let me walk you through the main results.",
+"I'd like to schedule a call to discuss the next steps.",
+"Thanks for getting back to me so quickly.",
+"As far as I know, the report is almost finished.",
+"Could we go over the figures once more?",
+"I'll keep you posted as soon as I hear anything.",
+"That's a good point, but I see it differently.",
+"We're still waiting for approval from the client.",
+"The numbers look promising, but it's too early to say.",
+"I'm responsible for tracking and reporting.",
+"Sorry, I didn't catch that. Could you say it again?",
+"It depends on what you mean by performance.",
+"We've made a lot of progress this month.",
+"I'd suggest we focus on the mobile experience.",
+"Could you tell me how to get to the station?",
+"I'm looking forward to working with you.",
+"Please let me know if anything is unclear.",
+"To be honest, I'm not completely convinced.",
+"We ran into a few problems with the data.",
+"I'll have a look and get back to you this afternoon.",
+"What do you think is the main reason for this drop?",
+"It would be great if we could meet on Thursday.",
+"I've been learning English for a while now.",
+"Can I ask you a quick question?",
+"Let's make sure we're all on the same page.",
+"The results were better than I expected.",
+"I'm sorry for the delay in replying.",
+"Would it be possible to extend the deadline?",
+"We'll need to double-check the numbers before sending them.",
+"Thank you for your patience and understanding."
 ];
 
 const writingPrompts = [
@@ -4024,7 +4112,33 @@ const audioDialogues = [
  {title:"Analytics meeting",level:"B2",lines:[["A","Traffic is up twelve percent, although organic conversions have fallen slightly."],["B","Could seasonality explain part of the decline?"],["A","Possibly, but the drop started before the seasonal peak."],["B","Then we should segment the data by acquisition channel."]],q:"What does B suggest?",a:"Segmenting the data by acquisition channel",opts:["Stopping the campaign","Segmenting the data by acquisition channel","Ignoring seasonality","Changing the website colours"]},
  {title:"Negotiating a deadline",level:"B2",lines:[["A","The client wants the full report by Wednesday."],["B","That's possible, provided we receive the final dataset today."],["A","If it arrives tomorrow morning?"],["B","Then I'd recommend sending an executive summary on Wednesday and the full analysis on Thursday."]],q:"What is the fallback plan?",a:"Send a summary Wednesday and full analysis Thursday",opts:["Cancel the report","Send everything Friday","Send a summary Wednesday and full analysis Thursday","Ask for a new dataset next week"]},
  {title:"Product decision",level:"B2",lines:[["A","Users are completing onboarding, but many don't return after the first week."],["B","So activation may not be the main issue. We should look at retention."],["A","Would you start with interviews or behavioural data?"],["B","Behavioural data first, then interviews to understand the reasons behind the patterns."]],q:"What will B analyse first?",a:"Behavioural data",opts:["Behavioural data","Interviews","Pricing","Advertising"]},
- {title:"Performance feedback",level:"B2",lines:[["A","Your analysis was strong, but the presentation was quite dense."],["B","I see. Should I reduce the number of charts?"],["A","Yes, and make the recommendation more explicit at the beginning."],["B","Understood. I'll lead with the conclusion next time."]],q:"What should B do next time?",a:"Lead with the conclusion",opts:["Add more charts","Lead with the conclusion","Remove the recommendation","Speak more slowly only"]}
+ {title:"Performance feedback",level:"B2",lines:[["A","Your analysis was strong, but the presentation was quite dense."],["B","I see. Should I reduce the number of charts?"],["A","Yes, and make the recommendation more explicit at the beginning."],["B","Understood. I'll lead with the conclusion next time."]],q:"What should B do next time?",a:"Lead with the conclusion",opts:["Add more charts","Lead with the conclusion","Remove the recommendation","Speak more slowly only"]},
+
+ {title:"At the supermarket",level:"A1",lines:[["A","Excuse me, where can I find the bread?"],["B","It's in aisle three, next to the milk."],["A","Thank you. And do you sell eggs?"],["B","Yes, they're in aisle five."]],q:"Where is the bread?",a:"In aisle three",opts:["In aisle three","In aisle five","Next to the eggs","At the entrance"]},
+ {title:"Meeting a colleague",level:"A1",lines:[["A","Hi, I'm Sarah. I work in the marketing team."],["B","Nice to meet you, Sarah. I'm Tom. I'm new here."],["A","Welcome! Do you want a coffee?"],["B","Yes, please. That's very kind."]],q:"What does Sarah offer Tom?",a:"A coffee",opts:["A coffee","A desk","A meeting","A book"]},
+ {title:"Ordering lunch",level:"A1",lines:[["A","Hello, can I have a chicken sandwich, please?"],["B","Sure. Would you like a drink?"],["A","A glass of water, please."],["B","That's six euros fifty."]],q:"How much is the lunch?",a:"Six euros fifty",opts:["Six euros fifty","Five euros","Seven euros","Sixteen euros fifty"]},
+ {title:"Asking the way",level:"A1",lines:[["A","Excuse me, is there a pharmacy near here?"],["B","Yes, go straight and turn left at the bank."],["A","Is it far?"],["B","No, it's about five minutes on foot."]],q:"How long does it take to get there?",a:"About five minutes",opts:["About five minutes","About fifteen minutes","One hour","Two minutes by bus"]},
+ {title:"Booking a meeting room",level:"A2",lines:[["A","Is the small meeting room free tomorrow morning?"],["B","Let me check. It's booked until ten, but it's free after that."],["A","Perfect. Can I have it from ten thirty to noon?"],["B","Yes, I'll put your name down."]],q:"When can she use the room?",a:"From ten thirty",opts:["From ten thirty","From nine","From noon","All morning"]},
+ {title:"A cancelled train",level:"A2",lines:[["A","I'm sorry I'm late. My train was cancelled."],["B","Don't worry. We've only just started."],["A","Did I miss anything important?"],["B","Not really. We're still talking about the budget."]],q:"Why was she late?",a:"Her train was cancelled",opts:["Her train was cancelled","She missed the bus","She forgot the meeting","She was ill"]},
+ {title:"Weekend plans",level:"A2",lines:[["A","What are you doing this weekend?"],["B","I'm going hiking with some friends, if the weather is good."],["A","Where are you going?"],["B","To the mountains near Grenoble. We leave early on Saturday morning."]],q:"When do they leave?",a:"Early on Saturday morning",opts:["Early on Saturday morning","On Friday evening","On Sunday afternoon","Late on Saturday night"]},
+ {title:"A phone call to a client",level:"A2",lines:[["A","Good morning, this is Anna from Digital Plus. Could I speak to Mr Brown?"],["B","I'm sorry, he's in a meeting. Can I take a message?"],["A","Yes, please ask him to call me back before noon."],["B","Of course. Could you spell your name, please?"]],q:"What does Anna want?",a:"Mr Brown to call her back",opts:["Mr Brown to call her back","To leave a long message","To book a meeting","To cancel an order"]},
+ {title:"Restaurant booking",level:"A2",lines:[["A","I'd like to book a table for four people on Friday evening."],["B","What time would you like?"],["A","Around eight."],["B","I'm afraid we're full at eight, but we have a table at eight thirty."]],q:"What time is the table available?",a:"Eight thirty",opts:["Eight thirty","Eight o'clock","Nine o'clock","Seven thirty"]},
+ {title:"Gym membership",level:"A2",lines:[["A","How much is a monthly membership?"],["B","It's thirty euros, but there is a student discount."],["A","Great. I'm a student."],["B","Then it's twenty-two euros. You just need to show your card."]],q:"What does he need to show?",a:"His student card",opts:["His student card","His passport","His bank card","His old membership"]},
+ {title:"Website traffic drop",level:"B1",lines:[["A","Our website traffic dropped by fifteen percent last week."],["B","Did anything change on the site?"],["A","We moved some pages, so some old links may be broken."],["B","Then let's check the redirects first."]],q:"What will they check first?",a:"The redirects",opts:["The redirects","The advertising budget","The page design","The email campaign"]},
+ {title:"A tracking issue",level:"B1",lines:[["A","The conversion numbers look strange this month."],["B","Maybe a tag stopped firing after the update."],["A","I'll test it in preview mode this afternoon."],["B","Good. Let me know what you find."]],q:"How will A investigate?",a:"By testing the tag in preview mode",opts:["By testing the tag in preview mode","By deleting the tag","By asking the client","By waiting until next month"]},
+ {title:"Client feedback",level:"B1",lines:[["A","The client liked the design, but they think the text is too long."],["B","We can shorten it. Do they have a word limit?"],["A","Not exactly, but they'd like it to fit on one screen."],["B","OK, I'll send a new version tomorrow."]],q:"What is the client's concern?",a:"The text is too long",opts:["The text is too long","The design is too dark","The price is too high","The deadline is too short"]},
+ {title:"Asking for a day off",level:"B1",lines:[["A","Do you have a minute? I'd like to take next Friday off."],["B","Is it for a personal reason?"],["A","Yes, I have an appointment in the morning."],["B","That's fine, as long as the report is ready on Thursday."]],q:"What condition does the manager set?",a:"The report must be ready on Thursday",opts:["The report must be ready on Thursday","He must work on Saturday","He must find a replacement","He must explain the reason in writing"]},
+ {title:"A flight delay",level:"B1",lines:[["A","Our flight has been delayed by two hours."],["B","Again? That's the second time this month."],["A","I know. I'll call the hotel so they don't give away our room."],["B","Good idea. Meanwhile, let's find somewhere to have lunch."]],q:"Why will A call the hotel?",a:"To keep the room",opts:["To keep the room","To cancel the booking","To ask for a refund","To change the date"]},
+ {title:"A new colleague's first day",level:"B1",lines:[["A","Here is your laptop and your badge."],["B","Thank you. Who should I ask about my email account?"],["A","Contact the IT helpdesk. They'll set it up this morning."],["B","And when do I meet the team?"],["A","At eleven, in the main meeting room."]],q:"When will B meet the team?",a:"At eleven",opts:["At eleven","This morning at nine","After lunch","Tomorrow"]},
+ {title:"A budget cut",level:"B2",lines:[["A","Management has asked us to reduce the advertising budget by ten percent."],["B","That's difficult, given that we planned two new campaigns."],["A","We could postpone one of them until next quarter."],["B","I'd rather keep both and lower the spend on social media."]],q:"What does B prefer?",a:"Keeping both campaigns and cutting social spend",opts:["Keeping both campaigns and cutting social spend","Postponing one campaign","Cancelling all campaigns","Asking for a bigger budget"]},
+ {title:"A/B test results",level:"B2",lines:[["A","The second version performed better, but the sample was small."],["B","So we can't be sure the difference is significant."],["A","Exactly. I suggest we run the test for another two weeks."],["B","Fine, provided we don't change anything else on the page."]],q:"Why do they want to continue the test?",a:"The sample was too small",opts:["The sample was too small","The first version won clearly","The page was too slow","The budget was too high"]},
+ {title:"Stakeholder disagreement",level:"B2",lines:[["A","The sales team wants daily reports, but that isn't realistic."],["B","Could we automate a weekly summary instead?"],["A","That would work, although they might still ask for ad hoc figures."],["B","Then let's agree on a dashboard they can check themselves."]],q:"What solution is proposed?",a:"A dashboard they can check themselves",opts:["A dashboard they can check themselves","Daily reports by email","A monthly meeting","A new analyst"]},
+ {title:"Explaining a delay",level:"B2",lines:[["A","I owe you an apology. The data export was delayed because the API limit was reached."],["B","Has it been resolved?"],["A","Partly. We've requested a higher limit, but we won't hear back before Monday."],["B","In that case, let's warn the client now rather than waiting."]],q:"What does B suggest?",a:"Warning the client immediately",opts:["Warning the client immediately","Waiting until Monday","Changing the supplier","Cancelling the export"]},
+ {title:"Networking at a conference",level:"B2",lines:[["A","What brought you to this conference?"],["B","I'm hoping to learn more about privacy regulations and how they affect measurement."],["A","It's a hot topic. Cookie consent has changed everything for us."],["B","Tell me about it. Our consent rate is below fifty percent."]],q:"What is B's problem?",a:"A low consent rate",opts:["A low consent rate","A high bounce rate","A broken website","A lack of budget"]},
+ {title:"A strategy debate",level:"C1",lines:[["A","I'm not convinced that increasing the budget alone will solve the problem."],["B","Surely it would help us reach a wider audience."],["A","Perhaps, but if the message is unclear, we'd simply be amplifying a weak proposition."],["B","Fair point. We'd better refine the positioning first."]],q:"What is A's main objection?",a:"A bigger budget won't fix an unclear message",opts:["A bigger budget won't fix an unclear message","The audience is too wide","The campaign is too expensive","The positioning is already perfect"]},
+ {title:"Analytics governance",level:"C1",lines:[["A","The real issue isn't the tool, it's the lack of consistent naming conventions."],["B","I couldn't agree more. Half the reports are unusable because nobody knows what each event means."],["A","If we document everything and enforce a review process, we'd save weeks of cleanup later."],["B","Let's draft a proposal and present it at the next steering committee."]],q:"What do they decide to do?",a:"Write a proposal for the steering committee",opts:["Write a proposal for the steering committee","Change the analytics tool","Delete half of the reports","Hire a consultant"]},
+ {title:"Negotiating a contract",level:"C1",lines:[["A","We're prepared to extend the contract by two years, on condition that you reduce the monthly fee."],["B","Frankly, we've already offered a significant discount."],["A","I appreciate that, but the market has moved."],["B","Let me discuss it with my director and come back to you by Thursday."]],q:"What does B promise?",a:"To answer by Thursday",opts:["To answer by Thursday","To lower the fee immediately","To refuse the offer","To sign the contract today"]},
+ {title:"A cautious forecast",level:"C1",lines:[["A","The projections suggest a steady recovery, though I'd treat them with caution."],["B","Why is that? The model seems robust."],["A","It assumes that consumer behaviour will remain stable, which is far from certain."],["B","Then we should present a range of scenarios rather than a single figure."]],q:"What does B recommend?",a:"Presenting several scenarios",opts:["Presenting several scenarios","Trusting the single forecast","Dropping the model","Waiting for new data"]}
 ];
 
 const cefrPath = {
@@ -4766,13 +4880,13 @@ function availableVoice(locale){
   const base=locale.split("-")[0].toLowerCase();
   return voices.find(v=>v.lang.toLowerCase().startsWith(base))||null;
 }
-function speakWithLocale(text,locale="en-US",rate=.82,onend=null){
+function speakWithLocale(text,locale="en-US",rate=.82,onend=null,pitch=1){
   if(!text)return;
   if(!("speechSynthesis" in window)){
     if($("feedback"))$("feedback").textContent="La lecture vocale n’est pas disponible sur ce navigateur.";
     if(onend)onend();return;
   }
-  const u=new SpeechSynthesisUtterance(text);u.lang=locale;u.rate=rate;u.pitch=1;
+  const u=new SpeechSynthesisUtterance(text);u.lang=locale;u.rate=rate;u.pitch=pitch;
   const voice=availableVoice(locale);if(voice)u.voice=voice;
   if(onend)u.onend=onend;
   speechSynthesis.speak(u);
@@ -5426,14 +5540,26 @@ function checkGrammar(){
 
 /* ---------------- AUDIO DIALOGUES ---------------- */
 function renderAudioDialogue(){
-  const x=rand(audioDialogues);current={...x,answer:x.a,audio:true};
-  $("question").textContent="Écoute le dialogue puis réponds.";
+  const lv=(A().lvl||""),pool=lv?audioDialogues.filter(d=>d.level===lv):audioDialogues;
+  let x=rand(pool.length?pool:audioDialogues);
+  if((pool.length||audioDialogues.length)>1&&x.title===window.__lastDlg){x=rand((pool.length?pool:audioDialogues).filter(d=>d.title!==window.__lastDlg))}
+  window.__lastDlg=x.title;
+  current={...x,answer:x.a,audio:true,plays:0,lastIdx:0};
+  $("question").textContent="Écoute le dialogue, sans lire le script, puis réponds.";
   $("audioZone").classList.remove("hidden");
   $("audioTitle").textContent=x.title;$("audioLevel").textContent=x.level;
   $("audioQuestion").textContent=x.q;
-  $("audioScript").innerHTML=x.lines.map(([speaker,line])=>`<div class="dialogueLine"><b>${speaker}:</b> ${escapeHtml(line)}</div>`).join("");
+  $("audioScript").innerHTML=x.lines.map(([speaker,line],i)=>`<div class="dialogueLine" data-i="${i}"><button type="button" class="auLn" data-i="${i}" aria-label="Écouter cette réplique">▶</button><span><b>${escapeHtml(speaker)} :</b> ${escapeHtml(line)}</span></div>`).join("");
   $("audioScript").classList.add("hidden");
-  $("showAudioScriptBtn").disabled=true;
+  $("showAudioScriptBtn").classList.add("hidden");
+  /* barre d'outils d'écoute */
+  let tools=$("auDlgTools");
+  if(!tools){tools=document.createElement("div");tools.id="auDlgTools";tools.className="auTools";$("audioQuestion").parentNode.insertBefore(tools,$("audioQuestion"))}
+  tools.innerHTML=`<button type="button" class="chip2" id="auSlow">Écouter lentement</button><button type="button" class="chip2" id="auLast">Dernière réplique</button><span class="small" id="auPlays">Aucune écoute</span>`;
+  $("auSlow").onclick=()=>playCurrentDialogue(.7);
+  $("auLast").onclick=()=>{if(!current?.audio)return;const i=Math.min(current.lastIdx||0,current.lines.length-1);dlgSayLine(i,.8)};
+  $("audioScript").querySelectorAll(".auLn").forEach(b=>b.onclick=()=>dlgSayLine(+b.dataset.i));
+  dlgSetBtn(false);
   shuffle(x.opts).forEach(o=>{
     const b=document.createElement("button");b.className="option";b.textContent=o;b.dataset.correct=o===x.a?"1":"0";
     b.onclick=()=>checkAudioAnswer(b,o===x.a);$("audioOptions").appendChild(b);
@@ -5446,17 +5572,30 @@ function updateAudioVoiceInfo(){
   const locale=$("audioAccent").value,voice=availableVoice(locale);
   $("audioVoiceInfo").textContent=voice?`Voix disponible : ${voice.name} (${voice.lang})`:`Voix ${locale} non trouvée : le navigateur utilisera sa meilleure voix anglaise disponible.`;
 }
-function playCurrentDialogue(){
-  if(!current?.audio||dialoguePlaying)return;
-  const token=++audioQueueToken;dialoguePlaying=true;
+function dlgSetBtn(on){const b=$("playDialogueBtn");if(b)b.textContent=on?"Arrêter":"▶ Écouter"}
+function dlgMark(idx){const ls=$("audioScript")?$("audioScript").children:[];[...ls].forEach((el,k)=>el.classList.toggle("now",k===idx))}
+function dlgPlays(){const p=$("auPlays");if(p){const n=current?.plays||0;p.textContent=n?(n+(n>1?" écoutes":" écoute")):"Aucune écoute"}}
+function stopDialogue(){audioQueueToken++;dialoguePlaying=false;try{if("speechSynthesis" in window)speechSynthesis.cancel()}catch(e){}dlgSetBtn(false);dlgMark(-1);setTimeout(()=>{if(!dialoguePlaying)try{speechSynthesis.cancel()}catch(e){}},250)}
+function dlgSayLine(i,rateOv){
+  if(!current?.audio||!current.lines[i])return;
+  stopDialogue();
+  current.lastIdx=i;dlgMark(i);
+  const locale=$("audioAccent").value,rate=typeof rateOv==="number"?rateOv:(Number($("audioSpeed").value)||.92);
+  speakWithLocale(current.lines[i][1],locale,rate,()=>dlgMark(-1),current.lines[i][0]==="A"?1.1:.88);
+}
+function playCurrentDialogue(ov){
+  if(!current?.audio)return;
+  if(dialoguePlaying){stopDialogue();return}
+  const locale=$("audioAccent").value,rate=typeof ov==="number"?ov:(Number($("audioSpeed").value)||.92);
   if("speechSynthesis" in window)speechSynthesis.cancel();
-  const locale=$("audioAccent").value,rate=Number($("audioSpeed").value)||.92;
+  const token=++audioQueueToken;dialoguePlaying=true;dlgSetBtn(true);
+  current.plays=(current.plays||0)+1;dlgPlays();
   let i=0;
   const next=()=>{
-    if(token!==audioQueueToken){dialoguePlaying=false;return}
-    if(i>=current.lines.length){dialoguePlaying=false;return}
-    const line=current.lines[i++][1];
-    speakWithLocale(line,locale,rate,next);
+    if(token!==audioQueueToken)return;
+    if(i>=current.lines.length){dialoguePlaying=false;dlgSetBtn(false);dlgMark(-1);return}
+    const idx=i++;current.lastIdx=idx;dlgMark(idx);
+    speakWithLocale(current.lines[idx][1],locale,rate,next,current.lines[idx][0]==="A"?1.1:.88);
   };
   next();
 }
@@ -5465,7 +5604,9 @@ function checkAudioAnswer(btn,good){
   [...$("audioOptions").children].forEach(x=>{x.disabled=true;if(x.dataset.correct==="1")x.classList.add("good")});
   if(good){btn.classList.add("good");reward(null,btn.textContent);$("feedback").textContent="✅ Correct";$("feedback").className="feedback goodText";}
   else{btn.classList.add("bad");penalize(null,btn.textContent);$("feedback").textContent="❌ Réponse : "+current.a;$("feedback").className="feedback badText";}
-  $("showAudioScriptBtn").disabled=false;$("nextBtn").classList.remove("hidden");
+  /* le script s'ouvre tout seul après la réponse : chaque réplique peut être réécoutée */
+  $("audioScript").classList.remove("hidden");
+  $("nextBtn").classList.remove("hidden");
 }
 
 /* ---------------- PRONUNCIATION LAB ---------------- */
@@ -5991,7 +6132,7 @@ function runSelfTests(showDetails=false){
   pronunciationSoundBank.forEach((x,i)=>test(`pronSound[${i}] complete`,()=>x.ipa&&x.target&&x.articulation&&x.pairs?.length>=2));
   wordStressBank.forEach((x,i)=>test(`wordStress[${i}] index`,()=>x.stress>=0&&x.stress<x.syllables.length&&x.ipa));
   sentenceStressBank.forEach((x,i)=>test(`sentenceStress[${i}] words`,()=>x.plain&&x.stressed?.length>=2));
-  audioDialogues.forEach((x,i)=>test(`audioDialogue[${i}] complete`,()=>x.lines?.length>=2&&x.opts.includes(x.a)&&["A1","A2","B1","B2"].includes(x.level)));
+  audioDialogues.forEach((x,i)=>test(`audioDialogue[${i}] complete`,()=>x.lines?.length>=2&&x.opts.includes(x.a)&&["A1","A2","B1","B2","C1"].includes(x.level)));
   Object.entries(cefrPath).forEach(([level,d])=>{
     test(`CEFR ${level} thresholds`,()=>d.required>=50&&d.required<=90&&d.attempts>=3);
     d.competencies.forEach(([label,m],i)=>test(`CEFR ${level} competency ${i} mode exists`,()=>[...$("modeSelect").options].some(o=>o.value===m)));
@@ -6566,23 +6707,75 @@ function audioSegFor(m){
   const seg=AUDIO_EAR.some(x=>x[0]===m)?"ear":AUDIO_ORAL.some(x=>x[0]===m)?"oral":null;
   if(seg){A().seg=seg;saveState();if(currentView==="audio")renderAudio()}
 }
+const AU_LV=["A1","A2","B1","B2","C1"];
+function auModeStats(days){
+  const out={},d=new Date();
+  for(let i=0;i<days;i++){
+    const day=state.log&&state.log[JD(d)];
+    if(day&&day.modes)Object.entries(day.modes).forEach(([m,v])=>{const o=out[m]||(out[m]={n:0,ok:0});o.n+=v.n||0;o.ok+=v.ok||0});
+    d.setDate(d.getDate()-1);
+  }
+  return out;
+}
+function auSum(st,list){return list.reduce((t,[m])=>{const v=st[m];return v?{n:t.n+v.n,ok:t.ok+v.ok}:t},{n:0,ok:0})}
+function auPct(o){return o&&o.n?Math.round(o.ok/o.n*100):null}
+function auCount(m){
+  try{
+    return ({audioDialogues:audioDialogues.length+" dialogues",dictation:allDictationSentences.length+" phrases",listening:vocab().length+" mots",
+      pronunciation:vocab().length+" mots",shadowing:shadowingSentences.length+" phrases",conversation:conversationScenarios.length+" scénarios",
+      pronLab:pronunciationSoundBank.length+" sons",wordStress:wordStressBank.length+" mots",sentenceStress:sentenceStressBank.length+" phrases"})[m]||"";
+  }catch(e){return""}
+}
 function renderAudioEx(host){
-  const oral=A().seg==="oral",list=oral?AUDIO_ORAL:AUDIO_EAR;
-  host.innerHTML=`<section class="secCard"><h2>Voix</h2>
-  <div class="row2"><select id="vcAccent" class="ghost" aria-label="Accent">${$("audioAccent").innerHTML}</select><select id="vcSpeed" class="ghost" aria-label="Vitesse">${$("audioSpeed").innerHTML}</select></div>
-  <div id="vcInfo" class="small" style="margin-top:8px"></div></section>
-  <section class="secCard"><h2>${oral?"Oral":"Écouter"}</h2>
-  <div class="goalChoicesGrid" style="margin-top:12px">${list.map(([m,l,d])=>`<button class="exerciseChoice" data-ex="${m}"><div><div>${esc(l)}</div><small>${esc(d)}</small></div><span class="arrow">›</span></button>`).join("")}</div></section>`;
-  const sync=(a,b)=>{$(a).value=$(b).value;$(a).onchange=()=>{$(b).value=$(a).value;$(b).dispatchEvent(new Event("change"));$("vcInfo").textContent=$("audioVoiceInfo").textContent}};
+  const a=A(),oral=a.seg==="oral",list=oral?AUDIO_ORAL:AUDIO_EAR,all=AUDIO_EAR.concat(AUDIO_ORAL);
+  const st7=auModeStats(7),st30=auModeStats(30),st1=auModeStats(1);
+  const t1=auSum(st1,all),t7=auSum(st7,all);
+  const p7=auPct(t7);
+  /* recommandation : le point le plus faible sur 30 jours (au moins 5 réponses), sinon l'exercice le moins pratiqué cette semaine */
+  let focus=null;
+  const weak=all.filter(([m])=>st30[m]&&st30[m].n>=5&&auPct(st30[m])<80).sort((x,y)=>auPct(st30[x[0]])-auPct(st30[y[0]]))[0];
+  if(weak)focus={m:weak[0],label:weak[1],why:"Point faible : "+auPct(st30[weak[0]])+" % de réussite sur 30 jours."};
+  else{
+    const idle=list.filter(([m])=>!st7[m]||!st7[m].n)[0];
+    if(idle)focus={m:idle[0],label:idle[1],why:"Pas encore travaillé cette semaine."};
+    else{const low=list.slice().sort((x,y)=>(auPct(st7[x[0]])??101)-(auPct(st7[y[0]])??101))[0];if(low)focus={m:low[0],label:low[1],why:"Ta réussite la plus basse cette semaine : "+auPct(st7[low[0]])+" %."}}
+  }
+  const lvChips=!oral?`<h3>Niveau des dialogues</h3><div class="auLv"><button type="button" class="chip2${a.lvl?"":" on"}" data-lv="">Tous<small>${audioDialogues.length}</small></button>${AU_LV.map(l=>`<button type="button" class="chip2${a.lvl===l?" on":""}" data-lv="${l}">${l}<small>${audioDialogues.filter(d=>d.level===l).length}</small></button>`).join("")}</div>`:"";
+  const card=([m,l,d])=>{
+    const o=st30[m],p=auPct(o),cls=p===null?"":p>=80?"ok":p<60?"low":"";
+    return `<button class="exerciseChoice" data-ex="${m}"><div><div>${esc(l)}</div><small>${esc(d)}</small><small class="auCnt">${esc(auCount(m))}</small></div><span class="auStat ${cls}">${p===null?"–":p+" %"}<small>${o?o.n+" en 30 j":"à faire"}</small></span><span class="arrow">›</span></button>`;
+  };
+  host.innerHTML=`<section class="secCard"><h2>Ma pratique</h2>
+  <div class="auTiles"><div class="auTile"><b>${t1.n}</b><span>aujourd’hui</span></div><div class="auTile"><b>${t7.n}</b><span>cette semaine</span></div><div class="auTile"><b>${p7===null?"–":p7+" %"}</b><span>réussite · 7 jours</span></div></div>
+  ${focus?`<div class="auFocus"><div><b>À faire maintenant</b><div class="small"><b>${esc(focus.label)}</b><br><span>${esc(focus.why)}</span></div></div><button class="primary" type="button" data-ex="${focus.m}">Go</button></div>`:""}</section>
+  <section class="secCard"><h2>${oral?"Oral : parler et prononcer":"Écouter : comprendre"}</h2>
+  <div class="small">${oral?"Répète à voix haute, travaille les sons et le rythme. Les pourcentages comptent les 30 derniers jours.":"Écoute sans lire, puis vérifie avec le script. Les pourcentages comptent les 30 derniers jours."}</div>
+  ${lvChips}
+  <div class="goalChoicesGrid" style="margin-top:12px">${list.map(card).join("")}</div></section>
+  <details class="secCard auVoice"><summary>Voix et vitesse</summary>
+  <div class="row2" style="margin-top:10px"><select id="vcAccent" class="ghost" aria-label="Accent">${$("audioAccent").innerHTML}</select><select id="vcSpeed" class="ghost" aria-label="Vitesse">${$("audioSpeed").innerHTML}</select></div>
+  <div id="vcInfo" class="small" style="margin-top:8px"></div></details>`;
+  const sync=(x,y)=>{$(x).value=$(y).value;$(x).onchange=()=>{$(y).value=$(x).value;$(y).dispatchEvent(new Event("change"));$("vcInfo").textContent=$("audioVoiceInfo").textContent}};
   sync("vcAccent","audioAccent");sync("vcSpeed","audioSpeed");
   try{$("audioAccent").dispatchEvent(new Event("change"))}catch(e){}
   $("vcInfo").textContent=$("audioVoiceInfo").textContent;
   host.querySelectorAll("[data-ex]").forEach(b=>b.onclick=()=>openExercise(b.dataset.ex));
+  host.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{a.lvl=b.dataset.lv;saveState();renderAudio()});
 }
 
 /* ---------- Podcasts (iTunes Search / Lookup) ---------- */
 const pod={q:"",results:null,show:null,eps:null,ep:null};
 const POD_SUGG=["6 Minute English","The English We Speak","All Ears English","TED Talks Daily","The Daily","Planet Money","HBR IdeaCast","Luke’s English Podcast"];
+const POD_CURATED=[
+ ["The English We Speak","BBC Learning English","A2–B1","3 min","Une expression idiomatique par épisode, avec exemples."],
+ ["6 Minute English","BBC Learning English","B1–B2","6 min","Un sujet de société discuté à deux, vocabulaire expliqué."],
+ ["All Ears English","Lindsay et Michelle","B1–B2","15–20 min","Conversations américaines naturelles, expressions du quotidien."],
+ ["TED Talks Daily","TED","B2–C1","10–20 min","Conférences variées, débit naturel."],
+ ["Luke’s English Podcast","Luke Thompson","B2–C1","long","Anecdotes et humour, accent britannique."],
+ ["Planet Money","NPR","B2–C1","20 min","L’économie racontée comme une histoire."],
+ ["HBR IdeaCast","Harvard Business Review","C1","20–30 min","Management et business, vocabulaire professionnel."],
+ ["The Daily","The New York Times","C1","25 min","Actualité approfondie, débit rapide."]
+];
 const SPEEDS=[0.75,1,1.25,1.5];
 const epKey=e=>String(e.trackId||e.episodeGuid||e.episodeUrl||"");
 function showFromRes(r){return{id:String(r.collectionId),name:r.collectionName||r.trackName||"Podcast",artist:r.artistName||""}}
@@ -6594,7 +6787,7 @@ function renderPod(host){
   
   ${last?`<div class="resume"><div><b>Reprendre</b><div class="small">${esc(last.title)}${a.pos[last.key]?" · à "+fmtClock(a.pos[last.key]):""}</div></div><button class="primary" id="pResume" type="button">Reprendre</button></div>`:""}
   <div class="row2" style="margin-top:12px"><input id="pQ" class="input" type="search" placeholder="Chercher un podcast" autocomplete="off" value="${esc(pod.q)}"><button id="pGo" class="primary" type="button">Chercher</button></div>
-  <div class="chipRow2" id="pSugg">${POD_SUGG.map(s=>`<button class="chip2" type="button" data-q="${esc(s)}">${esc(s)}</button>`).join("")}</div>
+  <h3>Pour progresser</h3><div class="shows" id="pSugg">${POD_CURATED.map(p=>`<button class="showCard" type="button" data-q="${esc(p[0])}"><span><b>${esc(p[0])}</b><small>${esc(p[2]+" · "+p[3]+" · "+p[4])}</small></span><span>›</span></button>`).join("")}</div>
   ${a.shows.length?`<h3>Mes podcasts</h3><div class="shows" id="pMine">${a.shows.map(s=>`<button class="showCard" type="button" data-mine="${esc(s.id)}"><span><b>${esc(s.name)}</b><small>${esc(s.artist)}</small></span><span>›</span></button>`).join("")}</div>`:""}
   <div id="pRes" style="margin-top:6px"></div></section>`;
   $("pGo").onclick=()=>podSearch($("pQ").value);
@@ -8415,6 +8608,23 @@ function roundResult(){
 }
 /* ----- Interface en anglais (les "Explications" restent en français) ----- */
 const I18N_DICT={
+"Ma pratique":"My practice","aujourd’hui":"today","cette semaine":"this week","réussite · 7 jours":"success · 7 days","À faire maintenant":"To do now","Go":"Go",
+"Écouter : comprendre":"Listen: understand","Oral : parler et prononcer":"Speaking: talk and pronounce",
+"Répète à voix haute, travaille les sons et le rythme. Les pourcentages comptent les 30 derniers jours.":"Repeat out loud and work on sounds and rhythm. Percentages cover the last 30 days.",
+"Écoute sans lire, puis vérifie avec le script. Les pourcentages comptent les 30 derniers jours.":"Listen without reading, then check with the script. Percentages cover the last 30 days.",
+"Niveau des dialogues":"Dialogue level","Lent":"Slow","Rapide":"Fast","Tous":"All","Voix et vitesse":"Voice and speed","à faire":"to do",
+"Écouter lentement":"Listen slowly","Dernière réplique":"Last line","Aucune écoute":"No plays yet","Arrêter":"Stop","Écouter cette réplique":"Listen to this line",
+"Écoute le dialogue, sans lire le script, puis réponds.":"Listen to the dialogue without reading the script, then answer.",
+"Pour progresser":"To improve",
+"Pas encore travaillé cette semaine.":"Not practised yet this week.",
+"Une expression idiomatique par épisode, avec exemples.":"One idiom per episode, with examples.",
+"Un sujet de société discuté à deux, vocabulaire expliqué.":"A topical subject discussed by two presenters, vocabulary explained.",
+"Conversations américaines naturelles, expressions du quotidien.":"Natural American conversations, everyday expressions.",
+"Conférences variées, débit naturel.":"Varied talks at natural speed.",
+"Anecdotes et humour, accent britannique.":"Anecdotes and humour, British accent.",
+"L’économie racontée comme une histoire.":"Economics told as a story.",
+"Management et business, vocabulaire professionnel.":"Management and business, professional vocabulary.",
+"Actualité approfondie, débit rapide.":"In-depth news at a fast pace.","long":"long",
 "Niveau":"Level","Écriture":"Writing","Écrire":"Write","Vidéos":"Videos","Écouter":"Listen","Oral":"Speaking","Podcasts":"Podcasts",
 "Français → Anglais":"French → English","Anglais → Français":"English → French","Texte en français":"French text","Ta traduction en anglais":"Your English translation",
 "Corriger et comparer":"Check and compare","Écouter ma version":"Listen to my version","Cette semaine":"This week","Aucune série en cours":"No streak yet",
@@ -8510,6 +8720,12 @@ const I18N_DICT={
 "objectif":"goal","Parcours CECR A1 → B2":"CEFR path A1 → B2","Accueil":"Home","Vocab.":"Vocab","Audio":"Audio","Garder ici":"Keep here","Choix des temps":"Choosing tenses","Grammaire avancée":"Advanced grammar"
 };
 const I18N_RULES=[
+[/^Voix disponible : (.+)$/,(m,x)=>"Voice available: "+x],
+[/^(\d+) en 30 j$/,(m,a)=>`${a} in 30 d`],
+[/^(\d+) écoutes?$/,(m,a)=>`${a} play${a==="1"?"":"s"}`],
+[/^(\d+) (dialogues|phrases|mots|scénarios|sons)$/,(m,a,w)=>`${a} ${({dialogues:"dialogues",phrases:"sentences",mots:"words","scénarios":"scenarios",sons:"sounds"})[w]}`],
+[/^Point faible : (\d+) % de réussite sur 30 jours\.$/,(m,a)=>`Weak spot: ${a}% success over 30 days.`],
+[/^Ta réussite la plus basse cette semaine : (\d+) %\.$/,(m,a)=>`Your lowest success rate this week: ${a}%.`],
 [/^Réviser (.+)$/,(m,t)=>"Review "+I18N(t)],
 [/^Question (\d+)\/(\d+) · en pause$/,(m,a,b)=>`Question ${a}/${b} · paused`],
 [/^(\d+)\/(\d+) · (Révision|Vocabulaire|Grammaire|Écoute)$/,(m,a,b,p)=>`${a}/${b} · ${I18N(p)}`],
