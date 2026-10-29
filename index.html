@@ -6604,11 +6604,12 @@ function tagPages(){
 function applyPageVisibility(){
   if(!pagesReady)return;
   const p=currentView,goal=curGoal(),goals=PAGE_GOALS[p]||[];
-  const zone=(p==="audio"?(A().seg==="ear"||A().seg==="oral"):p==="write"?W()!=="free":(p==="vocab"||p==="gram")?exOpen:p!=="home")||sessOpen||goal==="test";
+  const zone=(p==="audio"?((A().seg==="ear"||A().seg==="oral")&&exOpen):p==="write"?W()!=="free":(p==="vocab"||p==="gram")?exOpen:p!=="home")||sessOpen||goal==="test";
   $("view-train").dataset.page=p;
   const vtr=$("view-translate");if(vtr)vtr.classList.toggle("hidden",!(p==="write"&&W()==="free"));
   const hd=document.querySelector("header");if(hd)hd.classList.toggle("pgHide",p!=="home");
   pageTags.forEach(t=>t.el.classList.toggle("pgHide",t.el.classList.contains("goalPanel")||!(t.pg==="all"||(t.pg.split(" ").includes(p)&&!((p==="vocab"||p==="gram")&&exOpen))||(t.pg==="zone"&&zone))));
+  {const vau=$("view-audio");if(vau)vau.classList.toggle("hidden",!(p==="audio"&&!(exOpen&&(A().seg==="ear"||A().seg==="oral"))))}
   document.querySelectorAll("[data-goal]").forEach(b=>b.classList.toggle("pgHide",!goals.includes(b.dataset.goal)));
   const grid=document.querySelector(".goalGrid");if(grid)grid.classList.toggle("pgHide",goals.length<2);
   const g=goals.includes(goal)?goal:goals[0];
@@ -6733,7 +6734,7 @@ function renderAudioEx(host){
   const p7=auPct(t7);
   /* recommandation : le point le plus faible sur 30 jours (au moins 5 réponses), sinon l'exercice le moins pratiqué cette semaine */
   let focus=null;
-  const weak=all.filter(([m])=>st30[m]&&st30[m].n>=5&&auPct(st30[m])<80).sort((x,y)=>auPct(st30[x[0]])-auPct(st30[y[0]]))[0];
+  const weak=list.filter(([m])=>st30[m]&&st30[m].n>=5&&auPct(st30[m])<80).sort((x,y)=>auPct(st30[x[0]])-auPct(st30[y[0]]))[0];
   if(weak)focus={m:weak[0],label:weak[1],why:"Point faible : "+auPct(st30[weak[0]])+" % de réussite sur 30 jours."};
   else{
     const idle=list.filter(([m])=>!st7[m]||!st7[m].n)[0];
@@ -7385,15 +7386,15 @@ function modeInfo(){const info={};Object.values(goalModeGroups).forEach(g=>g.mod
 function renderPageBar(){
   const host=$("pageBar");if(!host)return;
   const p=currentView;
-  if(p!=="vocab"&&p!=="gram"&&p!=="write"){host.innerHTML="";barSig="";return}
+  if(p!=="vocab"&&p!=="gram"&&p!=="write"&&!(p==="audio"&&exOpen)){host.innerHTML="";barSig="";return}
   const sig=p+"|"+mode+"|"+(state.gramTheme||"")+"|"+(state.vocKind||"")+"|"+(state.packFocus||"")+"|"+W()+"|"+exOpen;
   if(sig===barSig&&host.firstChild)return;
   barSig=sig;
   const info=modeInfo();
-  if(p==="vocab"||p==="gram"){
+  if(p==="audio"||p==="vocab"||p==="gram"){
     if(exOpen){
       host.innerHTML=`<div class="blkBar"><button type="button" class="ghost backIc" id="pbBack" aria-label="Retour">‹</button><b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b></div>`;
-      $("pbBack").onclick=()=>{exOpen=false;applyPageVisibility();try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}};
+      $("pbBack").onclick=()=>{exOpen=false;if(p==="audio"){try{stopAudioMedia();if(typeof stopDialogue==="function")stopDialogue()}catch(e){}}applyPageVisibility();if(p==="audio")try{renderAudio()}catch(e){}try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}};
       return;
     }
     const groups=[];
@@ -7487,10 +7488,11 @@ openExercise=function(m,k){
   const flat=g=>g.reduce((x,s)=>x.concat(s[1]),[]);
   if(String(m).indexOf("view:")!==0){
     if(flat(SUBGROUPS.grammar).includes(m)||flat(SUBGROUPS.vocab).concat(["review","errors","favorites"]).includes(m))exOpen=true;
+    if(AUDIO_EAR.concat(AUDIO_ORAL).some(x=>x[0]===m))exOpen=true;
   }
   __oeOrig(m,k);
   const pg=GOAL_PAGE[curGoal()];
-  if(String(m).indexOf("view:")!==0)exOpen=(pg==="vocab"||pg==="gram");
+  if(String(m).indexOf("view:")!==0)exOpen=(pg==="vocab"||pg==="gram"||(pg==="audio"&&AUDIO_EAR.concat(AUDIO_ORAL).some(x=>x[0]===m)));
   barSig="";applyPageVisibility();
   try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}
 };
@@ -8612,7 +8614,7 @@ const I18N_DICT={
 "Écouter : comprendre":"Listen: understand","Oral : parler et prononcer":"Speaking: talk and pronounce",
 "Répète à voix haute, travaille les sons et le rythme. Les pourcentages comptent les 30 derniers jours.":"Repeat out loud and work on sounds and rhythm. Percentages cover the last 30 days.",
 "Écoute sans lire, puis vérifie avec le script. Les pourcentages comptent les 30 derniers jours.":"Listen without reading, then check with the script. Percentages cover the last 30 days.",
-"Niveau des dialogues":"Dialogue level","Lent":"Slow","Rapide":"Fast","Tous":"All","Voix et vitesse":"Voice and speed","à faire":"to do",
+"Niveau des dialogues":"Dialogue level","TH, H, voyelles, V/W, R, NG":"TH, H, vowels, V/W, R, NG","Lent":"Slow","Rapide":"Fast","Tous":"All","Voix et vitesse":"Voice and speed","à faire":"to do",
 "Écouter lentement":"Listen slowly","Dernière réplique":"Last line","Aucune écoute":"No plays yet","Arrêter":"Stop","Écouter cette réplique":"Listen to this line",
 "Écoute le dialogue, sans lire le script, puis réponds.":"Listen to the dialogue without reading the script, then answer.",
 "Pour progresser":"To improve",
@@ -9960,7 +9962,7 @@ const RESUME={};
     try{
       if(sessOpen)return;
       if(mode===s.mode&&$("exerciseCard")&&$("exerciseCard").offsetParent===null){
-        if(v==="vocab"||v==="gram"){exOpen=true;barSig="";applyPageVisibility();return}
+        if(v==="vocab"||v==="gram"||v==="audio"){exOpen=true;barSig="";applyPageVisibility();return}
       }
       if(mode===s.mode&&$("exerciseCard")&&$("exerciseCard").offsetParent!==null)return;
       openExercise(s.mode);
