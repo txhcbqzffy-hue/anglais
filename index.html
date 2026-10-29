@@ -1502,6 +1502,14 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
 .blkBar .themeSel{flex:1;width:auto;min-height:44px;margin-left:8px}
 .qrow.lis{display:flex;flex-direction:row-reverse;justify-content:flex-end;align-items:center;gap:12px}.qrow.lis #speakBtn{order:-1}.qrow.lis .question{flex:1}
 .qrow.lis~#textZone .input{background:#fff!important}
+.bi-head{--m:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%20fill=%27none%27%20stroke=%27black%27%20stroke-width=%272%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3E%3Cpath%20d=%27M3%2018v-6a9%209%200%200%201%2018%200v6%27/%3E%3Cpath%20d=%27M21%2019a2%202%200%200%201-2%202h-1a2%202%200%200%201-2-2v-3a2%202%200%200%201%202-2h3zM3%2019a2%202%200%200%200%202%202h1a2%202%200%200%200%202-2v-3a2%202%200%200%200-2-2H3z%27/%3E%3C/svg%3E")}
+.bi-play{--m:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%20fill=%27none%27%20stroke=%27black%27%20stroke-width=%272%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3E%3Crect%20x=%272%27%20y=%275%27%20width=%2720%27%20height=%2714%27%20rx=%273%27/%3E%3Cpath%20d=%27m10%209%205%203-5%203z%27/%3E%3C/svg%3E")}
+.bi-mic{--m:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%20fill=%27none%27%20stroke=%27black%27%20stroke-width=%272%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3E%3Crect%20x=%279%27%20y=%272%27%20width=%276%27%20height=%2713%27%20rx=%273%27/%3E%3Cpath%20d=%27M19%2010v1a7%207%200%200%201-14%200v-1%27/%3E%3Cpath%20d=%27M12%2018v4%27/%3E%3C/svg%3E")}
+.auBack{margin:0 0 10px;padding:8px 14px}
+#audioSeg{display:none!important}
+.blkGrid3 .blk em.auPct{background:var(--panel);color:var(--muted);border:1px solid var(--line)}
+.blkGrid3 .blk em.auPct.ok{color:#1a7f37}.blkGrid3 .blk em.auPct.low{color:#c0392b}
+.blkHead+.blkGrid3{margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -6662,7 +6670,7 @@ function showView(v,silent){
   if(pagesReady&&v!==prev)ensureModeForPage(v);
   applyPageVisibility();
   if(leavingAudio){vid.open=null;if($("audioSeg")&&A().seg==="vid")renderAudio()}
-  if(v==="audio")renderAudio();
+  if(v==="audio"){if(!silent&&prev!=="audio")A().seg="hub";renderAudio()}
   if(v==="write"&&W()==="free")renderTranslate();
   if(!silent){try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}}
 }
@@ -6702,11 +6710,51 @@ const netErrHtml=()=>`<div class="noteBox err">Impossible de joindre le service 
    ===================================================================== */
 function renderAudio(){
   const a=A(),host=$("audioBody");if(!host)return;
-  document.querySelectorAll("#audioSeg [data-as]").forEach(b=>{b.classList.toggle("on",b.dataset.as===a.seg);b.onclick=()=>{if(a.seg!==b.dataset.as){a.seg=b.dataset.as;saveState();vid.open=null;renderAudio()}}});
+  if(!exOpen&&(a.seg==="ear"||a.seg==="oral"||a.seg==="pod"&&false))a.seg="hub";
+  if(!["hub","pod","vid","ear","oral"].includes(a.seg))a.seg="hub";
   try{applyPageVisibility()}catch(e){}
+  if(a.seg==="hub")return renderAudioHub(host);
   if(a.seg==="vid")renderVideos(host);
   else if(a.seg==="ear"||a.seg==="oral")renderAudioEx(host);
   else renderPod(host);
+  /* retour au menu depuis la liste de podcasts / vidéos (hors épisode ou vidéo ouverts, qui ont leur propre retour) */
+  if(a.seg==="pod"||a.seg==="vid"){
+    const b=document.createElement("button");b.type="button";b.className="ghost auBack";b.textContent="‹ Audio";
+    b.onclick=()=>{a.seg="hub";saveState();vid.open=null;try{pod.ep=null;pod.show=null}catch(e){}renderAudio();try{window.scrollTo({top:0})}catch(e){}};
+    host.insertBefore(b,host.firstChild);
+  }
+}
+const AU_TILES=[
+  ["Podcasts et vidéos",[["pod","Podcasts","head"],["vid","Vidéos","play"]]],
+  ["Écouter",[["audioDialogues","Dialogues","swap"],["dictation","Dictée","write"],["listening","Mots","audio"]]],
+  ["Oral",[["pronunciation","Prononciation","mic"],["shadowing","Shadowing","repeat"],["conversation","Conversation","user"],["pronLab","Sons","search"],["wordStress","Accent","scale"],["sentenceStress","Rythme","order"]]]
+];
+function renderAudioHub(host){
+  const a=A(),all=AUDIO_EAR.concat(AUDIO_ORAL),st7=auModeStats(7),st30=auModeStats(30);
+  let focus=null;
+  const weak=all.filter(([m])=>st30[m]&&st30[m].n>=5&&auPct(st30[m])<80).sort((x,y)=>auPct(st30[x[0]])-auPct(st30[y[0]]))[0];
+  if(weak)focus={m:weak[0],label:weak[1],why:"Point faible : "+auPct(st30[weak[0]])+" % de réussite sur 30 jours."};
+  else{
+    const idle=all.filter(([m])=>!st7[m]||!st7[m].n)[0];
+    if(idle)focus={m:idle[0],label:idle[1],why:"Pas encore travaillé cette semaine."};
+    else{const low=all.slice().sort((x,y)=>(auPct(st7[x[0]])??101)-(auPct(st7[y[0]])??101))[0];if(low)focus={m:low[0],label:low[1],why:"Ta réussite la plus basse cette semaine : "+auPct(st7[low[0]])+" %."}}
+  }
+  const tile=([k,l,ic])=>{const p=auPct(st30[k]);return `<button type="button" class="blk" data-au="${k}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${esc(l)}</b>${p!==null?`<em class="auPct${p>=80?" ok":p<60?" low":""}">${p}%</em>`:""}</button>`};
+  const lv=`<div class="auLv" style="margin:0 0 10px"><button type="button" class="chip2${a.lvl?"":" on"}" data-lv="">Tous<small>${audioDialogues.length}</small></button>${AU_LV.map(l=>`<button type="button" class="chip2${a.lvl===l?" on":""}" data-lv="${l}">${l}<small>${audioDialogues.filter(d=>d.level===l).length}</small></button>`).join("")}</div>`;
+  host.innerHTML=(focus?`<section class="secCard"><div class="auFocus"><div><b>À faire maintenant</b><div class="small"><b>${esc(focus.label)}</b><br><span>${esc(focus.why)}</span></div></div><button class="primary" type="button" data-au="${focus.m}">Go</button></div></section>`:"")+
+  AU_TILES.map(([t,items])=>`<div class="blkHead">${esc(t)}</div>${t==="Écouter"?`<div class="small" style="margin:-2px 0 6px">Niveau des dialogues</div>`+lv:""}<div class="blkGrid3">${items.map(tile).join("")}</div>`).join("")+
+  `<details class="secCard auVoice"><summary>Voix et vitesse</summary>
+  <div class="row2" style="margin-top:10px"><select id="vcAccent" class="ghost" aria-label="Accent">${$("audioAccent").innerHTML}</select><select id="vcSpeed" class="ghost" aria-label="Vitesse">${$("audioSpeed").innerHTML}</select></div>
+  <div id="vcInfo" class="small" style="margin-top:8px"></div></details>`;
+  const sync=(x,y)=>{$(x).value=$(y).value;$(x).onchange=()=>{$(y).value=$(x).value;$(y).dispatchEvent(new Event("change"));$("vcInfo").textContent=$("audioVoiceInfo").textContent}};
+  sync("vcAccent","audioAccent");sync("vcSpeed","audioSpeed");
+  $("vcInfo").textContent=$("audioVoiceInfo").textContent;
+  host.querySelectorAll("[data-au]").forEach(b=>b.onclick=()=>{
+    const k=b.dataset.au;
+    if(k==="pod"||k==="vid"){a.seg=k;saveState();vid.open=null;try{pod.ep=null;pod.show=null}catch(e){}renderAudio();try{window.scrollTo({top:0})}catch(e){}}
+    else openExercise(k);
+  });
+  host.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{a.lvl=b.dataset.lv;saveState();renderAudio()});
 }
 const AUDIO_EAR=[
   ["audioDialogues","Dialogues audio","Écouter une conversation, puis répondre aux questions"],
@@ -7414,7 +7462,7 @@ function renderPageBar(){
     if(exOpen){
       host.innerHTML=`<div class="blkBar"><button type="button" class="ghost backIc" id="pbBack" aria-label="Retour">‹</button>${p==="audio"?`<button type="button" id="pbABtn" class="themeSel"><b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b><i class="chev"></i></button>`:`<b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b>`}</div>`;
       {const ab=$("pbABtn");if(ab)ab.onclick=()=>themeOpen("audio",false)}
-      $("pbBack").onclick=()=>{exOpen=false;if(p==="audio"){try{stopAudioMedia();if(typeof stopDialogue==="function")stopDialogue()}catch(e){}}applyPageVisibility();if(p==="audio")try{renderAudio()}catch(e){}try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}};
+      $("pbBack").onclick=()=>{exOpen=false;if(p==="audio")A().seg="hub";if(p==="audio"){try{stopAudioMedia();if(typeof stopDialogue==="function")stopDialogue()}catch(e){}}applyPageVisibility();if(p==="audio")try{renderAudio()}catch(e){}try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}};
       return;
     }
     const groups=[];
@@ -8655,7 +8703,7 @@ const I18N_DICT={
 "Tester mon niveau":"Test my level","Vocabulaire":"Vocabulary","Grammaire":"Grammar","Écoute":"Listening","Temps":"Tenses","Prépositions":"Prepositions","Définitions":"Definitions","Phrases à trous":"Fill in the blanks",
 "Quiz":"Quiz","Choisir un thème":"Choose a theme","Choisir un jeu":"Choose a game","Un jeu au choix de l’appli":"A game picked by the app","Retourne les cartes et retrouve les paires.":"Flip the cards and find the pairs.","30 secondes : un maximum de bonnes réponses.":"30 seconds: as many right answers as you can.","Écoute le mot et choisis-le.":"Listen to the word and pick it.","Devine le mot lettre par lettre.":"Guess the word letter by letter.","Bien joué":"Well done","Encore un tour ?":"One more round?","Au hasard":"Random","Jeux":"Games","Phrasal verbs":"Phrasal verbs","Faux amis":"False friends","Retour":"Back","‹ Retour":"‹ Back","Commencer":"Start","Reprendre":"Resume","Réduire":"Minimize","Fermer":"Close",
 "Valider":"Submit","Vérifier":"Check","Suivant":"Next","Question suivante →":"Next question →","Voir la réponse / traduction":"Show answer / translation","Rejouer":"Play again","Détail":"Details",
-"Thème":"Theme","Traduction libre FR ⇄ EN":"Free translation FR ⇄ EN","Choisir un exercice":"Choose an exercise","Réussite sur 30 jours":"Success over 30 days","Aucun exercice audio pour l’instant.":"No audio exercise yet.","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
+"Thème":"Theme","Traduction libre FR ⇄ EN":"Free translation FR ⇄ EN","Choisir un exercice":"Choose an exercise","Podcasts et vidéos":"Podcasts and videos","Dialogues":"Dialogues","Dictée":"Dictation","Prononciation":"Pronunciation","Sons":"Sounds","Accent":"Stress","Rythme":"Rhythm","‹ Audio":"‹ Audio","Réussite sur 30 jours":"Success over 30 days","Aucun exercice audio pour l’instant.":"No audio exercise yet.","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
 "Questions et négations":"Questions & negatives","Questions & négations":"Questions & negatives","Ordre des mots":"Word order","Choisir le bon temps":"Choose the right tense","Construire une phrase":"Build a sentence","Transformer une phrase":"Transform a sentence",
 "Transformer":"Transform","Trouver l’erreur":"Find the mistake","Articles":"Articles","Modaux":"Modals","Comparatifs":"Comparatives","3e personne":"3rd person","Irréguliers":"Irregulars","Verbes en -ED":"-ED verbs",
 "Prépositions : in / on / at":"Prepositions: in / on / at","Comparatifs & superlatifs":"Comparatives & superlatives","Connecteurs":"Connectors","Collocations":"Collocations",
@@ -9462,7 +9510,7 @@ function themeRender(anim){
   const dr=$("themeDrop");dr.classList.toggle("gamesMode",themeTab==="games"||themeTab==="write"||themeTab==="gram"||themeTab==="audio");
   dr.querySelector("h3").textContent=themeTab==="games"?"Choisir un jeu":themeTab==="write"?"Choisir un exercice":"Choisir un thème";
   if(themeTab==="audio"){
-    const lst=A().seg==="oral"?AUDIO_ORAL:AUDIO_EAR;
+    const lst=AUDIO_ORAL.some(x=>x[0]===mode)?AUDIO_ORAL:AUDIO_EAR;
     list.innerHTML=lst.map(([m,l],i)=>`<button type="button" class="themeItem${m===mode?" on":""}" data-am="${m}" style="--i:${i}"><span>${escapeHtml(l)}</span><i class="dot"></i></button>`).join("");
     list.scrollTop=0;list.classList.toggle("noanim",!anim);return;
   }
