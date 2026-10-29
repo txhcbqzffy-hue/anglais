@@ -8093,7 +8093,7 @@ function jRender(force){
     weeks+=`<div class="wk" data-t="${w===0?"Cette semaine":f(m)+" – "+f(e)}">${cells}</div>`;
   }
   const st=jStreak();
-  host.innerHTML=`<div class="wkHead"><b id="wkTitle">Cette semaine</b><span>${st?st+" jour"+(st>1?"s":"")+" d’affilée":"Aucune série en cours"}</span></div><div class="wkScroll">${weeks}</div><div id="dayDetail" class="dayDetail"></div><div id="auHome" class="dayDetail auHome"></div>`;
+  host.innerHTML=`<div class="wkHead"><b id="wkTitle">Cette semaine</b><span>${st?st+" jour"+(st>1?"s":"")+" d’affilée":"Aucune série en cours"}</span></div><div class="wkScroll">${weeks}</div><div id="dayDetail" class="dayDetail"></div>`;
   const sc=host.querySelector(".wkScroll");
   sc.scrollLeft=keep!==null?keep:sc.scrollWidth;
   const setTitle=()=>{const i=Math.round(sc.scrollLeft/Math.max(1,sc.clientWidth));const w=sc.children[Math.min(sc.children.length-1,Math.max(0,i))];if(w)$("wkTitle").textContent=w.dataset.t};
@@ -8106,7 +8106,7 @@ function jRender(force){
     if(jSel!==tk){jSel=tk;jMore=false;host.querySelectorAll(".wd").forEach(x=>x.classList.toggle("sel",x.dataset.d===tk));jDetail()}
   };
   host.querySelectorAll(".wd").forEach(b=>b.onclick=()=>{jSel=b.dataset.d;jMore=false;host.querySelectorAll(".wd").forEach(x=>x.classList.toggle("sel",x===b));jDetail()});
-  jDetail();jAudioCard();
+  jDetail();
 
 }
 function jDetail(){
