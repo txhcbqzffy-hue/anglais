@@ -7522,8 +7522,7 @@ function renderPageBar(){
     return;
   }
   const curL=(info[cur]&&info[cur][1])||(cur==="view:translate"?"Traduction libre":modeNames[cur])||"";
-  host.innerHTML=`<div class="blkBar"><button type="button" class="ghost backIc" id="pbBack" aria-label="Retour">‹</button><button type="button" id="pbWBtn" class="themeSel"><b>${escapeHtml(curL)}</b><i class="chev"></i></button></div>`;
-  $("pbWBtn").onclick=()=>themeOpen("write",false);
+  host.innerHTML=`<div class="blkBar"><button type="button" class="ghost backIc" id="pbBack" aria-label="Retour">‹</button><b>${escapeHtml(curL)}</b></div>`;
   $("pbBack").onclick=()=>{state.wseg="hub";saveState();barSig="";applyPageVisibility();try{window.scrollTo({top:0})}catch(e){}};
   const t=$("pbTheme");
   if(t)t.onchange=()=>{
