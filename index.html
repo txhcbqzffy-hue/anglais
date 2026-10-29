@@ -1505,6 +1505,11 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
 .bi-head{--m:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%20fill=%27none%27%20stroke=%27black%27%20stroke-width=%272%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3E%3Cpath%20d=%27M3%2018v-6a9%209%200%200%201%2018%200v6%27/%3E%3Cpath%20d=%27M21%2019a2%202%200%200%201-2%202h-1a2%202%200%200%201-2-2v-3a2%202%200%200%201%202-2h3zM3%2019a2%202%200%200%200%202%202h1a2%202%200%200%200%202-2v-3a2%202%200%200%200-2-2H3z%27/%3E%3C/svg%3E")}
 .bi-play{--m:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%20fill=%27none%27%20stroke=%27black%27%20stroke-width=%272%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3E%3Crect%20x=%272%27%20y=%275%27%20width=%2720%27%20height=%2714%27%20rx=%273%27/%3E%3Cpath%20d=%27m10%209%205%203-5%203z%27/%3E%3C/svg%3E")}
 .bi-mic{--m:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%20fill=%27none%27%20stroke=%27black%27%20stroke-width=%272%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3E%3Crect%20x=%279%27%20y=%272%27%20width=%276%27%20height=%2713%27%20rx=%273%27/%3E%3Cpath%20d=%27M19%2010v1a7%207%200%200%201-14%200v-1%27/%3E%3Cpath%20d=%27M12%2018v4%27/%3E%3C/svg%3E")}
+.auNow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px;margin:0 0 18px;border:1px solid rgba(var(--accent-rgb),.45);border-radius:var(--r);background:var(--panel);color:var(--text);box-shadow:var(--shadow)}
+.auNowTx{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.auNowTx small{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text)}
+.auNowTx b{font-size:15px}.auNowTx span{font-size:12px;color:var(--muted);line-height:1.3}
+.auNowGo{flex:none;padding:9px 16px;border-radius:var(--r);background:var(--accent);color:var(--on-accent);font-weight:800;font-size:14px}
 .auBack{margin:0 0 10px;padding:8px 14px}
 #audioSeg{display:none!important}
 .blkGrid3 .blk em.auPct{background:var(--panel);color:var(--muted);border:1px solid var(--line)}
@@ -6742,7 +6747,8 @@ function renderAudioHub(host){
   }
   const tile=([k,l,ic])=>{const p=auPct(st30[k]);return `<button type="button" class="blk" data-au="${k}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${esc(l)}</b>${p!==null?`<em class="auPct${p>=80?" ok":p<60?" low":""}">${p}%</em>`:""}</button>`};
   const lv=`<div class="auLv" style="margin:0 0 10px"><button type="button" class="chip2${a.lvl?"":" on"}" data-lv="">Tous<small>${audioDialogues.length}</small></button>${AU_LV.map(l=>`<button type="button" class="chip2${a.lvl===l?" on":""}" data-lv="${l}">${l}<small>${audioDialogues.filter(d=>d.level===l).length}</small></button>`).join("")}</div>`;
-  host.innerHTML=(focus?`<section class="secCard"><div class="auFocus"><div><b>À faire maintenant</b><div class="small"><b>${esc(focus.label)}</b><br><span>${esc(focus.why)}</span></div></div><button class="primary" type="button" data-au="${focus.m}">Go</button></div></section>`:"")+
+  const icOf=m=>{for(const g of AU_TILES)for(const x of g[1])if(x[0]===m)return x[2];return "audio"};
+  host.innerHTML=(focus?`<button type="button" class="auNow" data-au="${focus.m}"><span class="biWrap"><i class="bi-${icOf(focus.m)}"></i></span><span class="auNowTx"><small>À faire maintenant</small><b>${esc(focus.label)}</b><span>${esc(focus.why)}</span></span><span class="auNowGo">Go</span></button>`:"")+
   AU_TILES.map(([t,items])=>`<div class="blkHead">${esc(t)}</div>${t==="Écouter"?`<div class="small" style="margin:-2px 0 6px">Niveau des dialogues</div>`+lv:""}<div class="blkGrid3">${items.map(tile).join("")}</div>`).join("")+
   `<details class="secCard auVoice"><summary>Voix et vitesse</summary>
   <div class="row2" style="margin-top:10px"><select id="vcAccent" class="ghost" aria-label="Accent">${$("audioAccent").innerHTML}</select><select id="vcSpeed" class="ghost" aria-label="Vitesse">${$("audioSpeed").innerHTML}</select></div>
