@@ -1497,6 +1497,7 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
 .audioScript .dialogueLine.now{background:rgba(var(--accent-rgb),.16)}
 .auLn{flex:0 0 auto;width:30px;height:30px;min-height:30px!important;padding:0!important;border-radius:50%!important;border:1px solid var(--line);background:var(--panel);color:var(--text);font-size:11px;line-height:1}
 @media(max-width:420px){.auTile b{font-size:19px}}
+.blkBar .themeSel{flex:1;width:auto;min-height:44px;margin-left:8px}
 .qrow.lis{display:flex;flex-direction:row-reverse;justify-content:flex-end;align-items:center;gap:12px}.qrow.lis #speakBtn{order:-1}.qrow.lis .question{flex:1}
 .qrow.lis~#textZone .input{background:#fff!important}
 </style>
@@ -6757,7 +6758,16 @@ function renderAudioEx(host){
   const a=A(),oral=a.seg==="oral",list=oral?AUDIO_ORAL:AUDIO_EAR;
   const lvChips=!oral?`<h3>Niveau des dialogues</h3><div class="auLv"><button type="button" class="chip2${a.lvl?"":" on"}" data-lv="">Tous<small>${audioDialogues.length}</small></button>${AU_LV.map(l=>`<button type="button" class="chip2${a.lvl===l?" on":""}" data-lv="${l}">${l}<small>${audioDialogues.filter(d=>d.level===l).length}</small></button>`).join("")}</div>`:"";
   const card=([m,l,d])=>`<button class="exerciseChoice" data-ex="${m}"><div><div>${esc(l)}</div><small>${esc(d)}</small><small class="auCnt">${esc(auCount(m))}</small></div><span class="arrow">›</span></button>`;
-  host.innerHTML=`<section class="secCard"><h2>${oral?"Oral : parler et prononcer":"Écouter : comprendre"}</h2>
+    const st7=auModeStats(7),st30=auModeStats(30);
+  let focus=null;
+  const weak=list.filter(([m])=>st30[m]&&st30[m].n>=5&&auPct(st30[m])<80).sort((x,y)=>auPct(st30[x[0]])-auPct(st30[y[0]]))[0];
+  if(weak)focus={m:weak[0],label:weak[1],why:"Point faible : "+auPct(st30[weak[0]])+" % de réussite sur 30 jours."};
+  else{
+    const idle=list.filter(([m])=>!st7[m]||!st7[m].n)[0];
+    if(idle)focus={m:idle[0],label:idle[1],why:"Pas encore travaillé cette semaine."};
+    else{const low=list.slice().sort((x,y)=>(auPct(st7[x[0]])??101)-(auPct(st7[y[0]])??101))[0];if(low)focus={m:low[0],label:low[1],why:"Ta réussite la plus basse cette semaine : "+auPct(st7[low[0]])+" %."}}
+  }
+host.innerHTML=(focus?`<section class="secCard"><div class="auFocus"><div><b>À faire maintenant</b><div class="small"><b>${esc(focus.label)}</b><br><span>${esc(focus.why)}</span></div></div><button class="primary" type="button" data-ex="${focus.m}">Go</button></div></section>`:"")+`<section class="secCard"><h2>${oral?"Oral : parler et prononcer":"Écouter : comprendre"}</h2>
   <div class="small">${oral?"Répète à voix haute, travaille les sons et le rythme.":"Écoute sans lire, puis vérifie avec le script."}</div>
   ${lvChips}
   <div class="goalChoicesGrid" style="margin-top:12px">${list.map(card).join("")}</div></section>
@@ -7401,7 +7411,8 @@ function renderPageBar(){
   const info=modeInfo();
   if(p==="audio"||p==="vocab"||p==="gram"){
     if(exOpen){
-      host.innerHTML=`<div class="blkBar"><button type="button" class="ghost backIc" id="pbBack" aria-label="Retour">‹</button><b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b></div>`;
+      host.innerHTML=`<div class="blkBar"><button type="button" class="ghost backIc" id="pbBack" aria-label="Retour">‹</button>${p==="audio"?`<button type="button" id="pbABtn" class="themeSel"><b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b><i class="chev"></i></button>`:`<b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b>`}</div>`;
+      {const ab=$("pbABtn");if(ab)ab.onclick=()=>themeOpen("audio",false)}
       $("pbBack").onclick=()=>{exOpen=false;if(p==="audio"){try{stopAudioMedia();if(typeof stopDialogue==="function")stopDialogue()}catch(e){}}applyPageVisibility();if(p==="audio")try{renderAudio()}catch(e){}try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}};
       return;
     }
@@ -9419,6 +9430,7 @@ function themeEnsure(){
   d.querySelectorAll("[data-tt]").forEach(x=>x.addEventListener("click",()=>{themeTab=x.dataset.tt;themeRender(true)}));
   $("themeList").addEventListener("click",e=>{
     const it=e.target.closest(".themeItem");if(!it)return;
+    if(it.dataset.am){const v=it.dataset.am;themeClose();setTimeout(()=>{try{try{stopAudioMedia();if(typeof stopDialogue==="function")stopDialogue()}catch(x){}openExercise(v);barSig="";renderPageBar()}catch(x){}},330);return}
     if(it.dataset.gt!=null){state.gramTheme=it.dataset.gt;saveState();barSig="";try{renderPageBar()}catch(x){}themeClose();return}
     if(it.dataset.wm){
       const v=it.dataset.wm;themeClose();
@@ -9445,8 +9457,13 @@ function themeEnsure(){
 const GAME_FR={gPairs:"Relie chaque mot anglais à sa traduction.",gScramble:"Remets les lettres dans l’ordre pour former le mot.",gTrueFalse:"10 cartes : la traduction est-elle juste ?",gMissing:"Complète les lettres qui manquent.",gMemory:"Retourne les cartes et retrouve les paires.",gSpeed:"30 secondes : un maximum de bonnes réponses.",gListen:"Écoute le mot et choisis-le.",gHangman:"Devine le mot lettre par lettre."};
 function themeRender(anim){
   const list=$("themeList");if(!list)return;
-  const dr=$("themeDrop");dr.classList.toggle("gamesMode",themeTab==="games"||themeTab==="write"||themeTab==="gram");
+  const dr=$("themeDrop");dr.classList.toggle("gamesMode",themeTab==="games"||themeTab==="write"||themeTab==="gram"||themeTab==="audio");
   dr.querySelector("h3").textContent=themeTab==="games"?"Choisir un jeu":themeTab==="write"?"Choisir un exercice":"Choisir un thème";
+  if(themeTab==="audio"){
+    const lst=A().seg==="oral"?AUDIO_ORAL:AUDIO_EAR;
+    list.innerHTML=lst.map(([m,l],i)=>`<button type="button" class="themeItem${m===mode?" on":""}" data-am="${m}" style="--i:${i}"><span>${escapeHtml(l)}</span><i class="dot"></i></button>`).join("");
+    list.scrollTop=0;list.classList.toggle("noanim",!anim);return;
+  }
   if(themeTab==="gram"){
     const gf=state.gramTheme||"";
     list.innerHTML=[["","All themes"]].concat(GRAM_THEMES).map(([k,v],i)=>`<button type="button" class="themeItem${gf===k?" on":""}" data-gt="${escapeHtml(k)}" style="--i:${i}"><span>${escapeHtml(v)}</span><i class="dot"></i></button>`).join("");
