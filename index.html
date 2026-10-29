@@ -7415,9 +7415,9 @@ function renderPageBar(){
       h+=`<div class="pbField"><span>Thème</span><button type="button" id="pbThemeBtn" class="themeSel"><b>${escapeHtml((PACKS.find(q=>q.id===f)||{}).name||"Tous les thèmes")}</b><i class="chev"></i></button></div>`;
     }
     if(p==="gram"){
-      const GT=[["Temps et verbes","Tenses & verbs"],["Structure de la phrase","Sentence structure"],["Petits mots","Small words"],["Formation des mots","Word formation"],["Verbes en -ED","-ED verbs"],["Prononciation -S/-ES","-S/-ES pronunciation"]];
+      const GT=GRAM_THEMES;
       const gf=state.gramTheme||"",gg=(SUBGROUPS.grammar.find(x=>x[0]===gf)||[0,null])[1],tl=(GT.find(x=>x[0]===gf)||[0,"All themes"])[1];
-      h+=`<div class="pbField"><span>Theme</span><label class="themeSel gSel"><b>${tl}</b><i class="chev"></i><select id="pbGTheme" aria-label="Theme"><option value=""${gf?"":" selected"}>All themes</option>${GT.map(([k,v])=>`<option value="${k}"${gf===k?" selected":""}>${v}</option>`).join("")}</select></label></div>`;
+      h+=`<div class="pbField"><span>Theme</span><button type="button" id="pbGBtn" class="themeSel"><b>${tl}</b><i class="chev"></i></button></div>`;
       h+=`<div class="blkGrid3">${GRAM_BLOCKS.filter(([m])=>!gg||gg.includes(m)).map(([m,l,ic])=>`<button type="button" class="blk" data-blk="${m}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${l}</b></button>`).join("")}</div>`;
     }
     if(p==="vocab"){
@@ -7434,7 +7434,7 @@ function renderPageBar(){
       if(state.packFocus&&state.vocKind&&PACK_EXPR.includes(state.packFocus)!==(state.vocKind==="expr"))state.packFocus=null;
       saveState();barSig="";renderPageBar();
     });
-    const gs=$("pbGTheme");if(gs)gs.onchange=()=>{state.gramTheme=gs.value||"";saveState();barSig="";renderPageBar()};
+    const gb=$("pbGBtn");if(gb)gb.onclick=()=>themeOpen("gram",false);
     const tb=$("pbThemeBtn");if(tb)tb.onclick=()=>themeOpen(PACK_EXPR.includes(state.packFocus)?"expr":"words",false);
     const t=$("pbTheme");
     if(t)t.onchange=()=>{state.packFocus=t.value||null;saveState();barSig=""};
@@ -9405,6 +9405,7 @@ document.addEventListener("click",e=>{
 
 /* ----- Choix du thème : menu qui descend du haut, se ferme en tirant la poignée vers le haut ----- */
 let themeLaunch=false,themeTab="words";
+const GRAM_THEMES=[["Temps et verbes","Tenses & verbs"],["Structure de la phrase","Sentence structure"],["Petits mots","Small words"],["Formation des mots","Word formation"],["Verbes en -ED","-ED verbs"],["Prononciation -S/-ES","-S/-ES pronunciation"]];
 function themeEnsure(){
   if($("themeDrop"))return;
   const b=document.createElement("div");b.id="themeBack";b.className="themeBack";
@@ -9418,6 +9419,7 @@ function themeEnsure(){
   d.querySelectorAll("[data-tt]").forEach(x=>x.addEventListener("click",()=>{themeTab=x.dataset.tt;themeRender(true)}));
   $("themeList").addEventListener("click",e=>{
     const it=e.target.closest(".themeItem");if(!it)return;
+    if(it.dataset.gt!=null){state.gramTheme=it.dataset.gt;saveState();barSig="";try{renderPageBar()}catch(x){}themeClose();return}
     if(it.dataset.wm){
       const v=it.dataset.wm;themeClose();
       setTimeout(()=>{try{if(v==="view:translate"){state.wseg="free";saveState();applyPageVisibility();renderTranslate()}else openExercise(v);barSig="";renderPageBar()}catch(x){}},330);return;
@@ -9443,8 +9445,13 @@ function themeEnsure(){
 const GAME_FR={gPairs:"Relie chaque mot anglais à sa traduction.",gScramble:"Remets les lettres dans l’ordre pour former le mot.",gTrueFalse:"10 cartes : la traduction est-elle juste ?",gMissing:"Complète les lettres qui manquent.",gMemory:"Retourne les cartes et retrouve les paires.",gSpeed:"30 secondes : un maximum de bonnes réponses.",gListen:"Écoute le mot et choisis-le.",gHangman:"Devine le mot lettre par lettre."};
 function themeRender(anim){
   const list=$("themeList");if(!list)return;
-  const dr=$("themeDrop");dr.classList.toggle("gamesMode",themeTab==="games"||themeTab==="write");
+  const dr=$("themeDrop");dr.classList.toggle("gamesMode",themeTab==="games"||themeTab==="write"||themeTab==="gram");
   dr.querySelector("h3").textContent=themeTab==="games"?"Choisir un jeu":themeTab==="write"?"Choisir un exercice":"Choisir un thème";
+  if(themeTab==="gram"){
+    const gf=state.gramTheme||"";
+    list.innerHTML=[["","All themes"]].concat(GRAM_THEMES).map(([k,v],i)=>`<button type="button" class="themeItem${gf===k?" on":""}" data-gt="${escapeHtml(k)}" style="--i:${i}"><span>${escapeHtml(v)}</span><i class="dot"></i></button>`).join("");
+    list.scrollTop=0;list.classList.toggle("noanim",!anim);return;
+  }
   if(themeTab==="write"){
     const info=modeInfo(),cur=W()==="free"?"view:translate":mode;
     list.innerHTML=["view:translate","writingTask","reading","translationText"].filter(m=>info[m]).map((m,i)=>`<button type="button" class="themeItem${m===cur?" on":""}" data-wm="${m}" style="--i:${i}"><span>${escapeHtml(info[m][1])}</span><i class="dot"></i></button>`).join("");
