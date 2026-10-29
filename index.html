@@ -960,6 +960,8 @@ header{justify-content:space-between!important}
 #lvlSheet .cefrPanel{margin-top:14px}
 .accRow{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:start;margin-bottom:10px}
 .accRow .acc{margin:0!important}
+.accRow .acc.accWide{grid-column:1/-1!important;grid-row:3}
+.accPane.paneWide{grid-row:4}
 .accRow .acc>summary{padding:12px!important;min-height:44px;font-size:14px}
 .accRow .acc[open]{grid-column:1/-1}
 
@@ -1851,6 +1853,11 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
       </div>
       <div id="errorLog" class="hidden"></div>
     </div>
+  </section>
+
+  <section class="panel" id="auHomePanel">
+    <h2>Audio</h2>
+    <div id="auHome"></div>
   </section>
 
   <section class="panel" style="display:none">
@@ -6586,16 +6593,16 @@ function accordionize(){
   const root=$("view-train"),H=e=>((e.querySelector("h2,h3")||{}).textContent||"").trim();
   [...root.children].forEach(el=>{
     const h=H(el);
-    if(!(/^(Progression|Profil d’erreurs|Banque d’exercices|Maîtrise|Ajouter ton vocab|Contrôle qualité|Verbes en -ED|Parcours)/.test(h)))return;
+    if(!(/^(Progression|Audio$|Profil d’erreurs|Banque d’exercices|Maîtrise|Ajouter ton vocab|Contrôle qualité|Verbes en -ED|Parcours)/.test(h)))return;
     const d=document.createElement("details");d.className="acc";if(/^Maîtrise/.test(h))d.style.display="none";
     const sm=document.createElement("summary");sm.textContent=h.replace(/^Maîtrise des mots & règles/,"Maîtrise des mots et règles");
     root.insertBefore(d,el);d.appendChild(sm);d.appendChild(el);
   });
   const find=t=>[...root.children].find(e=>e.tagName==="DETAILS"&&e.firstChild&&e.firstChild.textContent.indexOf(t)===0),pp=$("revPanel");
-  const a1=find("Profil d’erreurs"),a2=find("Progression");
-  if(pp&&a1&&a2){const row=document.createElement("div");row.id="accRow";row.className="accRow";root.insertBefore(row,pp);row.appendChild(a1);row.appendChild(a2);
-    [a1,a2].forEach(d=>{const pane=document.createElement("div");pane.className="accPane";pane.hidden=true;[...d.children].forEach(c=>{if(c.tagName!=="SUMMARY")pane.appendChild(c)});row.appendChild(pane);d._pane=pane;
-      d.querySelector("summary").addEventListener("click",e=>{e.preventDefault();if(pane.hidden&&!pane.querySelector(".profileRow"))return;const on=pane.hidden;[a1,a2].forEach(x=>{x._pane.hidden=true;x.classList.remove("on")});if(on){pane.hidden=false;d.classList.add("on");pane.style.animation="none";void pane.offsetWidth;pane.style.animation="";setTimeout(()=>{try{const y=row.getBoundingClientRect().top+window.scrollY-70;window.scrollTo({top:Math.max(0,y),behavior:"smooth"})}catch(e){}},40)}})})}
+  const a1=find("Profil d’erreurs"),a2=find("Progression"),a3=find("Audio");
+  if(pp&&a1&&a2){const row=document.createElement("div");row.id="accRow";row.className="accRow";root.insertBefore(row,pp);row.appendChild(a1);row.appendChild(a2);if(a3){a3.classList.add("accWide");row.appendChild(a3)}
+    [a1,a2,a3].filter(Boolean).forEach(d=>{const pane=document.createElement("div");pane.className="accPane";pane.hidden=true;if(d===a3)pane.classList.add("paneWide");[...d.children].forEach(c=>{if(c.tagName!=="SUMMARY")pane.appendChild(c)});row.appendChild(pane);d._pane=pane;
+      d.querySelector("summary").addEventListener("click",e=>{e.preventDefault();if(pane.hidden&&!pane.querySelector(".profileRow,.auTiles"))return;const on=pane.hidden;[a1,a2,a3].filter(Boolean).forEach(x=>{x._pane.hidden=true;x.classList.remove("on")});if(on){pane.hidden=false;d.classList.add("on");pane.style.animation="none";void pane.offsetWidth;pane.style.animation="";setTimeout(()=>{try{const y=row.getBoundingClientRect().top+window.scrollY-70;window.scrollTo({top:Math.max(0,y),behavior:"smooth"})}catch(e){}},40)}})})}
 }
 function tagPages(){
   const root=$("view-train"),H=e=>((e.querySelector("h2,h3,b")||{}).textContent||"").trim();
@@ -6735,17 +6742,11 @@ function jAudioCard(){
   const box=$("auHome");if(!box)return;
   const all=AUDIO_EAR.concat(AUDIO_ORAL),st1=auModeStats(1),st7=auModeStats(7),st30=auModeStats(30);
   const t1=auSum(st1,all),t7=auSum(st7,all),p7=auPct(t7);
-  let focus=null;
-  const weak=all.filter(([m])=>st30[m]&&st30[m].n>=5&&auPct(st30[m])<80).sort((x,y)=>auPct(st30[x[0]])-auPct(st30[y[0]]))[0];
-  if(weak)focus={m:weak[0],label:weak[1],why:"Point faible : "+auPct(st30[weak[0]])+" % de réussite sur 30 jours."};
-  else{
-    const idle=all.filter(([m])=>!st7[m]||!st7[m].n)[0];
-    if(idle)focus={m:idle[0],label:idle[1],why:"Pas encore travaillé cette semaine."};
-    else{const low=all.slice().sort((x,y)=>(auPct(st7[x[0]])??101)-(auPct(st7[y[0]])??101))[0];if(low)focus={m:low[0],label:low[1],why:"Ta réussite la plus basse cette semaine : "+auPct(st7[low[0]])+" %."}}
-  }
-  box.innerHTML=`<h3>Audio</h3><div class="auTiles"><div class="auTile"><b>${t1.n}</b><span>aujourd’hui</span></div><div class="auTile"><b>${t7.n}</b><span>cette semaine</span></div><div class="auTile"><b>${p7===null?"–":p7+" %"}</b><span>réussite · 7 jours</span></div></div>`+
-  (focus?`<div class="auFocus"><div><b>À faire maintenant</b><div class="small"><b>${esc(focus.label)}</b><br><span>${esc(focus.why)}</span></div></div><button class="primary" type="button" data-ex="${focus.m}">Go</button></div>`:"");
-  box.querySelectorAll("[data-ex]").forEach(b=>b.onclick=()=>openExercise(b.dataset.ex));
+  const rows=all.filter(([m])=>st30[m]&&st30[m].n>0).sort((x,y)=>auPct(st30[y[0]])-auPct(st30[x[0]])||st30[y[0]].n-st30[x[0]].n)
+    .map(([m,l])=>{const p=auPct(st30[m]);const o=st30[m];return `<div class="profileRow"><div><div class="profileName">${esc(l)}</div><div class="profileMeta">${o.ok+" correct out of "+o.n}</div></div><div class="profileBar"><i style="width:${p}%"></i></div><div class="profilePct">${p}% correct</div><button class="ghost reviewConcept" data-aex="${m}">Réviser</button></div>`}).join("");
+  box.innerHTML=`<div class="auTiles"><div class="auTile"><b>${t1.n}</b><span>aujourd’hui</span></div><div class="auTile"><b>${t7.n}</b><span>cette semaine</span></div><div class="auTile"><b>${p7===null?"–":p7+" %"}</b><span>réussite · 7 jours</span></div></div>`+
+  (rows?`<div class="profileList" style="margin-top:12px">${rows}</div>`:`<div class="small" style="margin-top:10px">Aucun exercice audio pour l’instant.</div>`);
+  box.querySelectorAll("[data-aex]").forEach(b=>{b.onclick=()=>openExercise(b.dataset.aex);b.parentElement.onclick=e=>{if(e.target!==b)b.click()}});
 }
 function auCount(m){
   try{
@@ -8106,7 +8107,7 @@ function jRender(force){
     if(jSel!==tk){jSel=tk;jMore=false;host.querySelectorAll(".wd").forEach(x=>x.classList.toggle("sel",x.dataset.d===tk));jDetail()}
   };
   host.querySelectorAll(".wd").forEach(b=>b.onclick=()=>{jSel=b.dataset.d;jMore=false;host.querySelectorAll(".wd").forEach(x=>x.classList.toggle("sel",x===b));jDetail()});
-  jDetail();
+  jDetail();jAudioCard();
 
 }
 function jDetail(){
@@ -8288,6 +8289,7 @@ renderSkills=function(){
     <button class="ghost reviewConcept" data-skill-mode="${SKILL_MODE[r.k]}">Réviser</button>
   </div>`).join("");
   host.querySelectorAll("[data-skill-mode]").forEach(b=>{b.onclick=()=>openExercise(b.dataset.skillMode);b.parentElement.onclick=e=>{if(e.target!==b)b.click()}});
+  try{jAudioCard()}catch(e){}
 };
 
 function sessHeadEnsure(){
@@ -8653,7 +8655,7 @@ const I18N_DICT={
 "Tester mon niveau":"Test my level","Vocabulaire":"Vocabulary","Grammaire":"Grammar","Écoute":"Listening","Temps":"Tenses","Prépositions":"Prepositions","Définitions":"Definitions","Phrases à trous":"Fill in the blanks",
 "Quiz":"Quiz","Choisir un thème":"Choose a theme","Choisir un jeu":"Choose a game","Un jeu au choix de l’appli":"A game picked by the app","Retourne les cartes et retrouve les paires.":"Flip the cards and find the pairs.","30 secondes : un maximum de bonnes réponses.":"30 seconds: as many right answers as you can.","Écoute le mot et choisis-le.":"Listen to the word and pick it.","Devine le mot lettre par lettre.":"Guess the word letter by letter.","Bien joué":"Well done","Encore un tour ?":"One more round?","Au hasard":"Random","Jeux":"Games","Phrasal verbs":"Phrasal verbs","Faux amis":"False friends","Retour":"Back","‹ Retour":"‹ Back","Commencer":"Start","Reprendre":"Resume","Réduire":"Minimize","Fermer":"Close",
 "Valider":"Submit","Vérifier":"Check","Suivant":"Next","Question suivante →":"Next question →","Voir la réponse / traduction":"Show answer / translation","Rejouer":"Play again","Détail":"Details",
-"Thème":"Theme","Traduction libre FR ⇄ EN":"Free translation FR ⇄ EN","Choisir un exercice":"Choose an exercise","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
+"Thème":"Theme","Traduction libre FR ⇄ EN":"Free translation FR ⇄ EN","Choisir un exercice":"Choose an exercise","Réussite sur 30 jours":"Success over 30 days","Aucun exercice audio pour l’instant.":"No audio exercise yet.","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
 "Questions et négations":"Questions & negatives","Questions & négations":"Questions & negatives","Ordre des mots":"Word order","Choisir le bon temps":"Choose the right tense","Construire une phrase":"Build a sentence","Transformer une phrase":"Transform a sentence",
 "Transformer":"Transform","Trouver l’erreur":"Find the mistake","Articles":"Articles","Modaux":"Modals","Comparatifs":"Comparatives","3e personne":"3rd person","Irréguliers":"Irregulars","Verbes en -ED":"-ED verbs",
 "Prépositions : in / on / at":"Prepositions: in / on / at","Comparatifs & superlatifs":"Comparatives & superlatives","Connecteurs":"Connectors","Collocations":"Collocations",
