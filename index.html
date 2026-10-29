@@ -5570,7 +5570,7 @@ function checkGrammar(){
 
 /* ---------------- AUDIO DIALOGUES ---------------- */
 function renderAudioDialogue(){
-  const lv=(A().lvl||""),pool=lv?audioDialogues.filter(d=>d.level===lv):audioDialogues;
+  const LV5=["A1","A2","B1","B2","C1"],ci=Math.max(0,LV5.indexOf(officialLevel()||"A1")),okLv=[LV5[ci],LV5[Math.min(4,ci+1)]],pool0=audioDialogues.filter(d=>okLv.includes(d.level)),pool=pool0.length?pool0:audioDialogues;
   let x=rand(pool.length?pool:audioDialogues);
   if((pool.length||audioDialogues.length)>1&&x.title===window.__lastDlg){x=rand((pool.length?pool:audioDialogues).filter(d=>d.title!==window.__lastDlg))}
   window.__lastDlg=x.title;
@@ -6749,7 +6749,7 @@ function renderAudioHub(host){
   const lv=`<div class="auLv" style="margin:0 0 10px"><button type="button" class="chip2${a.lvl?"":" on"}" data-lv="">Tous<small>${audioDialogues.length}</small></button>${AU_LV.map(l=>`<button type="button" class="chip2${a.lvl===l?" on":""}" data-lv="${l}">${l}<small>${audioDialogues.filter(d=>d.level===l).length}</small></button>`).join("")}</div>`;
   const icOf=m=>{for(const g of AU_TILES)for(const x of g[1])if(x[0]===m)return x[2];return "audio"};
   host.innerHTML=(focus?`<button type="button" class="auNow" data-au="${focus.m}"><span class="biWrap"><i class="bi-${icOf(focus.m)}"></i></span><span class="auNowTx"><small>À faire maintenant</small><b>${esc(focus.label)}</b><span>${esc(focus.why)}</span></span><span class="auNowGo">Go</span></button>`:"")+
-  AU_TILES.map(([t,items])=>`<div class="blkHead">${esc(t)}</div>${t==="Écouter"?`<div class="small" style="margin:-2px 0 6px">Niveau des dialogues</div>`+lv:""}<div class="blkGrid3">${items.map(tile).join("")}</div>`).join("")+
+  AU_TILES.map(([t,items])=>`<div class="blkHead">${esc(t)}</div><div class="blkGrid3">${items.map(tile).join("")}</div>`).join("")+
   `<details class="secCard auVoice"><summary>Voix et vitesse</summary>
   <div class="row2" style="margin-top:10px"><select id="vcAccent" class="ghost" aria-label="Accent">${$("audioAccent").innerHTML}</select><select id="vcSpeed" class="ghost" aria-label="Vitesse">${$("audioSpeed").innerHTML}</select></div>
   <div id="vcInfo" class="small" style="margin-top:8px"></div></details>`;
