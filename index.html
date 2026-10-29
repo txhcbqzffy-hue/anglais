@@ -1497,6 +1497,8 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
 .audioScript .dialogueLine.now{background:rgba(var(--accent-rgb),.16)}
 .auLn{flex:0 0 auto;width:30px;height:30px;min-height:30px!important;padding:0!important;border-radius:50%!important;border:1px solid var(--line);background:var(--panel);color:var(--text);font-size:11px;line-height:1}
 @media(max-width:420px){.auTile b{font-size:19px}}
+.qrow.lis{display:flex;flex-direction:row-reverse;justify-content:flex-end;align-items:center;gap:12px}.qrow.lis #speakBtn{order:-1}.qrow.lis .question{flex:1}
+.qrow.lis~#textZone .input{background:#fff!important}
 </style>
 </head>
 <body>
@@ -5159,7 +5161,7 @@ function resetZones(){
   $("feedback").textContent="";$("feedback").className="feedback";
   $("options").innerHTML="";
   ["textZone","grammarZone","readingZone","translationTextZone","pronZone","audioZone","pronLabZone","writingZone","conversationZone","levelResult","info","wordBank","grammarMarkup","readingResult","readingModel","wordTranslation","translationTextWord","translationTextResult","translationTextModel","writingResult","writingModel","audioScript","translationWrap","translationBox"].forEach(id=>$(id).classList.add("hidden"));
-  $("answerInput").classList.remove("hidden");$("answerInput").value="";$("answerInput").readOnly=false;$("answerInput").onclick=null;$("answerInput").style.cursor="";$("feedback").onclick=null;$("feedback").style.cursor="";$("grammarInput").value="";$("readingAnswer").value="";$("translationTextAnswer").value="";$("writingInput").value="";$("heard").textContent="";$("pronLabFeedback").textContent="";$("pronWordsScore").textContent="—";$("pronTargetScore").textContent="—";$("pronRhythmScore").textContent="Mode dédié";$("conversationHistory").innerHTML="";$("conversationOptions").innerHTML="";$("audioOptions").innerHTML="";audioQueueToken++;dialoguePlaying=false;
+  $("answerInput").classList.remove("hidden");$("answerInput").value="";$("answerInput").readOnly=false;{const q=document.querySelector(".qrow");if(q)q.classList.toggle("lis",mode==="listening")}$("answerInput").onclick=null;$("answerInput").style.cursor="";$("feedback").onclick=null;$("feedback").style.cursor="";$("grammarInput").value="";$("readingAnswer").value="";$("translationTextAnswer").value="";$("writingInput").value="";$("heard").textContent="";$("pronLabFeedback").textContent="";$("pronWordsScore").textContent="—";$("pronTargetScore").textContent="—";$("pronRhythmScore").textContent="Mode dédié";$("conversationHistory").innerHTML="";$("conversationOptions").innerHTML="";$("audioOptions").innerHTML="";audioQueueToken++;dialoguePlaying=false;
   $("nextBtn").classList.add("hidden");
   $("speakBtn").style.visibility="visible";$("favBtn").style.visibility="visible";
   $("speakBtn").style.display=VOC_SPEAK.includes(mode)?"none":"";
