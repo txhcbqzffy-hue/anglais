@@ -1510,6 +1510,8 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
 .auNowTx small{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text)}
 .auNowTx b{font-size:15px}.auNowTx span{font-size:12px;color:var(--muted);line-height:1.3}
 .auNowGo{flex:none;padding:9px 16px;border-radius:var(--r);background:var(--accent);color:var(--on-accent);font-weight:800;font-size:14px}
+.blk.auNowTile{border-color:rgba(var(--accent-rgb),.6);background:rgba(var(--accent-rgb),.08)}
+.blk.auNowTile small{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-text)}
 .auBack{margin:0 0 10px;padding:8px 14px}
 #audioSeg{display:none!important}
 .blkGrid3 .blk em.auPct{background:var(--panel);color:var(--muted);border:1px solid var(--line)}
@@ -6731,7 +6733,7 @@ function renderAudio(){
   }
 }
 const AU_TILES=[
-  ["Podcasts et vidéos",[["pod","Podcasts","head"],["vid","Vidéos","play"]]],
+  ["Aujourd’hui",[["pod","Podcasts","head"],["vid","Vidéos","play"]]],
   ["Écouter",[["audioDialogues","Dialogues","swap"],["dictation","Dictée","write"],["listening","Mots","audio"]]],
   ["Oral",[["pronunciation","Prononciation","mic"],["shadowing","Shadowing","repeat"],["conversation","Conversation","user"],["pronLab","Sons","search"],["wordStress","Accent","scale"],["sentenceStress","Rythme","order"]]]
 ];
@@ -6747,9 +6749,11 @@ function renderAudioHub(host){
   }
   const tile=([k,l,ic])=>{const p=auPct(st30[k]);return `<button type="button" class="blk" data-au="${k}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${esc(l)}</b>${p!==null?`<em class="auPct${p>=80?" ok":p<60?" low":""}">${p}%</em>`:""}</button>`};
   const lv=`<div class="auLv" style="margin:0 0 10px"><button type="button" class="chip2${a.lvl?"":" on"}" data-lv="">Tous<small>${audioDialogues.length}</small></button>${AU_LV.map(l=>`<button type="button" class="chip2${a.lvl===l?" on":""}" data-lv="${l}">${l}<small>${audioDialogues.filter(d=>d.level===l).length}</small></button>`).join("")}</div>`;
-  const icOf=m=>{for(const g of AU_TILES)for(const x of g[1])if(x[0]===m)return x[2];return "audio"};
-  host.innerHTML=(focus?`<button type="button" class="auNow" data-au="${focus.m}"><span class="biWrap"><i class="bi-${icOf(focus.m)}"></i></span><span class="auNowTx"><small>À faire maintenant</small><b>${esc(focus.label)}</b><span>${esc(focus.why)}</span></span><span class="auNowGo">Go</span></button>`:"")+
-  AU_TILES.map(([t,items])=>`<div class="blkHead">${esc(t)}</div><div class="blkGrid3">${items.map(tile).join("")}</div>`).join("")+
+  const shortOf=m=>{for(const g of AU_TILES)for(const x of g[1])if(x[0]===m)return x;return null};
+  const fx=focus&&shortOf(focus.m);
+  const nowTile=fx?`<button type="button" class="blk auNowTile" data-au="${fx[0]}" title="${esc(focus.why)}"><span class="biWrap"><i class="bi-${fx[2]}"></i></span><b>${esc(fx[1])}</b><small>À faire maintenant</small></button>`:"";
+  host.innerHTML=
+  AU_TILES.map(([t,items])=>`<div class="blkHead">${esc(t)}</div><div class="blkGrid3">${t==="Aujourd’hui"?nowTile:""}${items.map(tile).join("")}</div>`).join("")+
   `<details class="secCard auVoice"><summary>Voix et vitesse</summary>
   <div class="row2" style="margin-top:10px"><select id="vcAccent" class="ghost" aria-label="Accent">${$("audioAccent").innerHTML}</select><select id="vcSpeed" class="ghost" aria-label="Vitesse">${$("audioSpeed").innerHTML}</select></div>
   <div id="vcInfo" class="small" style="margin-top:8px"></div></details>`;
@@ -8721,7 +8725,7 @@ const I18N_DICT={
 "Tester mon niveau":"Test my level","Vocabulaire":"Vocabulary","Grammaire":"Grammar","Écoute":"Listening","Temps":"Tenses","Prépositions":"Prepositions","Définitions":"Definitions","Phrases à trous":"Fill in the blanks",
 "Quiz":"Quiz","Choisir un thème":"Choose a theme","Choisir un jeu":"Choose a game","Un jeu au choix de l’appli":"A game picked by the app","Retourne les cartes et retrouve les paires.":"Flip the cards and find the pairs.","30 secondes : un maximum de bonnes réponses.":"30 seconds: as many right answers as you can.","Écoute le mot et choisis-le.":"Listen to the word and pick it.","Devine le mot lettre par lettre.":"Guess the word letter by letter.","Bien joué":"Well done","Encore un tour ?":"One more round?","Au hasard":"Random","Jeux":"Games","Phrasal verbs":"Phrasal verbs","Faux amis":"False friends","Retour":"Back","‹ Retour":"‹ Back","Commencer":"Start","Reprendre":"Resume","Réduire":"Minimize","Fermer":"Close",
 "Valider":"Submit","Vérifier":"Check","Suivant":"Next","Question suivante →":"Next question →","Voir la réponse / traduction":"Show answer / translation","Rejouer":"Play again","Détail":"Details",
-"Thème":"Theme","Traduction libre FR ⇄ EN":"Free translation FR ⇄ EN","Choisir un exercice":"Choose an exercise","Traduction libre":"Free translation","Lecture":"Reading","Traduction de texte":"Text translation","Podcasts et vidéos":"Podcasts and videos","Dialogues":"Dialogues","Dictée":"Dictation","Prononciation":"Pronunciation","Sons":"Sounds","Accent":"Stress","Rythme":"Rhythm","‹ Audio":"‹ Audio","Réussite sur 30 jours":"Success over 30 days","Aucun exercice audio pour l’instant.":"No audio exercise yet.","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
+"Thème":"Theme","Traduction libre FR ⇄ EN":"Free translation FR ⇄ EN","Choisir un exercice":"Choose an exercise","Traduction libre":"Free translation","Lecture":"Reading","Traduction de texte":"Text translation","Aujourd’hui":"Today","Dialogues":"Dialogues","Dictée":"Dictation","Prononciation":"Pronunciation","Sons":"Sounds","Accent":"Stress","Rythme":"Rhythm","‹ Audio":"‹ Audio","Réussite sur 30 jours":"Success over 30 days","Aucun exercice audio pour l’instant.":"No audio exercise yet.","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
 "Questions et négations":"Questions & negatives","Questions & négations":"Questions & negatives","Ordre des mots":"Word order","Choisir le bon temps":"Choose the right tense","Construire une phrase":"Build a sentence","Transformer une phrase":"Transform a sentence",
 "Transformer":"Transform","Trouver l’erreur":"Find the mistake","Articles":"Articles","Modaux":"Modals","Comparatifs":"Comparatives","3e personne":"3rd person","Irréguliers":"Irregulars","Verbes en -ED":"-ED verbs",
 "Prépositions : in / on / at":"Prepositions: in / on / at","Comparatifs & superlatifs":"Comparatives & superlatives","Connecteurs":"Connectors","Collocations":"Collocations",
