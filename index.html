@@ -1512,7 +1512,8 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
 .blk.auNowTile small{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-text)}
 .auBack{margin:0 0 10px;padding:8px 14px}
 #audioSeg{display:none!important}
-.blkGrid3 .blk em.auPct{background:var(--panel);color:var(--muted);border:1px solid var(--line)}
+.blkGrid3 .blk em.auPct{position:static;top:auto;right:auto;margin-top:auto;font-size:12px;padding:1px 9px;background:var(--panel);color:var(--muted);border:1px solid var(--line)}
+.blkGrid3 .blk em.auPct.none{opacity:.55}
 .blkGrid3 .blk em.auPct.ok{color:#1a7f37}.blkGrid3 .blk em.auPct.low{color:#c0392b}
 .blkHead+.blkGrid3{margin-bottom:6px}
 </style>
@@ -6745,7 +6746,7 @@ function renderAudioHub(host){
     if(idle)focus={m:idle[0],label:idle[1],why:"Pas encore travaillé cette semaine."};
     else{const low=all.slice().sort((x,y)=>(auPct(st7[x[0]])??101)-(auPct(st7[y[0]])??101))[0];if(low)focus={m:low[0],label:low[1],why:"Ta réussite la plus basse cette semaine : "+auPct(st7[low[0]])+" %."}}
   }
-  const tile=([k,l,ic])=>`<button type="button" class="blk" data-au="${k}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${esc(l)}</b>${pctBadge(k,st7)}</button>`;
+  const tile=([k,l,ic])=>`<button type="button" class="blk" data-au="${k}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${esc(l)}</b>${k==="pod"||k==="vid"?"":pctBadge(k,st7)}</button>`;
   const lv=`<div class="auLv" style="margin:0 0 10px"><button type="button" class="chip2${a.lvl?"":" on"}" data-lv="">Tous<small>${audioDialogues.length}</small></button>${AU_LV.map(l=>`<button type="button" class="chip2${a.lvl===l?" on":""}" data-lv="${l}">${l}<small>${audioDialogues.filter(d=>d.level===l).length}</small></button>`).join("")}</div>`;
   const shortOf=m=>{for(const g of AU_TILES)for(const x of g[1])if(x[0]===m)return x;return null};
   const fx=focus&&shortOf(focus.m);
@@ -6798,7 +6799,7 @@ function auPct(o){return o&&o.n?Math.round(o.ok/o.n*100):null}
 function pctBadge(keys,st){
   st=st||auModeStats(7);
   const t=(Array.isArray(keys)?keys:[keys]).reduce((a,m)=>{const v=st[m];return v?{n:a.n+v.n,ok:a.ok+v.ok}:a},{n:0,ok:0});
-  const p=auPct(t);if(p===null)return "";
+  const p=auPct(t);if(p===null)return `<em class="auPct none" title="Pas encore d’exercice sur 7 jours">–</em>`;
   return `<em class="auPct${p>=80?" ok":p<60?" low":""}" title="${t.ok} / ${t.n} · 7 jours">${p}%</em>`;
 }
 /* carte « Audio » de la page d'accueil : pratique du jour / semaine / réussite + exercice conseillé */
@@ -7519,7 +7520,7 @@ function renderPageBar(){
   if(W()==="hub"){
     const WT=[["view:translate","Traduction libre","swap"],["writingTask","Short writing","write"],["reading","Lecture","list"],["translationText","Traduction de texte","type"]];
     const wl={"writingTask":(info.writingTask||[])[1],"reading":(info.reading||[])[1],"translationText":(info.translationText||[])[1]};
-    host.innerHTML=`<div class="blkGrid3 blkWrite">${WT.map(([m,l,ic])=>`<button type="button" class="blk" data-wm="${m}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${escapeHtml(l)}</b>${pctBadge(m,st7)}</button>`).join("")}</div>`;
+    host.innerHTML=`<div class="blkGrid3 blkWrite">${WT.map(([m,l,ic])=>`<button type="button" class="blk" data-wm="${m}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${escapeHtml(l)}</b>${m==="view:translate"?"":pctBadge(m,st7)}</button>`).join("")}</div>`;
     host.querySelectorAll("[data-wm]").forEach(bt=>bt.onclick=()=>{
       const v=bt.dataset.wm;
       if(v==="view:translate"){state.wseg="free";saveState();barSig="";applyPageVisibility();renderTranslate();renderPageBar()}
@@ -8728,7 +8729,7 @@ const I18N_DICT={
 "Tester mon niveau":"Test my level","Vocabulaire":"Vocabulary","Grammaire":"Grammar","Écoute":"Listening","Temps":"Tenses","Prépositions":"Prepositions","Définitions":"Definitions","Phrases à trous":"Fill in the blanks",
 "Quiz":"Quiz","Choisir un thème":"Choose a theme","Choisir un jeu":"Choose a game","Un jeu au choix de l’appli":"A game picked by the app","Retourne les cartes et retrouve les paires.":"Flip the cards and find the pairs.","30 secondes : un maximum de bonnes réponses.":"30 seconds: as many right answers as you can.","Écoute le mot et choisis-le.":"Listen to the word and pick it.","Devine le mot lettre par lettre.":"Guess the word letter by letter.","Bien joué":"Well done","Encore un tour ?":"One more round?","Au hasard":"Random","Jeux":"Games","Phrasal verbs":"Phrasal verbs","Faux amis":"False friends","Retour":"Back","‹ Retour":"‹ Back","Commencer":"Start","Reprendre":"Resume","Réduire":"Minimize","Fermer":"Close",
 "Valider":"Submit","Vérifier":"Check","Suivant":"Next","Question suivante →":"Next question →","Voir la réponse / traduction":"Show answer / translation","Rejouer":"Play again","Détail":"Details",
-"Thème":"Theme","Traduction libre FR ⇄ EN":"Free translation FR ⇄ EN","Choisir un exercice":"Choose an exercise","Traduction libre":"Free translation","Lecture":"Reading","Traduction de texte":"Text translation","Aujourd’hui":"Today","Dialogues":"Dialogues","Dictée":"Dictation","Prononciation":"Pronunciation","Sons":"Sounds","Accent":"Stress","Rythme":"Rhythm","‹ Audio":"‹ Audio","Réussite sur 30 jours":"Success over 30 days","Aucun exercice audio pour l’instant.":"No audio exercise yet.","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
+"Thème":"Theme","Traduction libre FR ⇄ EN":"Free translation FR ⇄ EN","Choisir un exercice":"Choose an exercise","Past régulier -ED":"Regular past tense","Pas encore d’exercice sur 7 jours":"No exercise in the last 7 days","Traduction libre":"Free translation","Lecture":"Reading","Traduction de texte":"Text translation","Aujourd’hui":"Today","Dialogues":"Dialogues","Dictée":"Dictation","Prononciation":"Pronunciation","Sons":"Sounds","Accent":"Stress","Rythme":"Rhythm","‹ Audio":"‹ Audio","Réussite sur 30 jours":"Success over 30 days","Aucun exercice audio pour l’instant.":"No audio exercise yet.","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
 "Questions et négations":"Questions & negatives","Questions & négations":"Questions & negatives","Ordre des mots":"Word order","Choisir le bon temps":"Choose the right tense","Construire une phrase":"Build a sentence","Transformer une phrase":"Transform a sentence",
 "Transformer":"Transform","Trouver l’erreur":"Find the mistake","Articles":"Articles","Modaux":"Modals","Comparatifs":"Comparatives","3e personne":"3rd person","Irréguliers":"Irregulars","Verbes en -ED":"-ED verbs",
 "Prépositions : in / on / at":"Prepositions: in / on / at","Comparatifs & superlatifs":"Comparatives & superlatives","Connecteurs":"Connectors","Collocations":"Collocations",
