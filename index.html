@@ -1480,6 +1480,7 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
 .good:focus,.bad:focus{outline:0!important}
 
 /* ---- Audio : accueil, outils d'écoute ---- */
+.auHome h3{margin:0 0 2px;font-size:14px}
 .auTiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 .auTile{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
 .auTile b{font-size:22px;line-height:1.1}.auTile span{font-size:11.5px;color:var(--muted)}
@@ -5158,7 +5159,7 @@ function resetZones(){
   $("feedback").textContent="";$("feedback").className="feedback";
   $("options").innerHTML="";
   ["textZone","grammarZone","readingZone","translationTextZone","pronZone","audioZone","pronLabZone","writingZone","conversationZone","levelResult","info","wordBank","grammarMarkup","readingResult","readingModel","wordTranslation","translationTextWord","translationTextResult","translationTextModel","writingResult","writingModel","audioScript","translationWrap","translationBox"].forEach(id=>$(id).classList.add("hidden"));
-  $("answerInput").classList.remove("hidden");$("answerInput").value="";$("grammarInput").value="";$("readingAnswer").value="";$("translationTextAnswer").value="";$("writingInput").value="";$("heard").textContent="";$("pronLabFeedback").textContent="";$("pronWordsScore").textContent="—";$("pronTargetScore").textContent="—";$("pronRhythmScore").textContent="Mode dédié";$("conversationHistory").innerHTML="";$("conversationOptions").innerHTML="";$("audioOptions").innerHTML="";audioQueueToken++;dialoguePlaying=false;
+  $("answerInput").classList.remove("hidden");$("answerInput").value="";$("answerInput").readOnly=false;$("answerInput").onclick=null;$("answerInput").style.cursor="";$("feedback").onclick=null;$("feedback").style.cursor="";$("grammarInput").value="";$("readingAnswer").value="";$("translationTextAnswer").value="";$("writingInput").value="";$("heard").textContent="";$("pronLabFeedback").textContent="";$("pronWordsScore").textContent="—";$("pronTargetScore").textContent="—";$("pronRhythmScore").textContent="Mode dédié";$("conversationHistory").innerHTML="";$("conversationOptions").innerHTML="";$("audioOptions").innerHTML="";audioQueueToken++;dialoguePlaying=false;
   $("nextBtn").classList.add("hidden");
   $("speakBtn").style.visibility="visible";$("favBtn").style.visibility="visible";
   $("speakBtn").style.display=VOC_SPEAK.includes(mode)?"none":"";
@@ -5491,6 +5492,12 @@ function checkText(){
     penalize(currentVocabItem(),user);$("feedback").innerHTML=`<b>${escapeHtml(expected())}</b>`;$("feedback").className="feedback badText";
   }
   if(mode==="finderror")$("feedback").innerHTML+=`<br><span style="color:#d8e0ec">${escapeHtml(current.why)}</span>`;
+  /* réponses en anglais : un clic sur ce que j'ai tapé / sur la bonne réponse les prononce, pour comparer à l'oreille */
+  if(!ok&&(mode==="listening"||mode==="reverse")){
+    const inp=$("answerInput"),fb=$("feedback");
+    inp.readOnly=true;inp.style.cursor="pointer";inp.title="Écouter ma réponse";inp.onclick=()=>{if(locked)speak(user)};
+    fb.style.cursor="pointer";fb.onclick=()=>{if(locked)speak(expected())};
+  }
   finishExamStep();
 }
 function fail(prefix){
@@ -6720,6 +6727,23 @@ function auModeStats(days){
 }
 function auSum(st,list){return list.reduce((t,[m])=>{const v=st[m];return v?{n:t.n+v.n,ok:t.ok+v.ok}:t},{n:0,ok:0})}
 function auPct(o){return o&&o.n?Math.round(o.ok/o.n*100):null}
+/* carte « Audio » de la page d'accueil : pratique du jour / semaine / réussite + exercice conseillé */
+function jAudioCard(){
+  const box=$("auHome");if(!box)return;
+  const all=AUDIO_EAR.concat(AUDIO_ORAL),st1=auModeStats(1),st7=auModeStats(7),st30=auModeStats(30);
+  const t1=auSum(st1,all),t7=auSum(st7,all),p7=auPct(t7);
+  let focus=null;
+  const weak=all.filter(([m])=>st30[m]&&st30[m].n>=5&&auPct(st30[m])<80).sort((x,y)=>auPct(st30[x[0]])-auPct(st30[y[0]]))[0];
+  if(weak)focus={m:weak[0],label:weak[1],why:"Point faible : "+auPct(st30[weak[0]])+" % de réussite sur 30 jours."};
+  else{
+    const idle=all.filter(([m])=>!st7[m]||!st7[m].n)[0];
+    if(idle)focus={m:idle[0],label:idle[1],why:"Pas encore travaillé cette semaine."};
+    else{const low=all.slice().sort((x,y)=>(auPct(st7[x[0]])??101)-(auPct(st7[y[0]])??101))[0];if(low)focus={m:low[0],label:low[1],why:"Ta réussite la plus basse cette semaine : "+auPct(st7[low[0]])+" %."}}
+  }
+  box.innerHTML=`<h3>Audio</h3><div class="auTiles"><div class="auTile"><b>${t1.n}</b><span>aujourd’hui</span></div><div class="auTile"><b>${t7.n}</b><span>cette semaine</span></div><div class="auTile"><b>${p7===null?"–":p7+" %"}</b><span>réussite · 7 jours</span></div></div>`+
+  (focus?`<div class="auFocus"><div><b>À faire maintenant</b><div class="small"><b>${esc(focus.label)}</b><br><span>${esc(focus.why)}</span></div></div><button class="primary" type="button" data-ex="${focus.m}">Go</button></div>`:"");
+  box.querySelectorAll("[data-ex]").forEach(b=>b.onclick=()=>openExercise(b.dataset.ex));
+}
 function auCount(m){
   try{
     return ({audioDialogues:audioDialogues.length+" dialogues",dictation:allDictationSentences.length+" phrases",listening:vocab().length+" mots",
@@ -6728,29 +6752,11 @@ function auCount(m){
   }catch(e){return""}
 }
 function renderAudioEx(host){
-  const a=A(),oral=a.seg==="oral",list=oral?AUDIO_ORAL:AUDIO_EAR,all=AUDIO_EAR.concat(AUDIO_ORAL);
-  const st7=auModeStats(7),st30=auModeStats(30),st1=auModeStats(1);
-  const t1=auSum(st1,all),t7=auSum(st7,all);
-  const p7=auPct(t7);
-  /* recommandation : le point le plus faible sur 30 jours (au moins 5 réponses), sinon l'exercice le moins pratiqué cette semaine */
-  let focus=null;
-  const weak=list.filter(([m])=>st30[m]&&st30[m].n>=5&&auPct(st30[m])<80).sort((x,y)=>auPct(st30[x[0]])-auPct(st30[y[0]]))[0];
-  if(weak)focus={m:weak[0],label:weak[1],why:"Point faible : "+auPct(st30[weak[0]])+" % de réussite sur 30 jours."};
-  else{
-    const idle=list.filter(([m])=>!st7[m]||!st7[m].n)[0];
-    if(idle)focus={m:idle[0],label:idle[1],why:"Pas encore travaillé cette semaine."};
-    else{const low=list.slice().sort((x,y)=>(auPct(st7[x[0]])??101)-(auPct(st7[y[0]])??101))[0];if(low)focus={m:low[0],label:low[1],why:"Ta réussite la plus basse cette semaine : "+auPct(st7[low[0]])+" %."}}
-  }
+  const a=A(),oral=a.seg==="oral",list=oral?AUDIO_ORAL:AUDIO_EAR;
   const lvChips=!oral?`<h3>Niveau des dialogues</h3><div class="auLv"><button type="button" class="chip2${a.lvl?"":" on"}" data-lv="">Tous<small>${audioDialogues.length}</small></button>${AU_LV.map(l=>`<button type="button" class="chip2${a.lvl===l?" on":""}" data-lv="${l}">${l}<small>${audioDialogues.filter(d=>d.level===l).length}</small></button>`).join("")}</div>`:"";
-  const card=([m,l,d])=>{
-    const o=st30[m],p=auPct(o),cls=p===null?"":p>=80?"ok":p<60?"low":"";
-    return `<button class="exerciseChoice" data-ex="${m}"><div><div>${esc(l)}</div><small>${esc(d)}</small><small class="auCnt">${esc(auCount(m))}</small></div><span class="auStat ${cls}">${p===null?"–":p+" %"}<small>${o?o.n+" en 30 j":"à faire"}</small></span><span class="arrow">›</span></button>`;
-  };
-  host.innerHTML=`<section class="secCard"><h2>Ma pratique</h2>
-  <div class="auTiles"><div class="auTile"><b>${t1.n}</b><span>aujourd’hui</span></div><div class="auTile"><b>${t7.n}</b><span>cette semaine</span></div><div class="auTile"><b>${p7===null?"–":p7+" %"}</b><span>réussite · 7 jours</span></div></div>
-  ${focus?`<div class="auFocus"><div><b>À faire maintenant</b><div class="small"><b>${esc(focus.label)}</b><br><span>${esc(focus.why)}</span></div></div><button class="primary" type="button" data-ex="${focus.m}">Go</button></div>`:""}</section>
-  <section class="secCard"><h2>${oral?"Oral : parler et prononcer":"Écouter : comprendre"}</h2>
-  <div class="small">${oral?"Répète à voix haute, travaille les sons et le rythme. Les pourcentages comptent les 30 derniers jours.":"Écoute sans lire, puis vérifie avec le script. Les pourcentages comptent les 30 derniers jours."}</div>
+  const card=([m,l,d])=>`<button class="exerciseChoice" data-ex="${m}"><div><div>${esc(l)}</div><small>${esc(d)}</small><small class="auCnt">${esc(auCount(m))}</small></div><span class="arrow">›</span></button>`;
+  host.innerHTML=`<section class="secCard"><h2>${oral?"Oral : parler et prononcer":"Écouter : comprendre"}</h2>
+  <div class="small">${oral?"Répète à voix haute, travaille les sons et le rythme.":"Écoute sans lire, puis vérifie avec le script."}</div>
   ${lvChips}
   <div class="goalChoicesGrid" style="margin-top:12px">${list.map(card).join("")}</div></section>
   <details class="secCard auVoice"><summary>Voix et vitesse</summary>
@@ -8077,7 +8083,7 @@ function jRender(force){
     weeks+=`<div class="wk" data-t="${w===0?"Cette semaine":f(m)+" – "+f(e)}">${cells}</div>`;
   }
   const st=jStreak();
-  host.innerHTML=`<div class="wkHead"><b id="wkTitle">Cette semaine</b><span>${st?st+" jour"+(st>1?"s":"")+" d’affilée":"Aucune série en cours"}</span></div><div class="wkScroll">${weeks}</div><div id="dayDetail" class="dayDetail"></div>`;
+  host.innerHTML=`<div class="wkHead"><b id="wkTitle">Cette semaine</b><span>${st?st+" jour"+(st>1?"s":"")+" d’affilée":"Aucune série en cours"}</span></div><div class="wkScroll">${weeks}</div><div id="dayDetail" class="dayDetail"></div><div id="auHome" class="dayDetail auHome"></div>`;
   const sc=host.querySelector(".wkScroll");
   sc.scrollLeft=keep!==null?keep:sc.scrollWidth;
   const setTitle=()=>{const i=Math.round(sc.scrollLeft/Math.max(1,sc.clientWidth));const w=sc.children[Math.min(sc.children.length-1,Math.max(0,i))];if(w)$("wkTitle").textContent=w.dataset.t};
@@ -8090,7 +8096,7 @@ function jRender(force){
     if(jSel!==tk){jSel=tk;jMore=false;host.querySelectorAll(".wd").forEach(x=>x.classList.toggle("sel",x.dataset.d===tk));jDetail()}
   };
   host.querySelectorAll(".wd").forEach(b=>b.onclick=()=>{jSel=b.dataset.d;jMore=false;host.querySelectorAll(".wd").forEach(x=>x.classList.toggle("sel",x===b));jDetail()});
-  jDetail();
+  jDetail();jAudioCard();
 
 }
 function jDetail(){
