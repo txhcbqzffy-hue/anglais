@@ -7443,7 +7443,8 @@ function renderPageBar(){
   const groups=[["Écriture et lecture",["view:translate","writingTask","reading","translationText"]]];
   const cur=W()==="free"?"view:translate":mode;
   const opt=m=>info[m]?`<option value="${m}"${m===cur?" selected":""}>${escapeHtml(info[m][1])}</option>`:"";
-  let html=`<label class="pbField"><span>Exercice</span><select id="pbMode">${groups.map(([t,ms])=>`<optgroup label="${escapeHtml(t)}">${ms.map(opt).join("")}</optgroup>`).join("")}</select></label>`;
+  const curL=(info[cur]&&info[cur][1])||modeNames[cur]||"";
+  let html=`<div class="pbField"><span>Exercice</span><label class="themeSel gSel"><b>${escapeHtml(curL)}</b><i class="chev"></i><select id="pbMode" aria-label="Exercice">${groups.map(([t,ms])=>ms.map(opt).join("")).join("")}</select></label></div>`;
   host.innerHTML=html;
   const m=$("pbMode");if(m)m.onchange=()=>{
     if(m.value==="view:translate"){state.wseg="free";saveState();applyPageVisibility();renderTranslate();return}
