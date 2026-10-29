@@ -5185,7 +5185,6 @@ function newQuestion(){
     const x=rand(sPronunciation);
     current={answer:x[1],spoken:x[0]};
     $("question").innerHTML=`Comment se prononce la terminaison de <b>${escapeHtml(x[0])}</b> ?`;
-    $("info").innerHTML="Choisis le <b>son final</b> de -s/-es.";$("info").classList.remove("hidden");
     shuffle(["/s/","/z/","/ɪz/"]).forEach(o=>makeOption(o,o===x[1]));
   }
   else if(mode==="thirdPerson"){
