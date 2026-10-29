@@ -7444,12 +7444,8 @@ function renderPageBar(){
   const cur=W()==="free"?"view:translate":mode;
   const opt=m=>info[m]?`<option value="${m}"${m===cur?" selected":""}>${escapeHtml(info[m][1])}</option>`:"";
   const curL=(info[cur]&&info[cur][1])||modeNames[cur]||"";
-  let html=`<div class="pbField"><span>Exercice</span><label class="themeSel gSel"><b>${escapeHtml(curL)}</b><i class="chev"></i><select id="pbMode" aria-label="Exercice">${groups.map(([t,ms])=>ms.map(opt).join("")).join("")}</select></label></div>`;
-  host.innerHTML=html;
-  const m=$("pbMode");if(m)m.onchange=()=>{
-    if(m.value==="view:translate"){state.wseg="free";saveState();applyPageVisibility();renderTranslate();return}
-    openExercise(m.value);
-  };
+  host.innerHTML=`<div class="pbField"><span>Exercice</span><button type="button" id="pbWBtn" class="themeSel"><b>${escapeHtml(curL)}</b><i class="chev"></i></button></div>`;
+  $("pbWBtn").onclick=()=>themeOpen("write",false);
   const t=$("pbTheme");
   if(t)t.onchange=()=>{
     state.packFocus=t.value||null;saveState();
@@ -8646,7 +8642,7 @@ const I18N_DICT={
 "Tester mon niveau":"Test my level","Vocabulaire":"Vocabulary","Grammaire":"Grammar","Écoute":"Listening","Temps":"Tenses","Prépositions":"Prepositions","Définitions":"Definitions","Phrases à trous":"Fill in the blanks",
 "Quiz":"Quiz","Choisir un thème":"Choose a theme","Choisir un jeu":"Choose a game","Un jeu au choix de l’appli":"A game picked by the app","Retourne les cartes et retrouve les paires.":"Flip the cards and find the pairs.","30 secondes : un maximum de bonnes réponses.":"30 seconds: as many right answers as you can.","Écoute le mot et choisis-le.":"Listen to the word and pick it.","Devine le mot lettre par lettre.":"Guess the word letter by letter.","Bien joué":"Well done","Encore un tour ?":"One more round?","Au hasard":"Random","Jeux":"Games","Phrasal verbs":"Phrasal verbs","Faux amis":"False friends","Retour":"Back","‹ Retour":"‹ Back","Commencer":"Start","Reprendre":"Resume","Réduire":"Minimize","Fermer":"Close",
 "Valider":"Submit","Vérifier":"Check","Suivant":"Next","Question suivante →":"Next question →","Voir la réponse / traduction":"Show answer / translation","Rejouer":"Play again","Détail":"Details",
-"Thème":"Theme","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
+"Thème":"Theme","Traduction libre FR ⇄ EN":"Free translation FR ⇄ EN","Choisir un exercice":"Choose an exercise","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
 "Questions et négations":"Questions & negatives","Questions & négations":"Questions & negatives","Ordre des mots":"Word order","Choisir le bon temps":"Choose the right tense","Construire une phrase":"Build a sentence","Transformer une phrase":"Transform a sentence",
 "Transformer":"Transform","Trouver l’erreur":"Find the mistake","Articles":"Articles","Modaux":"Modals","Comparatifs":"Comparatives","3e personne":"3rd person","Irréguliers":"Irregulars","Verbes en -ED":"-ED verbs",
 "Prépositions : in / on / at":"Prepositions: in / on / at","Comparatifs & superlatifs":"Comparatives & superlatives","Connecteurs":"Connectors","Collocations":"Collocations",
@@ -9422,6 +9418,10 @@ function themeEnsure(){
   d.querySelectorAll("[data-tt]").forEach(x=>x.addEventListener("click",()=>{themeTab=x.dataset.tt;themeRender(true)}));
   $("themeList").addEventListener("click",e=>{
     const it=e.target.closest(".themeItem");if(!it)return;
+    if(it.dataset.wm){
+      const v=it.dataset.wm;themeClose();
+      setTimeout(()=>{try{if(v==="view:translate"){state.wseg="free";saveState();applyPageVisibility();renderTranslate()}else openExercise(v);barSig="";renderPageBar()}catch(x){}},330);return;
+    }
     if(it.dataset.game!=null){
       const id=it.dataset.game||GAME_MODES[Math.floor(Math.random()*GAME_MODES.length)];
       themeClose();setTimeout(()=>{try{openExercise(id)}catch(x){}},330);return;
@@ -9443,8 +9443,13 @@ function themeEnsure(){
 const GAME_FR={gPairs:"Relie chaque mot anglais à sa traduction.",gScramble:"Remets les lettres dans l’ordre pour former le mot.",gTrueFalse:"10 cartes : la traduction est-elle juste ?",gMissing:"Complète les lettres qui manquent.",gMemory:"Retourne les cartes et retrouve les paires.",gSpeed:"30 secondes : un maximum de bonnes réponses.",gListen:"Écoute le mot et choisis-le.",gHangman:"Devine le mot lettre par lettre."};
 function themeRender(anim){
   const list=$("themeList");if(!list)return;
-  const dr=$("themeDrop");dr.classList.toggle("gamesMode",themeTab==="games");
-  dr.querySelector("h3").textContent=themeTab==="games"?"Choisir un jeu":"Choisir un thème";
+  const dr=$("themeDrop");dr.classList.toggle("gamesMode",themeTab==="games"||themeTab==="write");
+  dr.querySelector("h3").textContent=themeTab==="games"?"Choisir un jeu":themeTab==="write"?"Choisir un exercice":"Choisir un thème";
+  if(themeTab==="write"){
+    const info=modeInfo(),cur=W()==="free"?"view:translate":mode;
+    list.innerHTML=["view:translate","writingTask","reading","translationText"].filter(m=>info[m]).map((m,i)=>`<button type="button" class="themeItem${m===cur?" on":""}" data-wm="${m}" style="--i:${i}"><span>${escapeHtml(info[m][1])}</span><i class="dot"></i></button>`).join("");
+    list.scrollTop=0;list.classList.toggle("noanim",!anim);return;
+  }
   if(themeTab==="games"){
     const row=(id,n,d,i)=>`<button type="button" class="themeItem" data-game="${id}" style="--i:${Math.min(i,12)}"><span>${escapeHtml(n)}${d?`<small>${escapeHtml(d)}</small>`:""}</span></button>`;
     list.innerHTML=row("","Au hasard","Un jeu au choix de l’appli",0)+GAME_MODES.map((m,i)=>row(m,(modeNames[m]||m).replace(/^(Jeu|Game) · /,""),(GAME_FR[m]||""),i+1)).join("");
