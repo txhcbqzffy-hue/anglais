@@ -7469,8 +7469,7 @@ function renderPageBar(){
   const info=modeInfo();
   if(p==="audio"||p==="vocab"||p==="gram"){
     if(exOpen){
-      host.innerHTML=`<div class="blkBar"><button type="button" class="ghost backIc" id="pbBack" aria-label="Retour">‹</button>${p==="audio"?`<button type="button" id="pbABtn" class="themeSel"><b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b><i class="chev"></i></button>`:`<b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b>`}</div>`;
-      {const ab=$("pbABtn");if(ab)ab.onclick=()=>themeOpen("audio",false)}
+      host.innerHTML=`<div class="blkBar"><button type="button" class="ghost backIc" id="pbBack" aria-label="Retour">‹</button><b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b></div>`;
       $("pbBack").onclick=()=>{exOpen=false;if(p==="audio")A().seg="hub";if(p==="audio"){try{stopAudioMedia();if(typeof stopDialogue==="function")stopDialogue()}catch(e){}}applyPageVisibility();if(p==="audio")try{renderAudio()}catch(e){}try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}};
       return;
     }
