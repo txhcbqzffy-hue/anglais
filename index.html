@@ -931,7 +931,7 @@ header{margin-bottom:2px!important}
 .pgTile.sel{border-color:var(--accent);box-shadow:0 0 0 2px rgba(var(--accent-rgb),.35)}
 .jwHead{display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px}
 .jwList{display:grid;gap:2px;max-height:300px;overflow:auto}
-.jwRow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
+.jwRow{cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
 .jwRow span{display:flex;flex-direction:column;min-width:0}.jwRow small{color:var(--muted);font-size:13px;margin-top:2px}
 .jwBar{width:64px;height:6px;border-radius:4px;background:var(--line);overflow:hidden;flex:none}.jwBar u{display:block;height:100%;background:#22c55e;border-radius:4px}
 .pbarHead{font-size:12px;font-weight:800;color:var(--muted);margin:14px 0 6px}
@@ -7926,6 +7926,8 @@ function jWords(wl){
   if(!list.length){box.innerHTML="";return}
   box.innerHTML=`<div class="jwHead"><b>${jOpenList==="learning"?"Mots en cours":"Mots appris"} (${list.length})</b><button type="button" class="primary" id="jQcm">QCM</button></div>
     <div class="jwList">${list.map(([w,v])=>`<div class="jwRow" data-fw="${escapeHtml(w)}"><span><b>${escapeHtml(w)}</b><small>${escapeHtml(jFr(w))}</small></span><i class="jwBar"><u style="width:${Math.max(4,v.score)}%"></u></i></div>`).join("")}</div>`;
+  /* un clic sur un mot = prononciation en anglais (l'appui long reste réservé aux favoris) */
+  box.querySelectorAll(".jwRow").forEach(r=>r.onclick=()=>speak(r.dataset.fw));
   $("jQcm").onclick=()=>{
     let items=list.map(([w])=>vocab().find(v=>v[0]===w)||(jFr(w)?[w,jFr(w),"custom"]:null)).filter(Boolean);
     if(items.length<4){$("jQcm").textContent="4 mots minimum";return}
