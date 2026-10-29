@@ -4623,7 +4623,9 @@ function renderConceptProfile(){
       const ea=a.t-a.c,eb=b.t-b.c;
       if(ea!==eb)return eb-ea;
       return a.c/a.t-b.c/b.t;
-    }).slice(0,10);
+    }).slice(0,10)
+    /* affichage : du taux d'erreur le plus élevé au plus bas */
+    .sort((a,b)=>{const ra=(a.t-a.c)/a.t,rb=(b.t-b.c)/b.t;return rb-ra||(b.t-b.c)-(a.t-a.c)});
   $("conceptProfile").innerHTML=entries.length?entries.map(s=>{
     const pct=conceptAccuracy(s);
     return `<div class="profileRow">
