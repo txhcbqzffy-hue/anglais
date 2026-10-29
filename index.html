@@ -6629,7 +6629,7 @@ function tagPages(){
 function applyPageVisibility(){
   if(!pagesReady)return;
   const p=currentView,goal=curGoal(),goals=PAGE_GOALS[p]||[];
-  const zone=(p==="audio"?((A().seg==="ear"||A().seg==="oral")&&exOpen):p==="write"?W()!=="free":(p==="vocab"||p==="gram")?exOpen:p!=="home")||sessOpen||goal==="test";
+  const zone=(p==="audio"?((A().seg==="ear"||A().seg==="oral")&&exOpen):p==="write"?(W()!=="free"&&W()!=="hub"):(p==="vocab"||p==="gram")?exOpen:p!=="home")||sessOpen||goal==="test";
   $("view-train").dataset.page=p;
   const vtr=$("view-translate");if(vtr)vtr.classList.toggle("hidden",!(p==="write"&&W()==="free"));
   const hd=document.querySelector("header");if(hd)hd.classList.toggle("pgHide",p!=="home");
@@ -6668,6 +6668,7 @@ function showView(v,silent){
   document.querySelectorAll(".bottomNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===v));
   const nb=document.querySelector(".bottomNav");if(nb)nb.style.setProperty("--i",Math.max(0,["vocab","gram","home","audio","write"].indexOf(v)));
   if(pagesReady&&v!==prev)ensureModeForPage(v);
+  if(v==="write"&&!silent&&prev!=="write"){state.wseg="hub";saveState()}
   applyPageVisibility();
   if(leavingAudio){vid.open=null;if($("audioSeg")&&A().seg==="vid")renderAudio()}
   if(v==="audio"){if(!silent&&prev!=="audio")A().seg="hub";renderAudio()}
@@ -7500,12 +7501,23 @@ function renderPageBar(){
     if(t)t.onchange=()=>{state.packFocus=t.value||null;saveState();barSig=""};
     return;
   }
-  const groups=[["Écriture et lecture",["view:translate","writingTask","reading","translationText"]]];
   const cur=W()==="free"?"view:translate":mode;
-  const opt=m=>info[m]?`<option value="${m}"${m===cur?" selected":""}>${escapeHtml(info[m][1])}</option>`:"";
-  const curL=(info[cur]&&info[cur][1])||modeNames[cur]||"";
-  host.innerHTML=`<div class="pbField"><span>Exercice</span><button type="button" id="pbWBtn" class="themeSel"><b>${escapeHtml(curL)}</b><i class="chev"></i></button></div>`;
+  if(W()==="hub"){
+    const WT=[["view:translate","Traduction libre","swap"],["writingTask","Short writing","write"],["reading","Lecture","list"],["translationText","Traduction de texte","type"]];
+    const wl={"writingTask":(info.writingTask||[])[1],"reading":(info.reading||[])[1],"translationText":(info.translationText||[])[1]};
+    host.innerHTML=`<div class="blkGrid3 blkWrite">${WT.map(([m,l,ic])=>`<button type="button" class="blk" data-wm="${m}"><span class="biWrap"><i class="bi-${ic}"></i></span><b>${escapeHtml(l)}</b></button>`).join("")}</div>`;
+    host.querySelectorAll("[data-wm]").forEach(bt=>bt.onclick=()=>{
+      const v=bt.dataset.wm;
+      if(v==="view:translate"){state.wseg="free";saveState();barSig="";applyPageVisibility();renderTranslate();renderPageBar()}
+      else{openExercise(v);barSig="";renderPageBar()}
+      try{window.scrollTo({top:0})}catch(e){}
+    });
+    return;
+  }
+  const curL=(info[cur]&&info[cur][1])||(cur==="view:translate"?"Traduction libre":modeNames[cur])||"";
+  host.innerHTML=`<div class="blkBar"><button type="button" class="ghost backIc" id="pbBack" aria-label="Retour">‹</button><button type="button" id="pbWBtn" class="themeSel"><b>${escapeHtml(curL)}</b><i class="chev"></i></button></div>`;
   $("pbWBtn").onclick=()=>themeOpen("write",false);
+  $("pbBack").onclick=()=>{state.wseg="hub";saveState();barSig="";applyPageVisibility();try{window.scrollTo({top:0})}catch(e){}};
   const t=$("pbTheme");
   if(t)t.onchange=()=>{
     state.packFocus=t.value||null;saveState();
@@ -8703,7 +8715,7 @@ const I18N_DICT={
 "Tester mon niveau":"Test my level","Vocabulaire":"Vocabulary","Grammaire":"Grammar","Écoute":"Listening","Temps":"Tenses","Prépositions":"Prepositions","Définitions":"Definitions","Phrases à trous":"Fill in the blanks",
 "Quiz":"Quiz","Choisir un thème":"Choose a theme","Choisir un jeu":"Choose a game","Un jeu au choix de l’appli":"A game picked by the app","Retourne les cartes et retrouve les paires.":"Flip the cards and find the pairs.","30 secondes : un maximum de bonnes réponses.":"30 seconds: as many right answers as you can.","Écoute le mot et choisis-le.":"Listen to the word and pick it.","Devine le mot lettre par lettre.":"Guess the word letter by letter.","Bien joué":"Well done","Encore un tour ?":"One more round?","Au hasard":"Random","Jeux":"Games","Phrasal verbs":"Phrasal verbs","Faux amis":"False friends","Retour":"Back","‹ Retour":"‹ Back","Commencer":"Start","Reprendre":"Resume","Réduire":"Minimize","Fermer":"Close",
 "Valider":"Submit","Vérifier":"Check","Suivant":"Next","Question suivante →":"Next question →","Voir la réponse / traduction":"Show answer / translation","Rejouer":"Play again","Détail":"Details",
-"Thème":"Theme","Traduction libre FR ⇄ EN":"Free translation FR ⇄ EN","Choisir un exercice":"Choose an exercise","Podcasts et vidéos":"Podcasts and videos","Dialogues":"Dialogues","Dictée":"Dictation","Prononciation":"Pronunciation","Sons":"Sounds","Accent":"Stress","Rythme":"Rhythm","‹ Audio":"‹ Audio","Réussite sur 30 jours":"Success over 30 days","Aucun exercice audio pour l’instant.":"No audio exercise yet.","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
+"Thème":"Theme","Traduction libre FR ⇄ EN":"Free translation FR ⇄ EN","Choisir un exercice":"Choose an exercise","Traduction libre":"Free translation","Lecture":"Reading","Traduction de texte":"Text translation","Podcasts et vidéos":"Podcasts and videos","Dialogues":"Dialogues","Dictée":"Dictation","Prononciation":"Pronunciation","Sons":"Sounds","Accent":"Stress","Rythme":"Rhythm","‹ Audio":"‹ Audio","Réussite sur 30 jours":"Success over 30 days","Aucun exercice audio pour l’instant.":"No audio exercise yet.","Tous les thèmes":"All themes","Série terminée":"Series complete","Terminé":"Done","Terminée":"Finished","Explications":"Explanations",
 "Questions et négations":"Questions & negatives","Questions & négations":"Questions & negatives","Ordre des mots":"Word order","Choisir le bon temps":"Choose the right tense","Construire une phrase":"Build a sentence","Transformer une phrase":"Transform a sentence",
 "Transformer":"Transform","Trouver l’erreur":"Find the mistake","Articles":"Articles","Modaux":"Modals","Comparatifs":"Comparatives","3e personne":"3rd person","Irréguliers":"Irregulars","Verbes en -ED":"-ED verbs",
 "Prépositions : in / on / at":"Prepositions: in / on / at","Comparatifs & superlatifs":"Comparatives & superlatives","Connecteurs":"Connectors","Collocations":"Collocations",
