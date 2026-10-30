@@ -6764,13 +6764,7 @@ function renderAudioHub(host){
   const fx=focus&&shortOf(focus.m);
   const nowTile=fx?`<button type="button" class="blk auNowTile" data-au="${fx[0]}" title="${esc(focus.why)}"><span class="biWrap"><i class="bi-${fx[2]}"></i></span><b>${esc(fx[1])}</b><small>À faire maintenant</small></button>`:"";
   host.innerHTML=
-  AU_TILES.map(([t,items])=>`<div class="blkHead">${esc(t)}</div><div class="blkGrid3">${t==="Aujourd’hui"?nowTile:""}${items.map(tile).join("")}</div>`).join("")+
-  `<details class="secCard auVoice"><summary>Voix et vitesse</summary>
-  <div class="row2" style="margin-top:10px"><select id="vcAccent" class="ghost" aria-label="Accent">${$("audioAccent").innerHTML}</select><select id="vcSpeed" class="ghost" aria-label="Vitesse">${$("audioSpeed").innerHTML}</select></div>
-  <div id="vcInfo" class="small" style="margin-top:8px"></div></details>`;
-  const sync=(x,y)=>{$(x).value=$(y).value;$(x).onchange=()=>{$(y).value=$(x).value;$(y).dispatchEvent(new Event("change"));$("vcInfo").textContent=$("audioVoiceInfo").textContent}};
-  sync("vcAccent","audioAccent");sync("vcSpeed","audioSpeed");
-  $("vcInfo").textContent=$("audioVoiceInfo").textContent;
+  AU_TILES.map(([t,items])=>`<div class="blkHead">${esc(t)}</div><div class="blkGrid3">${t==="Aujourd’hui"?nowTile:""}${items.map(tile).join("")}</div>`).join("");
   host.querySelectorAll("[data-au]").forEach(b=>b.onclick=()=>{
     const k=b.dataset.au;
     if(k==="pod"||k==="vid"){a.seg=k;saveState();vid.open=null;try{pod.ep=null;pod.show=null}catch(e){}renderAudio();try{window.scrollTo({top:0})}catch(e){}}
