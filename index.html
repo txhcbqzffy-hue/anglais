@@ -1526,6 +1526,10 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
 #favSheet .fRow{grid-template-columns:1fr 1fr 36px}
 html:not(.booted) body{opacity:0}
 body{transition:opacity .12s ease}
+body #exerciseCard:has(#pronZone:not(.hidden)){padding-bottom:16px!important}
+#pronZone:has(#heard:empty){min-height:0}
+#pronZone #heard:empty{display:none}
+#pronZone .actions:has(#recordBtn){margin:0;min-height:0}
 </style>
 <script>setTimeout(function(){document.documentElement.classList.add('booted')},2500)</script>
 </head>
@@ -6688,7 +6692,7 @@ function showView(v,silent){
   if(v==="write"&&!silent&&prev!=="write"){state.wseg="hub";saveState()}
   applyPageVisibility();
   if(leavingAudio){vid.open=null;if($("audioSeg")&&A().seg==="vid")renderAudio()}
-  if(v==="audio"){if(!silent&&prev!=="audio")A().seg="hub";renderAudio()}
+  if(v==="audio"){if(!silent){A().seg="hub";try{vid.open=null;pod.ep=null;pod.show=null}catch(e){}}renderAudio()}
   if(v==="write"&&W()==="free")renderTranslate();
   if(!silent){try{window.scrollTo({top:0,behavior:"auto"})}catch(e){}}
 }
