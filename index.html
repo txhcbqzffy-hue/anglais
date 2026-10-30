@@ -5529,7 +5529,7 @@ function checkText(){
   /* réponses en anglais : un clic sur ce que j'ai tapé / sur la bonne réponse les prononce, pour comparer à l'oreille */
   if(!ok&&(mode==="listening"||mode==="reverse")){
     const inp=$("answerInput"),fb=$("feedback");
-    inp.readOnly=true;inp.style.cursor="pointer";inp.title="Écouter ma réponse";inp.onclick=()=>{if(locked)speak(user)};
+    inp.style.cursor="pointer";inp.title="Écouter ma réponse";inp.onclick=()=>{if(locked)speak(user)};
     fb.style.cursor="pointer";fb.onclick=()=>{if(locked)speak(expected())};
   }
   finishExamStep();
@@ -9664,7 +9664,6 @@ function fitLock(){
   try{
     const ae=document.activeElement;
     let typing=ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName);
-    try{if(typing&&locked&&ae.id==="answerInput"){ae.blur();typing=false}}catch(x){}
     const root=document.documentElement;
     if(typing||document.body.classList.contains("sheetOpen")&&false){root.classList.remove("noScroll");return}
     // limite : haut de la barre fixe visible la plus haute (Submit / Next / daily / nav)
@@ -10191,6 +10190,13 @@ function focusTyping(){
     i.focus({preventScroll:true});
   }catch(e){}
 }
+/* taper sur Submit / Next ne ferme plus le clavier : le champ garde le focus */
+document.addEventListener("mousedown",e=>{
+  const b=e.target.closest&&e.target.closest("#checkTextBtn,#nextBtn");
+  if(!b)return;
+  const i=$("answerInput");
+  if(i&&document.activeElement===i)e.preventDefault();
+},true);
 {const nq=newQuestion;newQuestion=function(){const r=nq.apply(this,arguments);focusTyping();return r};
  const oe=openExercise;openExercise=function(){const r=oe.apply(this,arguments);focusTyping();setTimeout(focusTyping,60);return r};}
 
