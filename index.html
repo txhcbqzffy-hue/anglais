@@ -1510,6 +1510,11 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
 .auNowGo{flex:none;padding:9px 16px;border-radius:var(--r);background:var(--accent);color:var(--on-accent);font-weight:800;font-size:14px}
 .blk.auNowTile{border-color:rgba(var(--accent-rgb),.6);background:rgba(var(--accent-rgb),.08)}
 .blk.auNowTile small{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-text)}
+.auFlat>.secCard{background:none!important;border:0!important;box-shadow:none!important;padding:0!important}
+.auFlat>.secCard>h2{display:none}
+.auFlat .showCard,.auFlat .vCard{background:var(--panel);border-radius:var(--r);box-shadow:var(--shadow)}
+.auFlat .resume{background:var(--panel);border-radius:var(--r);box-shadow:var(--shadow)}
+.auFlat .shows,.auFlat .vList{margin-top:8px}
 .auBack{margin:0 0 10px;padding:8px 14px}
 #audioSeg{display:none!important}
 .blkGrid3 .blk em.auPct{background:var(--panel);color:var(--muted);border:1px solid var(--line)}
@@ -6739,13 +6744,11 @@ function renderAudio(){
   if(a.seg==="vid")renderVideos(host);
   else if(a.seg==="ear"||a.seg==="oral")renderAudioEx(host);
   else renderPod(host);
-  /* retour au menu depuis la liste de podcasts / vidéos (hors épisode ou vidéo ouverts, qui ont leur propre retour) */
-  if(a.seg==="pod"||a.seg==="vid"){
-    const b=document.createElement("button");b.type="button";b.className="ghost auBack";b.textContent="‹ Audio";
-    b.onclick=()=>{a.seg="hub";saveState();vid.open=null;try{pod.ep=null;pod.show=null}catch(e){}renderAudio();try{window.scrollTo({top:0})}catch(e){}};
-    host.insertBefore(b,host.firstChild);
-  }
+  const flat=(a.seg==="pod"||a.seg==="vid")&&!(a.seg==="pod"?(pod.ep||pod.show):vid.open);
+  host.classList.toggle("auFlat",!!flat);
+  try{barSig="";renderPageBar()}catch(e){}
 }
+{const _rp=renderPod,_rv=renderVideos;renderPod=function(h){const r=_rp.apply(this,arguments);try{const a=A();$("audioBody").classList.toggle("auFlat",!(pod.ep||pod.show));barSig="";renderPageBar()}catch(e){}return r};renderVideos=function(h){const r=_rv.apply(this,arguments);try{$("audioBody").classList.toggle("auFlat",!vid.open);barSig="";renderPageBar()}catch(e){}return r}}
 const AU_TILES=[
   ["Podcasts et vidéos",[["pod","Podcasts","head"],["vid","Vidéos","play"]]],
   ["Écouter",[["audioDialogues","Dialogues","swap"],["dictation","Dictée","write"],["listening","Mots","audio"]]],
@@ -7477,11 +7480,17 @@ function modeInfo(){const info={};Object.values(goalModeGroups).forEach(g=>g.mod
 function renderPageBar(){
   const host=$("pageBar");if(!host)return;
   const p=currentView;
-  if(p!=="vocab"&&p!=="gram"&&p!=="write"&&!(p==="audio"&&exOpen)){host.innerHTML="";barSig="";return}
-  const sig=p+"|"+mode+"|"+(state.gramTheme||"")+"|"+(state.vocKind||"")+"|"+(state.packFocus||"")+"|"+W()+"|"+exOpen+"|"+((state.log&&state.log[JD(new Date())]||{}).n||0);
+  const auList=p==="audio"&&!exOpen&&(A().seg==="pod"?!(pod.ep||pod.show):A().seg==="vid"?!vid.open:false);
+  if(p!=="vocab"&&p!=="gram"&&p!=="write"&&!(p==="audio"&&exOpen)&&!auList){host.innerHTML="";barSig="";return}
+  const sig=p+"|"+mode+"|"+(state.gramTheme||"")+"|"+(state.vocKind||"")+"|"+(state.packFocus||"")+"|"+W()+"|"+exOpen+"|"+((state.log&&state.log[JD(new Date())]||{}).n||0)+"|"+auList;
   if(sig===barSig&&host.firstChild)return;
   barSig=sig;
   const info=modeInfo(),st7=auModeStats(7);
+  if(auList){
+    host.innerHTML=`<div class="blkBar"><button type="button" class="ghost backIc" id="pbBack" aria-label="Retour">‹</button><b>${A().seg==="pod"?"Podcasts":"Vidéos"}</b></div>`;
+    $("pbBack").onclick=()=>{const a=A();a.seg="hub";saveState();try{vid.open=null;pod.ep=null;pod.show=null}catch(e){}renderAudio();try{window.scrollTo({top:0})}catch(e){}};
+    return;
+  }
   if(p==="audio"||p==="vocab"||p==="gram"){
     if(exOpen){
       host.innerHTML=`<div class="blkBar"><button type="button" class="ghost backIc" id="pbBack" aria-label="Retour">‹</button><b>${escapeHtml((info[mode]&&info[mode][1])||modeNames[mode]||"")}</b></div>`;
