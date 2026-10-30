@@ -6812,13 +6812,10 @@ function pctBadge(keys,st){
 /* carte « Audio » de la page d'accueil : pratique du jour / semaine / réussite + exercice conseillé */
 function jAudioCard(){
   const box=$("auHome");if(!box)return;
-  const all=AUDIO_EAR.concat(AUDIO_ORAL),st1=auModeStats(1),st7=auModeStats(7),st30=auModeStats(30);
-  const t1=auSum(st1,all),t7=auSum(st7,all),p7=auPct(t7);
+  const all=AUDIO_EAR.concat(AUDIO_ORAL),st30=auModeStats(30);
   const rows=all.filter(([m])=>st30[m]&&st30[m].n>0).sort((x,y)=>auPct(st30[y[0]])-auPct(st30[x[0]])||st30[y[0]].n-st30[x[0]].n)
-    .map(([m,l])=>{const p=auPct(st30[m]);const o=st30[m];return `<div class="profileRow"><div><div class="profileName">${esc(l)}</div><div class="profileMeta">${o.ok+" correct out of "+o.n}</div></div><div class="profileBar"><i style="width:${p}%"></i></div><div class="profilePct">${p}% correct</div><button class="ghost reviewConcept" data-aex="${m}">Réviser</button></div>`}).join("");
-  box.innerHTML=`<div class="auTiles"><div class="auTile"><b>${t1.n}</b><span>aujourd’hui</span></div><div class="auTile"><b>${t7.n}</b><span>cette semaine</span></div><div class="auTile"><b>${p7===null?"–":p7+" %"}</b><span>réussite · 7 jours</span></div></div>`+
-  (rows?`<div class="profileList" style="margin-top:12px">${rows}</div>`:`<div class="small" style="margin-top:10px">Aucun exercice audio pour l’instant.</div>`);
-  box.querySelectorAll("[data-aex]").forEach(b=>{b.onclick=()=>openExercise(b.dataset.aex);b.parentElement.onclick=e=>{if(e.target!==b)b.click()}});
+    .map(([m,l])=>{const o=st30[m],p=auPct(o);return `<div class="profileRow"><div><div class="profileName">${esc(l)}</div><div class="profileMeta">${o.ok+" correct out of "+o.n}</div></div><div class="profileBar"><i style="width:${p}%"></i></div><div class="profilePct">${p}% correct</div></div>`}).join("");
+  box.innerHTML=rows?`<div class="profileList">${rows}</div>`:`<div class="small">Aucun exercice audio pour l’instant.</div>`;
 }
 function auCount(m){
   try{
