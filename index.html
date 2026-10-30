@@ -6660,6 +6660,7 @@ function pageFollowMode(){
   if(pg!==currentView)showView(pg,true);else applyPageVisibility();
 }
 function showView(v,silent){
+  if(!silent){try{if(typeof favClose==="function")favClose()}catch(e){}}
   if(!silent)exOpen=false;
   if(v==="translate"){state.wseg="free";saveState()}
   v=({train:"home",translate:"write"})[v]||v;
