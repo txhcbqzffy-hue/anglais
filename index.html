@@ -1515,6 +1515,12 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
 .blkGrid3 .blk em.auPct{background:var(--panel);color:var(--muted);border:1px solid var(--line)}
 .blkGrid3 .blk em.auPct.ok{color:#1a7f37}.blkGrid3 .blk em.auPct.low{color:#c0392b}
 .blkHead+.blkGrid3{margin-bottom:6px}
+#favSheet{overflow:hidden!important;display:flex;flex-direction:column;padding-bottom:0!important;overscroll-behavior:none}
+#favSheet.hidden{display:none!important}
+#favSheet .sheetHead{flex:none;width:100%}
+#favSheet #favBody{flex:1;min-height:0;width:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:120px}
+#favSheet .favTabs{position:sticky;top:0;z-index:2;background:var(--bg);padding-bottom:8px}
+.favBtns .primary,.favBtns .primary:active{box-shadow:none!important;filter:none!important}
 </style>
 </head>
 <body>
