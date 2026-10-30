@@ -8274,11 +8274,10 @@ function initLevel(){
   const b=document.createElement("button");b.type="button";b.id="lvlBtn";b.className="lvlBadge";b.setAttribute("aria-label","Niveau estimé");b.onclick=openLevel;
   hd.insertBefore(b,hd.firstChild);
   const s=document.createElement("div");s.id="lvlSheet";s.className="sheet hidden";s.setAttribute("role","dialog");
-  s.innerHTML=`<div class="sheetHead"><h2>Mon niveau</h2><button type="button" id="lvlClose" class="ghost backIc" aria-label="Fermer">✕</button></div><div id="lvlTop"></div><button type="button" class="primary" id="lvlTest" style="margin-top:12px">Faire le test de niveau (20 questions)</button><div id="lvlCefr"></div>`;
+  s.innerHTML=`<div class="sheetHead"><h2>Mon niveau</h2><button type="button" id="lvlClose" class="ghost backIc" aria-label="Fermer">✕</button></div><div id="lvlTop"></div><div id="lvlCefr"></div>`;
   document.body.appendChild(s);
   const cp=document.querySelector(".cefrPanel");if(cp)$("lvlCefr").appendChild(cp);
   $("lvlClose").onclick=closeLevel;
-  $("lvlTest").onclick=()=>{closeLevel();openExercise("levelTest")};
   s.addEventListener("click",e=>{if(e.target.closest("[data-cefr-level]"))closeLevel()},true);
   lvlTrack();
 }
