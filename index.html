@@ -6930,7 +6930,7 @@ function renderPodEp(host){
   host.innerHTML=`<section class="secCard"><button id="pBack2" class="ghost backIc" type="button" aria-label="Épisodes">‹</button>
   <h2 style="margin-top:10px">${esc(e.trackName||"Épisode")}</h2><div class="small">${esc((pod.show&&pod.show.name)||e.collectionName||"")}${e.releaseDate?" · "+esc(fmtDate(e.releaseDate)):""}</div>
   ${url?`<audio id="pAudio" class="pAudio" controls preload="metadata" src="${esc(url)}"></audio>`:'<div class="noteBox err">Cet épisode n’a pas de fichier audio lisible.</div>'}
-  <div class="row2" style="margin-top:12px"><span id="pDone" class="chip2 on" style="${a.seen[key]?"":"display:none"}">Écouté ✓</span>${page?`<a class="ghost" style="padding:11px 14px;border-radius:5px;text-decoration:none;color:inherit;border:1px solid var(--line)" href="${esc(page)}" target="_blank" rel="noopener">Page de l’épisode</a>`:""}</div>
+  <div class="row2" style="margin-top:12px"><span id="pDone" class="chip2 on" style="${a.seen[key]?"":"display:none"}">Écouté ✓</span></div>
   <div class="vStep"><b>Écris ce que tu comprends</b>
    <textarea id="pwTxt" class="trBox" placeholder="Mets en pause et écris ce que tu viens d’entendre ou le résumé du passage" spellcheck="false"></textarea>
    <div class="row2" style="margin-top:8px"><button id="pwFix" class="ghost" type="button">Corriger avec LanguageTool</button></div><div id="pwRes"></div></div></section>`;
