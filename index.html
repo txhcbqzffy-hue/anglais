@@ -6898,7 +6898,7 @@ function renderPod(host){
   
   ${last?`<div class="resume"><div><b>Reprendre</b><div class="small">${esc(last.title)}${a.pos[last.key]?" · à "+fmtClock(a.pos[last.key]):""}</div></div><button class="primary" id="pResume" type="button">Reprendre</button></div>`:""}
   <div class="row2" style="margin-top:12px"><input id="pQ" class="input" type="search" placeholder="Chercher un podcast" autocomplete="off" value="${esc(pod.q)}"><button id="pGo" class="primary" type="button">Chercher</button></div>
-  <div id="pSugg">${[["Pour débuter","A2–B1",p=>/^A2/.test(p[2])],["Niveau intermédiaire","B1–B2",p=>/^B1/.test(p[2])],["Niveau avancé","B2–C1",p=>/^(B2|C1)/.test(p[2])]].map(g=>{const l=POD_CURATED.filter(g[2]);return l.length?`<h3 class="pGrp">${g[0]}<em>${g[1]}</em></h3><div class="shows">${l.map(p=>`<button class="showCard" type="button" data-q="${esc(p[0])}"><span><b>${esc(p[0])}</b><span class="pMeta"><i>${esc(p[2])}</i><i>${esc(p[3])}</i><span>${esc(p[1])}</span></span><small>${esc(p[4])}</small></span><span>›</span></button>`).join("")}</div>`:""}).join("")}</div>
+  <div id="pSugg">${(()=>{const ord=["A1","A2","B1","B2","C1"],L=ord.indexOf(currentCEFR()),rg=p=>p[2].split("–").map(x=>ord.indexOf(x));let l=POD_CURATED.filter(p=>{const r=rg(p);return r[0]<=L&&L<=r[r.length-1]});if(!l.length){const m=Math.min(...POD_CURATED.map(p=>rg(p)[0]));l=POD_CURATED.filter(p=>rg(p)[0]===m)}return`<h3 class="pGrp">Pour ton niveau<em>${ord[L]||""}</em></h3><div class="shows">${l.map(p=>`<button class="showCard" type="button" data-q="${esc(p[0])}"><span><b>${esc(p[0])}</b><span class="pMeta"><i>${esc(p[2])}</i><i>${esc(p[3])}</i><span>${esc(p[1])}</span></span><small>${esc(p[4])}</small></span><span>›</span></button>`).join("")}</div>`})()}</div>
   ${a.shows.length?`<h3>Mes podcasts</h3><div class="shows" id="pMine">${a.shows.map(s=>`<button class="showCard" type="button" data-mine="${esc(s.id)}"><span><b>${esc(s.name)}</b><small>${esc(s.artist)}</small></span><span>›</span></button>`).join("")}</div>`:""}
   <div id="pRes" style="margin-top:6px"></div></section>`;
   $("pGo").onclick=()=>podSearch($("pQ").value);
@@ -8747,6 +8747,7 @@ const I18N_DICT={
 "Écouter lentement":"Listen slowly","Dernière réplique":"Last line","Aucune écoute":"No plays yet","Arrêter":"Stop","Écouter cette réplique":"Listen to this line",
 "Écoute le dialogue, sans lire le script, puis réponds.":"Listen to the dialogue without reading the script, then answer.",
 "Pour progresser":"To improve",
+"Pour ton niveau":"For your level",
 "Pour débuter":"Beginner","Niveau intermédiaire":"Intermediate","Niveau avancé":"Advanced",
 "Pas encore travaillé cette semaine.":"Not practised yet this week.",
 "Une expression idiomatique par épisode, avec exemples.":"One idiom per episode, with examples.",
