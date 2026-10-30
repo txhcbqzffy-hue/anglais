@@ -6930,12 +6930,11 @@ function renderPodEp(host){
   host.innerHTML=`<section class="secCard"><button id="pBack2" class="ghost backIc" type="button" aria-label="Épisodes">‹</button>
   <h2 style="margin-top:10px">${esc(e.trackName||"Épisode")}</h2><div class="small">${esc((pod.show&&pod.show.name)||e.collectionName||"")}${e.releaseDate?" · "+esc(fmtDate(e.releaseDate)):""}</div>
   ${url?`<audio id="pAudio" class="pAudio" controls preload="metadata" src="${esc(url)}"></audio>`:'<div class="noteBox err">Cet épisode n’a pas de fichier audio lisible.</div>'}
-  <div class="pTools"><button class="chip2" id="pBk" type="button">−15 s</button><button class="chip2" id="pFw" type="button">+15 s</button>${SPEEDS.map(s=>`<button class="chip2${s===a.speed?" on":""}" type="button" data-sp="${s}">${String(s).replace(".",",")}×</button>`).join("")}</div>
-  <div class="row2" style="margin-top:12px"><button id="pDone" class="ghost" type="button">${a.seen[key]?"Écouté ✓":"Marquer comme écouté"}</button>${page?`<a class="ghost" style="padding:11px 14px;border-radius:5px;text-decoration:none;color:inherit;border:1px solid var(--line)" href="${esc(page)}" target="_blank" rel="noopener">Page de l’épisode</a>`:""}</div>
+  <div class="row2" style="margin-top:12px"><span id="pDone" class="chip2 on" style="${a.seen[key]?"":"display:none"}">Écouté ✓</span>${page?`<a class="ghost" style="padding:11px 14px;border-radius:5px;text-decoration:none;color:inherit;border:1px solid var(--line)" href="${esc(page)}" target="_blank" rel="noopener">Page de l’épisode</a>`:""}</div>
   <div class="vStep"><b>Écris ce que tu comprends</b>
    <textarea id="pwTxt" class="trBox" placeholder="Mets en pause et écris ce que tu viens d’entendre ou le résumé du passage" spellcheck="false"></textarea>
    <div class="row2" style="margin-top:8px"><button id="pwFix" class="ghost" type="button">Corriger avec LanguageTool</button></div><div id="pwRes"></div></div></section>`;
-  setTimeout(()=>{const f=$("pwFix");if(f)f.onclick=()=>{const t=$("pwTxt").value.trim();if(t.split(/\s+/).length<3){$("pwRes").innerHTML='<div class="small">Écris au moins une phrase.</div>';return}ltRun($("pwRes"),t,"en-US","fr",null)}},0);
+  setTimeout(()=>{const f=$("pwFix");if(f)f.onclick=()=>{const t=$("pwTxt").value.trim();if(t.split(/\s+/).length<3){$("pwRes").innerHTML='<div class="small">Écris au moins une phrase.</div>';return}ltRun($("pwRes"),t,"en-US","fr",null);a.seen[key]=Date.now();delete a.pos[key];saveState();const d=$("pDone");if(d)d.style.display=""}},0);
   $("pBack2").onclick=()=>{stopAudioMedia();pod.ep=null;renderAudio()};
   const au=$("pAudio");
   if(au){
@@ -6943,12 +6942,8 @@ function renderPodEp(host){
     au.addEventListener("loadedmetadata",()=>{const p=a.pos[key];if(p&&au.duration&&p<au.duration-15)au.currentTime=p;au.playbackRate=a.speed});
     let t0=0;
     au.addEventListener("timeupdate",()=>{if(Date.now()-t0<4000)return;t0=Date.now();a.pos[key]=Math.floor(au.currentTime);a.last={key,title:e.trackName||"Épisode",show:pod.show,ep:e};saveState()});
-    au.addEventListener("ended",()=>{a.seen[key]=Date.now();delete a.pos[key];saveState();if($("pDone"))$("pDone").textContent="Écouté ✓"});
-    $("pBk").onclick=()=>{au.currentTime=Math.max(0,au.currentTime-15)};
-    $("pFw").onclick=()=>{au.currentTime=au.currentTime+15};
-    host.querySelectorAll("[data-sp]").forEach(b=>b.onclick=()=>{a.speed=+b.dataset.sp;au.defaultPlaybackRate=a.speed;au.playbackRate=a.speed;saveState();host.querySelectorAll("[data-sp]").forEach(x=>x.classList.toggle("on",x===b))});
+    au.addEventListener("ended",()=>{a.seen[key]=Date.now();delete a.pos[key];saveState();const d=$("pDone");if(d)d.style.display=""});
   }
-  $("pDone").onclick=()=>{a.seen[key]=Date.now();saveState();$("pDone").textContent="Écouté ✓"};
 }
 
 /* ---------- Vidéos YouTube (liste vérifiée dans la session précédente) ---------- */
