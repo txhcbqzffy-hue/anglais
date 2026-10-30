@@ -1544,6 +1544,11 @@ body:not(.onAudio) .pPlayer{opacity:0;pointer-events:none}
 .pPlayer .pT{flex:none;font-size:12px;font-weight:700;color:var(--muted);min-width:38px;text-align:center;font-variant-numeric:tabular-nums}
 .pPlayer .pSeek{flex:1;min-width:0;accent-color:var(--accent);height:28px;margin:0}
 
+.pGrp{display:flex;align-items:baseline;gap:8px;margin:18px 0 8px}
+.pGrp em{font-style:normal;font-size:12px;font-weight:700;color:var(--muted)}
+.pMeta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:5px;font-size:12px;color:var(--muted)}
+.pMeta i{font-style:normal;font-weight:700;font-size:11px;padding:2px 7px;border-radius:999px;background:var(--accent-soft,rgba(0,0,0,.06));color:var(--accent)}
+.pMeta i+i{background:rgba(0,0,0,.06);color:var(--muted)}
 </style>
 <script>setTimeout(function(){document.documentElement.classList.add('booted')},2500)</script>
 </head>
@@ -6875,7 +6880,7 @@ const POD_SUGG=["6 Minute English","The English We Speak","All Ears English","TE
 const POD_CURATED=[
  ["The English We Speak","BBC Learning English","A2–B1","3 min","Une expression idiomatique par épisode, avec exemples."],
  ["6 Minute English","BBC Learning English","B1–B2","6 min","Un sujet de société discuté à deux, vocabulaire expliqué."],
- ["All Ears English","Lindsay et Michelle","B1–B2","15–20 min","Conversations américaines naturelles, expressions du quotidien."],
+ ["All Ears English","Lindsay & Michelle","B1–B2","15–20 min","Conversations américaines naturelles, expressions du quotidien."],
  ["TED Talks Daily","TED","B2–C1","10–20 min","Conférences variées, débit naturel."],
  ["Luke’s English Podcast","Luke Thompson","B2–C1","long","Anecdotes et humour, accent britannique."],
  ["Planet Money","NPR","B2–C1","20 min","L’économie racontée comme une histoire."],
@@ -6893,7 +6898,7 @@ function renderPod(host){
   
   ${last?`<div class="resume"><div><b>Reprendre</b><div class="small">${esc(last.title)}${a.pos[last.key]?" · à "+fmtClock(a.pos[last.key]):""}</div></div><button class="primary" id="pResume" type="button">Reprendre</button></div>`:""}
   <div class="row2" style="margin-top:12px"><input id="pQ" class="input" type="search" placeholder="Chercher un podcast" autocomplete="off" value="${esc(pod.q)}"><button id="pGo" class="primary" type="button">Chercher</button></div>
-  <h3>Pour progresser</h3><div class="shows" id="pSugg">${POD_CURATED.map(p=>`<button class="showCard" type="button" data-q="${esc(p[0])}"><span><b>${esc(p[0])}</b><small>${esc(p[2]+" · "+p[3]+" · "+p[4])}</small></span><span>›</span></button>`).join("")}</div>
+  <div id="pSugg">${[["Pour débuter","A2–B1",p=>/^A2/.test(p[2])],["Niveau intermédiaire","B1–B2",p=>/^B1/.test(p[2])],["Niveau avancé","B2–C1",p=>/^(B2|C1)/.test(p[2])]].map(g=>{const l=POD_CURATED.filter(g[2]);return l.length?`<h3 class="pGrp">${g[0]}<em>${g[1]}</em></h3><div class="shows">${l.map(p=>`<button class="showCard" type="button" data-q="${esc(p[0])}"><span><b>${esc(p[0])}</b><span class="pMeta"><i>${esc(p[2])}</i><i>${esc(p[3])}</i><span>${esc(p[1])}</span></span><small>${esc(p[4])}</small></span><span>›</span></button>`).join("")}</div>`:""}).join("")}</div>
   ${a.shows.length?`<h3>Mes podcasts</h3><div class="shows" id="pMine">${a.shows.map(s=>`<button class="showCard" type="button" data-mine="${esc(s.id)}"><span><b>${esc(s.name)}</b><small>${esc(s.artist)}</small></span><span>›</span></button>`).join("")}</div>`:""}
   <div id="pRes" style="margin-top:6px"></div></section>`;
   $("pGo").onclick=()=>podSearch($("pQ").value);
@@ -8742,6 +8747,7 @@ const I18N_DICT={
 "Écouter lentement":"Listen slowly","Dernière réplique":"Last line","Aucune écoute":"No plays yet","Arrêter":"Stop","Écouter cette réplique":"Listen to this line",
 "Écoute le dialogue, sans lire le script, puis réponds.":"Listen to the dialogue without reading the script, then answer.",
 "Pour progresser":"To improve",
+"Pour débuter":"Beginner","Niveau intermédiaire":"Intermediate","Niveau avancé":"Advanced",
 "Pas encore travaillé cette semaine.":"Not practised yet this week.",
 "Une expression idiomatique par épisode, avec exemples.":"One idiom per episode, with examples.",
 "Un sujet de société discuté à deux, vocabulaire expliqué.":"A topical subject discussed by two presenters, vocabulary explained.",
