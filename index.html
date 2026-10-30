@@ -1535,9 +1535,15 @@ body #exerciseCard:has(#pronZone:not(.hidden)){padding-bottom:16px!important}
 #pronZone:has(#heard:empty){min-height:0}
 #pronZone #heard:empty{display:none}
 #pronZone .actions:has(#recordBtn){margin:0;min-height:0}
-.pAudio{position:fixed!important;left:14px;right:14px;width:auto!important;bottom:var(--dockBottom,92px);z-index:70;height:54px;border-radius:16px;box-shadow:0 10px 28px -10px rgba(0,0,0,.35);background:var(--panel)}
-html.kbUp .pAudio{display:none}
-body:not(.onAudio) .pAudio{opacity:0;pointer-events:none}
+html.kbUp .pPlayer{display:none}
+body:not(.onAudio) .pPlayer{opacity:0;pointer-events:none}
+.pPlayer{position:fixed;left:14px;right:14px;bottom:var(--dockBottom,92px);z-index:70;height:58px;display:flex;align-items:center;gap:10px;padding:0 14px 0 9px;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:0 10px 28px -10px rgba(0,0,0,.35)}
+.pPlay{flex:none;width:42px;height:42px;border-radius:50%;border:0;background:var(--accent);color:var(--on-accent);font-size:16px;line-height:1;display:grid;place-items:center;padding:0}
+.pPlay::before{content:"▶";margin-left:2px}
+.pPlayer.playing .pPlay::before{content:"❚❚";margin-left:0;font-size:13px;letter-spacing:-1px}
+.pPlayer .pT{flex:none;font-size:12px;font-weight:700;color:var(--muted);min-width:38px;text-align:center;font-variant-numeric:tabular-nums}
+.pPlayer .pSeek{flex:1;min-width:0;accent-color:var(--accent);height:28px;margin:0}
+
 </style>
 <script>setTimeout(function(){document.documentElement.classList.add('booted')},2500)</script>
 </head>
@@ -6741,7 +6747,7 @@ const netErrHtml=()=>`<div class="noteBox err">Impossible de joindre le service 
    ===================================================================== */
 function renderAudio(){
   const a=A(),host=$("audioBody");if(!host)return;
-  try{const o=document.body.querySelector(":scope > #pAudio");if(o&&!(a.seg==="pod"&&pod.ep)){o.pause();o.remove()}}catch(x){}
+  try{const o=$("pPlayer");if(o&&!(a.seg==="pod"&&pod.ep)){const x=$("pAudio");if(x)x.pause();o.remove()}}catch(x){}
   if(!exOpen&&(a.seg==="ear"||a.seg==="oral"||a.seg==="pod"&&false))a.seg="hub";
   if(!["hub","pod","vid","ear","oral"].includes(a.seg))a.seg="hub";
   try{applyPageVisibility()}catch(e){}
@@ -6931,11 +6937,11 @@ async function renderPodShow(host){
   }catch(e){if($("pList"))$("pList").innerHTML=netErrHtml()}
 }
 function renderPodEp(host){
-  try{const o=document.body.querySelector(":scope > #pAudio");if(o){o.pause();o.remove()}}catch(x){}
+  try{const x=$("pAudio");if(x)x.pause();const o=$("pPlayer");if(o)o.remove()}catch(x){}
   const e=pod.ep,a=A(),key=epKey(e),url=safeUrl(e.episodeUrl),page=safeUrl(e.trackViewUrl||e.collectionViewUrl);
   host.innerHTML=`<section class="secCard"><button id="pBack2" class="ghost backIc" type="button" aria-label="Épisodes">‹</button>
   <h2 style="margin-top:10px">${esc(e.trackName||"Épisode")}</h2><div class="small">${esc((pod.show&&pod.show.name)||e.collectionName||"")}${e.releaseDate?" · "+esc(fmtDate(e.releaseDate)):""}</div>
-  ${url?`<audio id="pAudio" class="pAudio" controls preload="metadata" src="${esc(url)}"></audio>`:'<div class="noteBox err">Cet épisode n’a pas de fichier audio lisible.</div>'}
+  ${url?`<audio id="pAudio" class="pAudio" preload="metadata" src="${esc(url)}"></audio>`:'<div class="noteBox err">Cet épisode n’a pas de fichier audio lisible.</div>'}
   <div class="row2" style="margin-top:12px"><span id="pDone" class="chip2 on" style="${a.seen[key]?"":"display:none"}">Écouté ✓</span></div>
   <div class="vStep"><b>Écris ce que tu comprends</b>
    <textarea id="pwTxt" class="trBox" placeholder="Mets en pause et écris ce que tu viens d’entendre ou le résumé du passage" spellcheck="false"></textarea>
@@ -6944,7 +6950,16 @@ function renderPodEp(host){
   $("pBack2").onclick=()=>{stopAudioMedia();pod.ep=null;renderAudio()};
   const au=$("pAudio");
   if(au){
-    document.body.appendChild(au);
+    const bar=document.createElement("div");bar.id="pPlayer";bar.className="pPlayer";
+    bar.innerHTML='<button type="button" class="pPlay" aria-label="Lecture / pause"></button><span class="pT" id="pCur">0:00</span><input type="range" class="pSeek" min="0" max="1000" value="0" aria-label="Position"><span class="pT" id="pRem">-0:00</span>';
+    document.body.appendChild(bar);
+    {const fm=t=>{t=Math.max(0,Math.floor(t||0));return Math.floor(t/60)+":"+String(t%60).padStart(2,"0")};
+     const rg=bar.querySelector(".pSeek");let drag=false;
+     const ui=()=>{const d=au.duration||0;bar.classList.toggle("playing",!au.paused&&!au.ended);$("pCur").textContent=fm(au.currentTime);$("pRem").textContent="-"+fm(d-au.currentTime);if(!drag&&d)rg.value=Math.round(au.currentTime/d*1000)};
+     bar.querySelector(".pPlay").onclick=()=>{if(au.paused)au.play().catch(()=>{});else au.pause()};
+     rg.addEventListener("input",()=>{drag=true;const d=au.duration||0;if(d)au.currentTime=rg.value/1000*d;ui()});
+     rg.addEventListener("change",()=>{drag=false});
+     ["timeupdate","play","pause","ended","loadedmetadata","durationchange","seeked"].forEach(ev=>au.addEventListener(ev,ui));ui()}
     au.defaultPlaybackRate=a.speed;au.playbackRate=a.speed;
     au.addEventListener("loadedmetadata",()=>{const p=a.pos[key];if(p&&au.duration&&p<au.duration-15)au.currentTime=p;au.playbackRate=a.speed});
     let t0=0;
