@@ -1524,7 +1524,10 @@ button.good,button.bad,.option.good,.option.bad,.gTile.good,.gTile.bad,.gTF.tfOk
 #favSheet .fStar::before{width:17px;height:17px}
 #favSheet .fStar{min-width:36px;min-height:44px}
 #favSheet .fRow{grid-template-columns:1fr 1fr 36px}
+html:not(.booted) body{opacity:0}
+body{transition:opacity .12s ease}
 </style>
+<script>setTimeout(function(){document.documentElement.classList.add('booted')},2500)</script>
 </head>
 <body>
 <div class="app">
@@ -10250,6 +10253,7 @@ renderGoalChoices("grammar");
 setMode("quiz");
 initV28();planTick();renderPacks();
 setTimeout(runBootChecks,80);
+try{requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.add('booted')})})}catch(e){document.documentElement.classList.add('booted')}
 </script>
 </body>
 </html>
