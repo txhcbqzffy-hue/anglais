@@ -6814,8 +6814,9 @@ function jAudioCard(){
   const box=$("auHome");if(!box)return;
   const all=AUDIO_EAR.concat(AUDIO_ORAL),st30=auModeStats(30);
   const rows=all.filter(([m])=>st30[m]&&st30[m].n>0).sort((x,y)=>auPct(st30[y[0]])-auPct(st30[x[0]])||st30[y[0]].n-st30[x[0]].n)
-    .map(([m,l])=>{const o=st30[m],p=auPct(o);return `<div class="profileRow"><div><div class="profileName">${esc(l)}</div><div class="profileMeta">${o.ok+" correct out of "+o.n}</div></div><div class="profileBar"><i style="width:${p}%"></i></div><div class="profilePct">${p}% correct</div></div>`}).join("");
+    .map(([m,l])=>{const o=st30[m],p=auPct(o);return `<div class="profileRow" data-aex="${m}" style="cursor:pointer"><div><div class="profileName">${esc(l)}</div><div class="profileMeta">${o.ok+" correct out of "+o.n}</div></div><div class="profileBar"><i style="width:${p}%"></i></div><div class="profilePct">${p}% correct</div></div>`}).join("");
   box.innerHTML=rows?`<div class="profileList">${rows}</div>`:`<div class="small">Aucun exercice audio pour l’instant.</div>`;
+  box.querySelectorAll("[data-aex]").forEach(r=>r.onclick=()=>openExercise(r.dataset.aex));
 }
 function auCount(m){
   try{
